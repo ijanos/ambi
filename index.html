@@ -7,7 +7,40 @@
     <title>ambi</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <aside class="sidebar">
+        <h2 class="title">Controls</h2>
+        <div class="content">
+          <form class="controls-form">
+            <div class="form-group">
+              <label for="word1">Word 1</label>
+              <input type="text" id="word1" name="word1" />
+            </div>
+            <div class="form-group">
+              <label for="word2">Word 2</label>
+              <input type="text" id="word2" name="word2" />
+            </div>
+            <div class="form-group">
+              <label for="font-selector">Font</label>
+              <select id="font-selector" name="font">
+                <option value="arial">Arial</option>
+                <option value="helvetica">Helvetica</option>
+                <option value="times">Times New Roman</option>
+                <option value="courier">Courier New</option>
+                <option value="georgia">Georgia</option>
+              </select>
+            </div>
+            <button type="submit" class="generate-btn">Generate</button>
+          </form>
+        </div>
+        <footer class="footer">
+          footer
+        </footer>
+      </aside>
+      <main class="viewport">
+        <p>3D Scene will go here</p>
+      </main>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
