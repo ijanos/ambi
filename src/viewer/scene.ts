@@ -5,30 +5,35 @@ let scene: THREE.Scene;
 let camera: THREE.PerspectiveCamera;
 let renderer: THREE.WebGLRenderer;
 let controls: OrbitControls;
-let mesh: THREE.Mesh;
+let glyphGroup: THREE.Group;
+let meshes: THREE.Mesh[] = [];
 let animationFrameId: number;
 
 const DEFAULT_VIEW_DIRECTION = new THREE.Vector3(1, 0.8, 1).normalize();
+const GLYPH_GAP = 40;
+const glyphMaterial = new THREE.MeshNormalMaterial();
+
+export interface MeshInstance {
+  geometry: THREE.BufferGeometry;
+  position?: readonly [number, number, number];
+  rotation?: readonly [number, number, number];
+}
 
 export function initScene(container: HTMLElement) {
-  // Scene
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xfafafa);
 
-  // Camera — 45° isometric view
   const width = container.clientWidth;
   const height = container.clientHeight;
   camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 10000);
   camera.position.set(150, 150, 150);
   camera.lookAt(0, 0, 0);
 
-  // Renderer
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(width, height);
   renderer.setPixelRatio(window.devicePixelRatio);
   container.appendChild(renderer.domElement);
 
-  // Lights
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
   scene.add(ambientLight);
 
@@ -37,13 +42,13 @@ export function initScene(container: HTMLElement) {
   directionalLight.castShadow = true;
   scene.add(directionalLight);
 
-  // Create a placeholder mesh (will be replaced when geometry is loaded)
-  const geometry = new THREE.BoxGeometry();
-  const material = new THREE.MeshNormalMaterial();
-  mesh = new THREE.Mesh(geometry, material);
-  scene.add(mesh);
+  glyphGroup = new THREE.Group();
+  scene.add(glyphGroup);
 
-  // OrbitControls
+  const placeholder = new THREE.Mesh(new THREE.BoxGeometry(), glyphMaterial);
+  glyphGroup.add(placeholder);
+  meshes = [placeholder];
+
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.05;
@@ -51,10 +56,7 @@ export function initScene(container: HTMLElement) {
   controls.target.set(0, 0, 0);
   controls.update();
 
-  // Handle window resize
   window.addEventListener('resize', onWindowResize);
-
-  // Start render loop
   animate();
 }
 
@@ -76,12 +78,38 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-function frameGeometry(geometry: THREE.BufferGeometry) {
-  geometry.computeBoundingSphere();
-  const sphere = geometry.boundingSphere;
+function clearMeshes() {
+  for (const mesh of meshes) {
+    glyphGroup.remove(mesh);
+    mesh.geometry.dispose();
+  }
+  meshes = [];
+}
 
-  if (!sphere) return;
+function layoutMeshes() {
+  if (meshes.length === 0) return;
 
+  const widths = meshes.map((mesh) => {
+    mesh.geometry.computeBoundingBox();
+    const box = mesh.geometry.boundingBox;
+    return box ? box.max.x - box.min.x : 0;
+  });
+
+  const totalWidth = widths.reduce((sum, width) => sum + width, 0) + GLYPH_GAP * Math.max(meshes.length - 1, 0);
+  let cursor = -totalWidth / 2;
+
+  meshes.forEach((mesh, index) => {
+    const width = widths[index];
+    mesh.position.set(cursor + width / 2, 0, 0);
+    cursor += width + GLYPH_GAP;
+  });
+}
+
+function frameMeshes() {
+  const box = new THREE.Box3().setFromObject(glyphGroup);
+  if (box.isEmpty()) return;
+
+  const sphere = box.getBoundingSphere(new THREE.Sphere());
   const radius = Math.max(sphere.radius, 1);
   const distance = radius * 2.8;
 
@@ -93,13 +121,42 @@ function frameGeometry(geometry: THREE.BufferGeometry) {
   controls.update();
 }
 
-export function setMeshGeometry(geometry: THREE.BufferGeometry) {
-  if (mesh.geometry !== geometry) {
-    mesh.geometry.dispose();
-    mesh.geometry = geometry;
-  }
+export function setMeshInstances(instances: MeshInstance[]) {
+  clearMeshes();
 
-  frameGeometry(geometry);
+  meshes = instances.map(({ geometry, position, rotation }) => {
+    const mesh = new THREE.Mesh(geometry, glyphMaterial);
+
+    if (position) {
+      mesh.position.set(position[0], position[1], position[2]);
+    }
+
+    if (rotation) {
+      mesh.rotation.set(rotation[0], rotation[1], rotation[2]);
+    }
+
+    glyphGroup.add(mesh);
+    return mesh;
+  });
+
+  frameMeshes();
+}
+
+export function setMeshGeometries(geometries: THREE.BufferGeometry[]) {
+  clearMeshes();
+
+  meshes = geometries.map((geometry) => {
+    const mesh = new THREE.Mesh(geometry, glyphMaterial);
+    glyphGroup.add(mesh);
+    return mesh;
+  });
+
+  layoutMeshes();
+  frameMeshes();
+}
+
+export function setMeshGeometry(geometry: THREE.BufferGeometry) {
+  setMeshGeometries([geometry]);
 }
 
 export function dispose() {
