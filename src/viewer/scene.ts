@@ -10,6 +10,7 @@ let meshes: THREE.Mesh[] = [];
 let animationFrameId: number;
 
 const DEFAULT_VIEW_DIRECTION = new THREE.Vector3(1, 0.8, 1).normalize();
+const DEFAULT_GLYPH_GROUP_Y_ROTATION = Math.PI / 4;
 const GLYPH_GAP = 40;
 const glyphMaterial = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide });
 
@@ -43,6 +44,7 @@ export function initScene(container: HTMLElement) {
   scene.add(directionalLight);
 
   glyphGroup = new THREE.Group();
+  glyphGroup.rotation.y = DEFAULT_GLYPH_GROUP_Y_ROTATION;
   scene.add(glyphGroup);
 
   const placeholder = new THREE.Mesh(new THREE.BoxGeometry(), glyphMaterial);
@@ -124,6 +126,8 @@ function frameMeshes() {
 export function setMeshInstances(instances: MeshInstance[]) {
   clearMeshes();
 
+  const hasExplicitPositions = instances.some(({ position }) => position !== undefined);
+
   meshes = instances.map(({ geometry, position, rotation }) => {
     const mesh = new THREE.Mesh(geometry, glyphMaterial);
 
@@ -138,6 +142,10 @@ export function setMeshInstances(instances: MeshInstance[]) {
     glyphGroup.add(mesh);
     return mesh;
   });
+
+  if (!hasExplicitPositions) {
+    layoutMeshes();
+  }
 
   frameMeshes();
 }

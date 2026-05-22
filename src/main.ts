@@ -3,11 +3,12 @@ import { createIntersectedGlyphSolidFromFont } from './geometry/font-glyph';
 import { initManifold } from './geometry/manifold';
 import { loadMondaFont } from './fonts/load-font';
 import { manifoldToThree } from './viewer/mesh-bridge';
-import { dispose, initScene, setMeshGeometries } from './viewer/scene';
+import { dispose, initScene, setMeshInstances } from './viewer/scene';
 
 const WORD_LEFT = 'HELLO';
 const WORD_RIGHT = 'WORLD';
 const ROTATED_GLYPH_Y_DEGREES = 90;
+const SCENE_MESH_Y_ROTATION_RADIANS = - Math.PI / 4;
 
 type LetterPair = {
   leftCharacter: string;
@@ -60,7 +61,7 @@ async function main() {
       rotatedGlyphYDegrees: ROTATED_GLYPH_Y_DEGREES,
     });
 
-    const geometries = letterPairs.map(({ leftCharacter, rightCharacter, index }) => {
+    const meshInstances = letterPairs.map(({ leftCharacter, rightCharacter, index }) => {
       console.log('Creating intersected pair', {
         index,
         leftCharacter,
@@ -74,11 +75,16 @@ async function main() {
         ROTATED_GLYPH_Y_DEGREES,
       );
 
-      return manifoldToThree(intersection.getMesh());
+      return {
+        geometry: manifoldToThree(intersection.getMesh()),
+        rotation: [0, SCENE_MESH_Y_ROTATION_RADIANS, 0] as const,
+      };
     });
 
-    setMeshGeometries(geometries);
-    console.log('Intersected letter pairs rendered');
+    setMeshInstances(meshInstances);
+    console.log('Intersected letter pairs rendered', {
+      sceneMeshYRotationRadians: SCENE_MESH_Y_ROTATION_RADIANS,
+    });
   } catch (error) {
     console.error('Error during initialization:', error);
     if (error instanceof Error) {
