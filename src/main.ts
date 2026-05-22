@@ -1,11 +1,25 @@
 import './style.css';
 import { createGlyphSolidFromFont } from './geometry/font-glyph';
 import { initManifold } from './geometry/manifold';
-import { manifoldToThree } from './viewer/mesh-bridge';
-import { dispose, initScene, setMeshInstances } from './viewer/scene';
+import { dispose, initScene, setMeshGeometry } from './viewer/scene';
 import { loadMondaFont } from './fonts/load-font';
+import { manifoldToThree } from './viewer/mesh-bridge';
+import type { Mesh } from 'manifold-3d';
 
 const ROTATED_GLYPH_Y_DEGREES = 90;
+
+function logMeshStats(label: string, manifoldMesh: Mesh) {
+  if (!manifoldMesh || !manifoldMesh.triVerts || !manifoldMesh.vertProperties) {
+    throw new Error(`Invalid mesh data returned from Manifold for ${label}`);
+  }
+
+  console.log(`${label} mesh stats`, {
+    numProp: manifoldMesh.numProp,
+    vertProperties: manifoldMesh.vertProperties.length,
+    vertices: manifoldMesh.vertProperties.length / manifoldMesh.numProp,
+    triangles: manifoldMesh.triVerts.length / 3,
+  });
+}
 
 async function main() {
   try {
@@ -26,19 +40,19 @@ async function main() {
     const font = await loadMondaFont();
     console.log('Monda font loaded');
 
-    console.log('Creating Manifold glyph solids...');
+    console.log('Creating source glyph solids...');
     const glyphA = createGlyphSolidFromFont(font, 'A');
     const glyphB = createGlyphSolidFromFont(font, 'B').rotate(0, ROTATED_GLYPH_Y_DEGREES, 0);
 
-    const geometryA = manifoldToThree(glyphA.getMesh());
-    const geometryB = manifoldToThree(glyphB.getMesh());
+    console.log('Creating intersected glyph solid...');
+    const intersection = glyphA.intersect(glyphB);
+    const intersectionMesh = intersection.getMesh();
+    logMeshStats('Intersection', intersectionMesh);
 
-    setMeshInstances([
-      { geometry: geometryA },
-      { geometry: geometryB },
-    ]);
+    const geometry = manifoldToThree(intersectionMesh);
+    setMeshGeometry(geometry);
 
-    console.log('Overlapped glyphs rendered', {
+    console.log('Intersected glyph rendered', {
       referenceGlyph: 'A',
       rotatedGlyph: 'B',
       rotatedGlyphYDegrees: ROTATED_GLYPH_Y_DEGREES,

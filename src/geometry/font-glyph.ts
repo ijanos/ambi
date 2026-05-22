@@ -11,8 +11,8 @@ import type {
 import { getManifold } from './manifold';
 
 const GLYPH_SIZE = 100;
-const GLYPH_DEPTH = 200;
-const CURVE_SEGMENTS = 10;
+const GLYPH_DEPTH = 100;
+const CURVE_SEGMENTS = 12;
 const FILL_RULE: FillRule = 'EvenOdd';
 const EPSILON = 1e-6;
 
