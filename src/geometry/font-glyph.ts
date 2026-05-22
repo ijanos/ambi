@@ -127,8 +127,9 @@ function getBoxCenter(solid: ManifoldSolid): Vec3 {
 }
 
 function centerSolid(solid: ManifoldSolid): ManifoldSolid {
-  const [x, y, z] = getBoxCenter(solid);
-  return solid.translate(-x, -y, -z);
+  // Center the solid along the x and z axes, keeping y at 0 to keep letters base aligned
+  const [x, , z] = getBoxCenter(solid);
+  return solid.translate(-x, 0, -z);
 }
 
 function extrudeContours(
