@@ -1,7 +1,7 @@
 import './style.css';
 import { initManifold } from './geometry/manifold';
-import { createLetterASolid, createLetterXSolid } from './geometry/glyph';
-import { initScene, setMeshInstances, dispose } from './viewer/scene';
+import { createIntersectedGlyphSolid } from './geometry/glyph';
+import { initScene, setMeshGeometry, dispose } from './viewer/scene';
 import { manifoldToThree } from './viewer/mesh-bridge';
 import type { Mesh } from 'manifold-3d';
 
@@ -34,26 +34,13 @@ async function main() {
     initScene(viewerContainer);
     console.log('Scene initialized');
 
-    console.log('Creating glyph solids...');
-    const aMesh = createLetterASolid();
-    const xMesh = createLetterXSolid();
-    logMeshStats('A', aMesh);
-    logMeshStats('X', xMesh);
+    console.log('Creating intersected glyph solid...');
+    const intersectedMesh = createIntersectedGlyphSolid();
+    logMeshStats('Intersection', intersectedMesh);
 
-    setMeshInstances([
-      {
-        geometry: manifoldToThree(aMesh),
-        position: [0, 0, 0],
-        rotation: [0, 0, 0],
-      },
-      {
-        geometry: manifoldToThree(xMesh),
-        position: [0, 0, 0],
-        rotation: [0, Math.PI / 2, 0],
-      },
-    ]);
-
-    console.log('Glyphs rendered');
+    const geometry = manifoldToThree(intersectedMesh);
+    setMeshGeometry(geometry);
+    console.log('Intersection rendered');
   } catch (error) {
     console.error('Error during initialization:', error);
     if (error instanceof Error) {

@@ -1,5 +1,6 @@
 import type {
   FillRule,
+  Manifold as ManifoldSolid,
   ManifoldToplevel,
   Mesh,
   Polygons,
@@ -8,20 +9,37 @@ import type {
 import { getManifold } from './manifold';
 
 export const GLYPH_DEPTH = 200;
+const X_ROTATION_DEGREES = 90;
+
+type Vec3 = readonly [number, number, number];
+
+function getBoxCenter(solid: ManifoldSolid): Vec3 {
+  const box = solid.boundingBox();
+  return [
+    (box.min[0] + box.max[0]) / 2,
+    (box.min[1] + box.max[1]) / 2,
+    (box.min[2] + box.max[2]) / 2,
+  ];
+}
+
+function centerManifold(solid: ManifoldSolid): ManifoldSolid {
+  const [x, y, z] = getBoxCenter(solid);
+  return solid.translate(-x, -y, -z);
+}
 
 function extrudeGlyph(
   manifold: ManifoldToplevel,
   contours: Polygons,
   fillRule: FillRule,
   depth = GLYPH_DEPTH,
-): Mesh {
+): ManifoldSolid {
   const crossSection = manifold.CrossSection.ofPolygons(contours, fillRule);
   const solid = crossSection.extrude(depth, 0, 0, [1, 1], true);
 
-  return solid.getMesh();
+  return centerManifold(solid);
 }
 
-export function createLetterASolid(): Mesh {
+export function createLetterAManifold(): ManifoldSolid {
   const manifold = getManifold();
 
   const outerA: SimplePolygon = [
@@ -44,7 +62,7 @@ export function createLetterASolid(): Mesh {
   return extrudeGlyph(manifold, [outerA, innerCutout], 'EvenOdd');
 }
 
-export function createLetterXSolid(): Mesh {
+export function createLetterXManifold(): ManifoldSolid {
   const manifold = getManifold();
 
   const diagonalOne: SimplePolygon = [
@@ -64,6 +82,22 @@ export function createLetterXSolid(): Mesh {
   return extrudeGlyph(manifold, [diagonalOne, diagonalTwo], 'Positive');
 }
 
+export function createLetterASolid(): Mesh {
+  return createLetterAManifold().getMesh();
+}
+
+export function createLetterXSolid(): Mesh {
+  return createLetterXManifold().getMesh();
+}
+
+export function createIntersectedGlyphSolid(): Mesh {
+  const aGlyph = createLetterAManifold();
+  const xGlyph = createLetterXManifold().rotate(0, X_ROTATION_DEGREES, 0);
+  const intersection = aGlyph.intersect(xGlyph);
+
+  return intersection.getMesh();
+}
+
 export function createTestSolid(): Mesh {
-  return createLetterASolid();
+  return createIntersectedGlyphSolid();
 }
