@@ -1,24 +1,36 @@
 import './style.css';
-import { createGlyphSolidFromFont } from './geometry/font-glyph';
+import { createIntersectedGlyphSolidFromFont } from './geometry/font-glyph';
 import { initManifold } from './geometry/manifold';
-import { dispose, initScene, setMeshGeometry } from './viewer/scene';
 import { loadMondaFont } from './fonts/load-font';
 import { manifoldToThree } from './viewer/mesh-bridge';
-import type { Mesh } from 'manifold-3d';
+import { dispose, initScene, setMeshGeometries } from './viewer/scene';
 
+const WORD_LEFT = 'HELLO';
+const WORD_RIGHT = 'WORLD';
 const ROTATED_GLYPH_Y_DEGREES = 90;
 
-function logMeshStats(label: string, manifoldMesh: Mesh) {
-  if (!manifoldMesh || !manifoldMesh.triVerts || !manifoldMesh.vertProperties) {
-    throw new Error(`Invalid mesh data returned from Manifold for ${label}`);
-  }
+type LetterPair = {
+  leftCharacter: string;
+  rightCharacter: string;
+  index: number;
+};
 
-  console.log(`${label} mesh stats`, {
-    numProp: manifoldMesh.numProp,
-    vertProperties: manifoldMesh.vertProperties.length,
-    vertices: manifoldMesh.vertProperties.length / manifoldMesh.numProp,
-    triangles: manifoldMesh.triVerts.length / 3,
-  });
+function assertSameLength(wordLeft: string, wordRight: string) {
+  if (wordLeft.length !== wordRight.length) {
+    throw new Error(
+      `Expected words of equal length, got ${JSON.stringify(wordLeft)} (${wordLeft.length}) and ${JSON.stringify(wordRight)} (${wordRight.length})`,
+    );
+  }
+}
+
+function createLetterPairs(wordLeft: string, wordRight: string): LetterPair[] {
+  assertSameLength(wordLeft, wordRight);
+
+  return Array.from(wordLeft, (leftCharacter, index) => ({
+    leftCharacter,
+    rightCharacter: wordRight[index] ?? '',
+    index,
+  }));
 }
 
 async function main() {
@@ -40,23 +52,33 @@ async function main() {
     const font = await loadMondaFont();
     console.log('Monda font loaded');
 
-    console.log('Creating source glyph solids...');
-    const glyphA = createGlyphSolidFromFont(font, 'A');
-    const glyphB = createGlyphSolidFromFont(font, 'B').rotate(0, ROTATED_GLYPH_Y_DEGREES, 0);
-
-    console.log('Creating intersected glyph solid...');
-    const intersection = glyphA.intersect(glyphB);
-    const intersectionMesh = intersection.getMesh();
-    logMeshStats('Intersection', intersectionMesh);
-
-    const geometry = manifoldToThree(intersectionMesh);
-    setMeshGeometry(geometry);
-
-    console.log('Intersected glyph rendered', {
-      referenceGlyph: 'A',
-      rotatedGlyph: 'B',
+    const letterPairs = createLetterPairs(WORD_LEFT, WORD_RIGHT);
+    console.log('Creating intersected letter pairs...', {
+      wordLeft: WORD_LEFT,
+      wordRight: WORD_RIGHT,
+      pairCount: letterPairs.length,
       rotatedGlyphYDegrees: ROTATED_GLYPH_Y_DEGREES,
     });
+
+    const geometries = letterPairs.map(({ leftCharacter, rightCharacter, index }) => {
+      console.log('Creating intersected pair', {
+        index,
+        leftCharacter,
+        rightCharacter,
+      });
+
+      const intersection = createIntersectedGlyphSolidFromFont(
+        font,
+        leftCharacter,
+        rightCharacter,
+        ROTATED_GLYPH_Y_DEGREES,
+      );
+
+      return manifoldToThree(intersection.getMesh());
+    });
+
+    setMeshGeometries(geometries);
+    console.log('Intersected letter pairs rendered');
   } catch (error) {
     console.error('Error during initialization:', error);
     if (error instanceof Error) {

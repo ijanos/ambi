@@ -158,3 +158,17 @@ export function createGlyphSolidFromFont(font: Font, character: string): Manifol
 
   return extrudeContours(manifold, character, contours);
 }
+
+export function createIntersectedGlyphSolidFromFont(
+  font: Font,
+  firstCharacter: string,
+  secondCharacter: string,
+  rotatedGlyphYDegrees: number,
+): ManifoldSolid {
+  const firstGlyph = createGlyphSolidFromFont(font, firstCharacter);
+  const rotatedSecondGlyph = createGlyphSolidFromFont(font, secondCharacter).rotate(0, rotatedGlyphYDegrees, 0);
+  const intersection = firstGlyph.intersect(rotatedSecondGlyph);
+
+  logMeshStats(`${firstCharacter}/${secondCharacter} intersection`, intersection.getMesh());
+  return intersection;
+}
