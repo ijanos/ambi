@@ -11,7 +11,7 @@ let animationFrameId: number;
 
 const DEFAULT_VIEW_DIRECTION = new THREE.Vector3(1, 0.8, 1).normalize();
 const GLYPH_GAP = 40;
-const glyphMaterial = new THREE.MeshNormalMaterial();
+const glyphMaterial = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide });
 
 export interface MeshInstance {
   geometry: THREE.BufferGeometry;
