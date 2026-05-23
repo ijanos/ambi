@@ -1,9 +1,6 @@
 import './style.css';
-import { initManifold } from './geometry/manifold';
-import { loadMondaFont } from './fonts/load-font';
-import { buildIntersectedLetterPairMeshInstances } from './rendering/intersected-letter-pairs';
+import type { RenderingRuntime } from './rendering/runtime';
 import { initControlsPanel } from './ui/controls-panel';
-import { dispose, initScene, setMeshInstances } from './viewer/scene';
 
 const DEFAULT_WORD_LEFT = 'HELLO';
 const DEFAULT_WORD_RIGHT = 'WORLD';
@@ -11,37 +8,41 @@ const ROTATED_GLYPH_Y_DEGREES = 90;
 const SCENE_MESH_Y_ROTATION_RADIANS = -Math.PI / 4;
 
 async function main() {
-  try {
-    console.log('Initializing Manifold...');
-    await initManifold();
-    console.log('Manifold initialized');
+  let disposeRenderingRuntime: (() => void) | undefined;
 
+  try {
     const viewerContainer = document.getElementById('viewer');
     if (!viewerContainer) {
       throw new Error('Viewer container not found');
     }
-
-    console.log('Initializing scene...');
-    initScene(viewerContainer);
-    console.log('Scene initialized');
 
     const controlsPanel = initControlsPanel({
       defaultWordLeft: DEFAULT_WORD_LEFT,
       defaultWordRight: DEFAULT_WORD_RIGHT,
     });
 
-    console.log('Loading Monda font...');
-    const font = await loadMondaFont();
-    console.log('Monda font loaded');
+    let renderingRuntimePromise: Promise<RenderingRuntime> | undefined;
 
-    const renderFromInputs = () => {
+    const getRenderingRuntime = () => {
+      if (!renderingRuntimePromise) {
+        renderingRuntimePromise = import('./rendering/runtime').then(async ({ createRenderingRuntime }) => {
+          const runtime = await createRenderingRuntime(viewerContainer);
+          disposeRenderingRuntime = runtime.dispose;
+          return runtime;
+        });
+      }
+
+      return renderingRuntimePromise;
+    };
+
+    const renderFromInputs = async () => {
       const validation = controlsPanel.syncValidation();
       if (!validation.isValid) {
         return;
       }
 
-      const meshInstances = buildIntersectedLetterPairMeshInstances(
-        font,
+      const renderingRuntime = await getRenderingRuntime();
+      renderingRuntime.renderIntersectedLetterPairs(
         validation.normalizedWordLeft,
         validation.normalizedWordRight,
         {
@@ -49,21 +50,24 @@ async function main() {
           sceneMeshYRotationRadians: SCENE_MESH_Y_ROTATION_RADIANS,
         },
       );
-
-      setMeshInstances(meshInstances);
     };
 
     controlsPanel.enableLiveValidation();
-    controlsPanel.onSubmit(renderFromInputs);
+    controlsPanel.onSubmit(() => {
+      void renderFromInputs();
+    });
 
-    renderFromInputs();
+    await renderFromInputs();
   } catch (error) {
     console.error('Error during initialization:', error);
     if (error instanceof Error) {
       console.error('Stack trace:', error.stack);
     }
   }
+
+  window.addEventListener('beforeunload', () => {
+    disposeRenderingRuntime?.();
+  });
 }
 
-main();
-window.addEventListener('beforeunload', dispose);
+void main();
