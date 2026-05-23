@@ -35,7 +35,6 @@ export function manifoldToThree(mesh: ManifoldMesh): THREE.BufferGeometry {
   geo.setIndex(Array.from(mesh.triVerts));
 
   geo.computeBoundingBox();
-  geo.center();
   geo.computeVertexNormals();
   geo.computeBoundingSphere();
 
