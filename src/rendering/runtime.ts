@@ -1,12 +1,10 @@
 import { initManifold } from '../geometry/manifold';
 import { loadMondaFont } from '../fonts/load-font';
-import { initScene, setMaterialMode, setMeshInstances, dispose } from '../viewer/scene';
-import type { MaterialMode } from '../viewer/scene';
+import { initScene, setCameraMode, setMaterialMode, setMeshInstances, dispose } from '../viewer/scene';
+import type { CameraMode, MaterialMode } from '../viewer/scene';
 import { buildIntersectedLetterPairMeshInstances } from './intersected-letter-pairs';
 
-export type { MaterialMode } from '../viewer/scene';
-
-export type CameraMode = 'perspective' | 'orthographic';
+export type { CameraMode, MaterialMode } from '../viewer/scene';
 
 export type RenderOptions = {
   rotatedGlyphYDegrees: number;
@@ -17,6 +15,7 @@ export type RenderOptions = {
 
 export type RenderingRuntime = {
   renderIntersectedLetterPairs(wordLeft: string, wordRight: string, options: RenderOptions): void;
+  setCameraMode(cameraMode: CameraMode): void;
   setMaterialMode(materialMode: MaterialMode): void;
   dispose(): void;
 };
@@ -36,6 +35,7 @@ export async function createRenderingRuntime(container: HTMLElement): Promise<Re
 
   return {
     renderIntersectedLetterPairs(wordLeft, wordRight, options) {
+      setCameraMode(options.cameraMode);
       setMaterialMode(options.materialMode);
 
       const meshInstances = buildIntersectedLetterPairMeshInstances(font, wordLeft, wordRight, {
@@ -44,6 +44,7 @@ export async function createRenderingRuntime(container: HTMLElement): Promise<Re
       });
       setMeshInstances(meshInstances);
     },
+    setCameraMode,
     setMaterialMode,
     dispose,
   };

@@ -1,5 +1,5 @@
 import './style.css';
-import type { RenderingRuntime } from './rendering/runtime';
+import type { RenderOptions, RenderingRuntime } from './rendering/runtime';
 import { initControlsPanel } from './ui/controls-panel';
 
 const DEFAULT_WORD_LEFT = 'HELLO';
@@ -35,7 +35,7 @@ async function main() {
       return renderingRuntimePromise;
     };
 
-    const getRenderOptions = (): Parameters<RenderingRuntime['renderIntersectedLetterPairs']>[2] => {
+    const getRenderOptions = (): RenderOptions => {
       const settings = controlsPanel.getRenderSettings();
 
       return {
@@ -61,6 +61,11 @@ async function main() {
     };
 
     controlsPanel.enableLiveValidation();
+    controlsPanel.onCameraModeChange((cameraMode) => {
+      void getRenderingRuntime().then((runtime) => {
+        runtime.setCameraMode(cameraMode);
+      });
+    });
     controlsPanel.onMaterialModeChange((materialMode) => {
       void getRenderingRuntime().then((runtime) => {
         runtime.setMaterialMode(materialMode);

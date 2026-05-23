@@ -19,6 +19,7 @@ export type ControlsPanel = {
   syncValidation(): WordValidation;
   getRenderSettings(): RenderSettings;
   enableLiveValidation(): void;
+  onCameraModeChange(handler: (cameraMode: CameraMode) => void): void;
   onMaterialModeChange(handler: (materialMode: MaterialMode) => void): void;
   onSubmit(handler: () => void): void;
 };
@@ -140,6 +141,11 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
     enableLiveValidation() {
       controls.wordLeftInput.addEventListener('input', syncValidation);
       controls.wordRightInput.addEventListener('input', syncValidation);
+    },
+    onCameraModeChange(handler) {
+      controls.cameraModeSelect.addEventListener('change', () => {
+        handler(parseCameraMode(controls.cameraModeSelect.value));
+      });
     },
     onMaterialModeChange(handler) {
       controls.materialModeSelect.addEventListener('change', () => {

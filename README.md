@@ -9,7 +9,7 @@ Successor to [3dwords.rekettye.com](https://3dwords.rekettye.com/) ([GitHub link
 
 Not in order of priority.
 
-- [ ] Optional orthographic camera
+- [x] Optional orthographic camera
 - [ ] Multiple font choices
 - [ ] Custom font loading
 - [ ] Custom spacing between characters
@@ -19,6 +19,7 @@ Not in order of priority.
 - [ ] Glyph height normalization? (ascenders and descenders can be cut off with some fonts)
 - [ ] Optional base platform with customizable height and width
 - [ ] Show mesh statistics
+- [ ] Warnings for floating geometry
 - [ ] Emojis? How would that even work?
 - [ ] Maybe per-character font choices?
 
