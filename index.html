@@ -30,9 +30,24 @@
                 <option value="georgia">Georgia</option>
               </select>
             </div>
+            <div id="validation-message" class="validation-message" aria-live="polite"></div>
             <button type="submit" class="generate-btn">Generate</button>
+            <div class="settings-separator">Settings</div>
+            <div class="form-group">
+              <label for="camera-mode">Camera</label>
+              <select id="camera-mode" name="camera-mode">
+                <option value="perspective" selected>Perspective</option>
+                <option value="orthographic">Orthographic</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="material-mode">Mesh Material</label>
+              <select id="material-mode" name="material-mode">
+                <option value="base-color" selected>Base Color</option>
+                <option value="normal-vectors">Normal Vectors</option>
+              </select>
+            </div>
           </form>
-          <div id="validation-message" class="validation-message" aria-live="polite"></div>
         </div>
         <footer class="footer"><a href="https://github.com/ijanos/ambi">Ambi on GitHub</a></footer>
       </aside>

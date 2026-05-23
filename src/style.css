@@ -165,9 +165,20 @@ h2 {
   box-shadow: 0 0 0 3px var(--warning-soft);
 }
 
+.controls-form > .settings-separator {
+  margin-top: 4px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
 .validation-message {
-  min-height: 40px;
-  margin-top: 16px;
+  min-height: 0px;
+  margin-top: 0px;
   font-size: 13px;
   line-height: 1.4;
   color: var(--text);

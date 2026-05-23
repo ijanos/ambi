@@ -1,3 +1,4 @@
+import type { CameraMode, MaterialMode } from '../rendering/runtime';
 import { assertSameLength, assertWordsPresent, normalizeWord } from '../word-pairs';
 
 export type WordValidation = {
@@ -9,9 +10,16 @@ export type WordValidation = {
   message: string;
 };
 
+export type RenderSettings = {
+  cameraMode: CameraMode;
+  materialMode: MaterialMode;
+};
+
 export type ControlsPanel = {
   syncValidation(): WordValidation;
+  getRenderSettings(): RenderSettings;
   enableLiveValidation(): void;
+  onMaterialModeChange(handler: (materialMode: MaterialMode) => void): void;
   onSubmit(handler: () => void): void;
 };
 
@@ -21,6 +29,8 @@ type Controls = {
   wordRightInput: HTMLInputElement;
   wordLeftLabel: HTMLLabelElement;
   wordRightLabel: HTMLLabelElement;
+  cameraModeSelect: HTMLSelectElement;
+  materialModeSelect: HTMLSelectElement;
   validationMessage: HTMLDivElement;
 };
 
@@ -45,6 +55,8 @@ function getControls(): Controls {
     wordRightInput: requireElement<HTMLInputElement>('#word2'),
     wordLeftLabel: requireElement<HTMLLabelElement>('#word1-label'),
     wordRightLabel: requireElement<HTMLLabelElement>('#word2-label'),
+    cameraModeSelect: requireElement<HTMLSelectElement>('#camera-mode'),
+    materialModeSelect: requireElement<HTMLSelectElement>('#material-mode'),
     validationMessage: requireElement<HTMLDivElement>('#validation-message'),
   };
 }
@@ -52,6 +64,14 @@ function getControls(): Controls {
 function formatWordLabel(baseLabel: string, letterCount: number): string {
   const unit = letterCount === 1 ? 'letter' : 'letters';
   return `${baseLabel} (${letterCount} ${unit})`;
+}
+
+function parseCameraMode(value: string): CameraMode {
+  return value === 'orthographic' ? 'orthographic' : 'perspective';
+}
+
+function parseMaterialMode(value: string): MaterialMode {
+  return value === 'normal-vectors' ? 'normal-vectors' : 'base-color';
 }
 
 function validateWords(wordLeft: string, wordRight: string): WordValidation {
@@ -109,11 +129,22 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
     validateWords(controls.wordLeftInput.value, controls.wordRightInput.value),
   );
 
+  const getRenderSettings = (): RenderSettings => ({
+    cameraMode: parseCameraMode(controls.cameraModeSelect.value),
+    materialMode: parseMaterialMode(controls.materialModeSelect.value),
+  });
+
   return {
     syncValidation,
+    getRenderSettings,
     enableLiveValidation() {
       controls.wordLeftInput.addEventListener('input', syncValidation);
       controls.wordRightInput.addEventListener('input', syncValidation);
+    },
+    onMaterialModeChange(handler) {
+      controls.materialModeSelect.addEventListener('change', () => {
+        handler(parseMaterialMode(controls.materialModeSelect.value));
+      });
     },
     onSubmit(handler) {
       controls.form.addEventListener('submit', (event) => {

@@ -11,12 +11,34 @@ let animationFrameId: number;
 
 const DEFAULT_VIEW_DIRECTION = new THREE.Vector3(0, 0.25, 1).normalize();
 const GLYPH_GAP = 40;
-const glyphMaterial = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide });
+const baseColorMaterial = new THREE.MeshMatcapMaterial({
+  color: 0x6b6375,
+  side: THREE.DoubleSide,
+  flatShading: true,
+});
+const normalMaterial = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide });
+
+export type MaterialMode = 'base-color' | 'normal-vectors';
+
+let currentMaterialMode: MaterialMode = 'base-color';
 
 export interface MeshInstance {
   geometry: THREE.BufferGeometry;
   position?: THREE.Vector3;
   rotation?: THREE.Vector3;
+}
+
+function getGlyphMaterial(mode: MaterialMode): THREE.Material {
+  return mode === 'normal-vectors' ? normalMaterial : baseColorMaterial;
+}
+
+function applyMaterialMode(mode: MaterialMode) {
+  currentMaterialMode = mode;
+  const material = getGlyphMaterial(mode);
+
+  for (const mesh of meshes) {
+    mesh.material = material;
+  }
 }
 
 export function initScene(container: HTMLElement) {
@@ -45,7 +67,7 @@ export function initScene(container: HTMLElement) {
   glyphGroup = new THREE.Group();
   scene.add(glyphGroup);
 
-  const placeholder = new THREE.Mesh(new THREE.BoxGeometry(), glyphMaterial);
+  const placeholder = new THREE.Mesh(new THREE.BoxGeometry(), getGlyphMaterial(currentMaterialMode));
   glyphGroup.add(placeholder);
   meshes = [placeholder];
 
@@ -127,7 +149,7 @@ export function setMeshInstances(instances: MeshInstance[]) {
   const hasExplicitPositions = instances.some(({ position }) => position !== undefined);
 
   meshes = instances.map(({ geometry, position, rotation }) => {
-    const mesh = new THREE.Mesh(geometry, glyphMaterial);
+    const mesh = new THREE.Mesh(geometry, getGlyphMaterial(currentMaterialMode));
 
     if (position) {
       mesh.position.copy(position);
@@ -148,11 +170,15 @@ export function setMeshInstances(instances: MeshInstance[]) {
   frameMeshes();
 }
 
-
+export function setMaterialMode(mode: MaterialMode) {
+  applyMaterialMode(mode);
+}
 
 export function dispose() {
   cancelAnimationFrame(animationFrameId);
   window.removeEventListener('resize', onWindowResize);
   controls.dispose();
   renderer.dispose();
+  baseColorMaterial.dispose();
+  normalMaterial.dispose();
 }

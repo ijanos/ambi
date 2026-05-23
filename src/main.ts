@@ -35,6 +35,17 @@ async function main() {
       return renderingRuntimePromise;
     };
 
+    const getRenderOptions = (): Parameters<RenderingRuntime['renderIntersectedLetterPairs']>[2] => {
+      const settings = controlsPanel.getRenderSettings();
+
+      return {
+        rotatedGlyphYDegrees: ROTATED_GLYPH_Y_DEGREES,
+        sceneMeshYRotationRadians: SCENE_MESH_Y_ROTATION_RADIANS,
+        cameraMode: settings.cameraMode,
+        materialMode: settings.materialMode,
+      };
+    };
+
     const renderFromInputs = async () => {
       const validation = controlsPanel.syncValidation();
       if (!validation.isValid) {
@@ -45,14 +56,16 @@ async function main() {
       renderingRuntime.renderIntersectedLetterPairs(
         validation.normalizedWordLeft,
         validation.normalizedWordRight,
-        {
-          rotatedGlyphYDegrees: ROTATED_GLYPH_Y_DEGREES,
-          sceneMeshYRotationRadians: SCENE_MESH_Y_ROTATION_RADIANS,
-        },
+        getRenderOptions(),
       );
     };
 
     controlsPanel.enableLiveValidation();
+    controlsPanel.onMaterialModeChange((materialMode) => {
+      void getRenderingRuntime().then((runtime) => {
+        runtime.setMaterialMode(materialMode);
+      });
+    });
     controlsPanel.onSubmit(() => {
       void renderFromInputs();
     });
