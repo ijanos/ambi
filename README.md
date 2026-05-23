@@ -1,6 +1,6 @@
 # Ambi
 
-Ambi is a browser-based tool for generating 3D printable 3D [ambigrams](https://en.wikipedia.org/wiki/Ambigram) generated from two words of the same length.
+Ambi is a browser-based tool for creating 3D printable 3D [ambigrams](https://en.wikipedia.org/wiki/Ambigram) generated from two words of the same length.
 
 Successor to [3dwords.rekettye.com](https://3dwords.rekettye.com/) ([GitHub link](https://github.com/ijanos/two-words-one-stl))
 
@@ -14,9 +14,11 @@ Not in order of priority.
 - [ ] Custom font loading
 - [ ] Custom spacing between characters
 - [ ] Per-side font choices
-- [ ] Parametrized tessellation?
+- [ ] Parametrized tessellation for smoother meshes?
 - [ ] Export to STL / 3MF / something else?
+- [ ] Glyph height normalization? (ascenders and descenders can be cut off with some fonts)
 - [ ] Optional base platform with customizable height and width
+- [ ] Show mesh statistics
 - [ ] Emojis? How would that even work?
 - [ ] Maybe per-character font choices?
 

@@ -9,15 +9,14 @@ let glyphGroup: THREE.Group;
 let meshes: THREE.Mesh[] = [];
 let animationFrameId: number;
 
-const DEFAULT_VIEW_DIRECTION = new THREE.Vector3(1, 0.8, 1).normalize();
-const DEFAULT_GLYPH_GROUP_Y_ROTATION = Math.PI / 4;
+const DEFAULT_VIEW_DIRECTION = new THREE.Vector3(0, 0, 1).normalize();
 const GLYPH_GAP = 40;
 const glyphMaterial = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide });
 
 export interface MeshInstance {
   geometry: THREE.BufferGeometry;
-  position?: readonly [number, number, number];
-  rotation?: readonly [number, number, number];
+  position?: THREE.Vector3;
+  rotation?: THREE.Vector3;
 }
 
 export function initScene(container: HTMLElement) {
@@ -44,7 +43,6 @@ export function initScene(container: HTMLElement) {
   scene.add(directionalLight);
 
   glyphGroup = new THREE.Group();
-  glyphGroup.rotation.y = DEFAULT_GLYPH_GROUP_Y_ROTATION;
   scene.add(glyphGroup);
 
   const placeholder = new THREE.Mesh(new THREE.BoxGeometry(), glyphMaterial);
@@ -132,11 +130,11 @@ export function setMeshInstances(instances: MeshInstance[]) {
     const mesh = new THREE.Mesh(geometry, glyphMaterial);
 
     if (position) {
-      mesh.position.set(position[0], position[1], position[2]);
+      mesh.position.copy(position);
     }
 
     if (rotation) {
-      mesh.rotation.set(rotation[0], rotation[1], rotation[2]);
+      mesh.rotation.setFromVector3(rotation);
     }
 
     glyphGroup.add(mesh);
@@ -150,22 +148,7 @@ export function setMeshInstances(instances: MeshInstance[]) {
   frameMeshes();
 }
 
-export function setMeshGeometries(geometries: THREE.BufferGeometry[]) {
-  clearMeshes();
 
-  meshes = geometries.map((geometry) => {
-    const mesh = new THREE.Mesh(geometry, glyphMaterial);
-    glyphGroup.add(mesh);
-    return mesh;
-  });
-
-  layoutMeshes();
-  frameMeshes();
-}
-
-export function setMeshGeometry(geometry: THREE.BufferGeometry) {
-  setMeshGeometries([geometry]);
-}
 
 export function dispose() {
   cancelAnimationFrame(animationFrameId);

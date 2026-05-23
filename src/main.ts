@@ -1,4 +1,5 @@
 import './style.css';
+import { Vector3 } from 'three';
 import type { Font } from 'three/addons/loaders/FontLoader.js';
 import { createIntersectedGlyphSolidFromFont } from './geometry/font-glyph';
 import { initManifold } from './geometry/manifold';
@@ -37,7 +38,7 @@ function getControls(): Controls {
 
 
 
-function renderWordPairPreview(font: Font, wordLeft: string, wordRight: string) {
+function renderIntersectedLetterPairs(font: Font, wordLeft: string, wordRight: string) {
   const normalizedWordLeft = normalizeWord(wordLeft);
   const normalizedWordRight = normalizeWord(wordRight);
   const letterPairs = createLetterPairs(normalizedWordLeft, normalizedWordRight);
@@ -64,7 +65,7 @@ function renderWordPairPreview(font: Font, wordLeft: string, wordRight: string) 
 
     return {
       geometry: manifoldToThree(intersection.getMesh()),
-      rotation: [0, SCENE_MESH_Y_ROTATION_RADIANS, 0] as const,
+      rotation: new Vector3(0, SCENE_MESH_Y_ROTATION_RADIANS, 0),
     };
   });
 
@@ -99,7 +100,7 @@ async function main() {
     console.log('Monda font loaded');
 
     const renderFromInputs = () => {
-      renderWordPairPreview(font, controls.wordLeftInput.value, controls.wordRightInput.value);
+      renderIntersectedLetterPairs(font, controls.wordLeftInput.value, controls.wordRightInput.value);
     };
 
     controls.form.addEventListener('submit', (event) => {

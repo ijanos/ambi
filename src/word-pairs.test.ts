@@ -18,7 +18,7 @@ describe('assertSameLength', () => {
 });
 
 describe('createLetterPairs', () => {
-  it('creates indexed letter pairs', () => {
+  it('creates letter pairs', () => {
     expect(createLetterPairs('AB', 'CD')).toEqual([
       { leftCharacter: 'A', rightCharacter: 'C' },
       { leftCharacter: 'B', rightCharacter: 'D' },
