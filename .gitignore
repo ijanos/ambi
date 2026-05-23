@@ -10,3 +10,9 @@ pnpm-debug.log*
 
 .DS_Store
 Thumbs.db
+
+# I don't have an opinion on these yet
+AGENT.md
+AGENTS.md
+CLAUDE.md
+GEMINI.md
