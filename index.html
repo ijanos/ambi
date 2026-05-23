@@ -13,11 +13,11 @@
         <div class="content">
           <form id="controls-form" class="controls-form">
             <div class="form-group">
-              <label for="word1">Word 1</label>
+              <label for="word1" id="word1-label">Word 1</label>
               <input type="text" id="word1" name="word1" />
             </div>
             <div class="form-group">
-              <label for="word2">Word 2</label>
+              <label for="word2" id="word2-label">Word 2</label>
               <input type="text" id="word2" name="word2" />
             </div>
             <div class="form-group">
@@ -32,6 +32,7 @@
             </div>
             <button type="submit" class="generate-btn">Generate</button>
           </form>
+          <div id="validation-message" class="validation-message" aria-live="polite"></div>
         </div>
         <footer class="footer"><a href="https://github.com/ijanos/ambi">Ambi on GitHub</a></footer>
       </aside>

@@ -9,7 +9,7 @@ let glyphGroup: THREE.Group;
 let meshes: THREE.Mesh[] = [];
 let animationFrameId: number;
 
-const DEFAULT_VIEW_DIRECTION = new THREE.Vector3(0, 0, 1).normalize();
+const DEFAULT_VIEW_DIRECTION = new THREE.Vector3(0, 0.25, 1).normalize();
 const GLYPH_GAP = 40;
 const glyphMaterial = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide });
 

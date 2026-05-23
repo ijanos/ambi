@@ -8,6 +8,8 @@
   --bg: #fff;
   --border: #e5e4e7;
   --panel-bg: #f9f8fb;
+  --warning: #d97706;
+  --warning-soft: rgba(217, 119, 6, 0.14);
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
 
@@ -28,6 +30,8 @@
     --bg: #16171d;
     --border: #2e303a;
     --panel-bg: #1f2028;
+    --warning: #f59e0b;
+    --warning-soft: rgba(245, 158, 11, 0.18);
   }
 }
 
@@ -154,6 +158,23 @@ h2 {
 
 .controls-form > .form-group > select {
   cursor: pointer;
+}
+
+.controls-form > .form-group > input.is-invalid {
+  border-color: var(--warning);
+  box-shadow: 0 0 0 3px var(--warning-soft);
+}
+
+.validation-message {
+  min-height: 40px;
+  margin-top: 16px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.validation-message[data-state='error'] {
+  color: var(--warning);
 }
 
 /* Generate Button */

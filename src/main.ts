@@ -1,80 +1,14 @@
 import './style.css';
-import { Vector3 } from 'three';
-import type { Font } from 'three/addons/loaders/FontLoader.js';
-import { createIntersectedGlyphSolidFromFont } from './geometry/font-glyph';
 import { initManifold } from './geometry/manifold';
 import { loadMondaFont } from './fonts/load-font';
-import { manifoldToThree } from './viewer/mesh-bridge';
+import { buildIntersectedLetterPairMeshInstances } from './rendering/intersected-letter-pairs';
+import { initControlsPanel } from './ui/controls-panel';
 import { dispose, initScene, setMeshInstances } from './viewer/scene';
-import { createLetterPairs, normalizeWord } from './word-pairs';
 
 const DEFAULT_WORD_LEFT = 'HELLO';
 const DEFAULT_WORD_RIGHT = 'WORLD';
 const ROTATED_GLYPH_Y_DEGREES = 90;
 const SCENE_MESH_Y_ROTATION_RADIANS = -Math.PI / 4;
-
-type Controls = {
-  form: HTMLFormElement;
-  wordLeftInput: HTMLInputElement;
-  wordRightInput: HTMLInputElement;
-};
-
-function requireElement<T extends Element>(selector: string): T {
-  const element = document.querySelector(selector);
-  if (!element) {
-    throw new Error(`Required element not found: ${selector}`);
-  }
-
-  return element as T;
-}
-
-function getControls(): Controls {
-  return {
-    form: requireElement<HTMLFormElement>('#controls-form'),
-    wordLeftInput: requireElement<HTMLInputElement>('#word1'),
-    wordRightInput: requireElement<HTMLInputElement>('#word2'),
-  };
-}
-
-
-
-function renderIntersectedLetterPairs(font: Font, wordLeft: string, wordRight: string) {
-  const normalizedWordLeft = normalizeWord(wordLeft);
-  const normalizedWordRight = normalizeWord(wordRight);
-  const letterPairs = createLetterPairs(normalizedWordLeft, normalizedWordRight);
-
-  console.log('Creating intersected letter pairs...', {
-    wordLeft: normalizedWordLeft,
-    wordRight: normalizedWordRight,
-    pairCount: letterPairs.length,
-    rotatedGlyphYDegrees: ROTATED_GLYPH_Y_DEGREES,
-  });
-
-  const meshInstances = letterPairs.map(({ leftCharacter, rightCharacter }) => {
-    console.log('Creating intersected pair', {
-      leftCharacter,
-      rightCharacter,
-    });
-
-    const intersection = createIntersectedGlyphSolidFromFont(
-      font,
-      leftCharacter,
-      rightCharacter,
-      ROTATED_GLYPH_Y_DEGREES,
-    );
-
-    return {
-      geometry: manifoldToThree(intersection.getMesh()),
-      rotation: new Vector3(0, SCENE_MESH_Y_ROTATION_RADIANS, 0),
-    };
-  });
-
-  setMeshInstances(meshInstances);
-
-  console.log('Intersected letter pairs rendered', {
-    sceneMeshYRotationRadians: SCENE_MESH_Y_ROTATION_RADIANS,
-  });
-}
 
 async function main() {
   try {
@@ -91,27 +25,36 @@ async function main() {
     initScene(viewerContainer);
     console.log('Scene initialized');
 
-    const controls = getControls();
-    controls.wordLeftInput.value = DEFAULT_WORD_LEFT;
-    controls.wordRightInput.value = DEFAULT_WORD_RIGHT;
+    const controlsPanel = initControlsPanel({
+      defaultWordLeft: DEFAULT_WORD_LEFT,
+      defaultWordRight: DEFAULT_WORD_RIGHT,
+    });
 
     console.log('Loading Monda font...');
     const font = await loadMondaFont();
     console.log('Monda font loaded');
 
     const renderFromInputs = () => {
-      renderIntersectedLetterPairs(font, controls.wordLeftInput.value, controls.wordRightInput.value);
+      const validation = controlsPanel.syncValidation();
+      if (!validation.isValid) {
+        return;
+      }
+
+      const meshInstances = buildIntersectedLetterPairMeshInstances(
+        font,
+        validation.normalizedWordLeft,
+        validation.normalizedWordRight,
+        {
+          rotatedGlyphYDegrees: ROTATED_GLYPH_Y_DEGREES,
+          sceneMeshYRotationRadians: SCENE_MESH_Y_ROTATION_RADIANS,
+        },
+      );
+
+      setMeshInstances(meshInstances);
     };
 
-    controls.form.addEventListener('submit', (event) => {
-      event.preventDefault();
-
-      try {
-        renderFromInputs();
-      } catch (error) {
-        console.error('Error during generation:', error);
-      }
-    });
+    controlsPanel.enableLiveValidation();
+    controlsPanel.onSubmit(renderFromInputs);
 
     renderFromInputs();
   } catch (error) {
