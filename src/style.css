@@ -88,9 +88,11 @@ h2 {
 }
 
 .sidebar > .title {
-  margin: 0 0 20px 0;
-  font-size: 18px;
-  font-weight: 600;
+  margin: 0 0 24px 0;
+  font-size: 28px;
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.03em;
   color: var(--text-h);
 }
 
@@ -107,9 +109,10 @@ h2 {
   text-align: center;
 }
 
-/* ==========================================================================
-   CONTROLS FORM COMPONENT
-   ========================================================================== */
+.sidebar > .footer a {
+  color: var(--text);
+  text-decoration: none;
+}
 
 .controls-form {
   display: flex;
