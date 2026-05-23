@@ -5,17 +5,12 @@ import { initManifold } from './geometry/manifold';
 import { loadMondaFont } from './fonts/load-font';
 import { manifoldToThree } from './viewer/mesh-bridge';
 import { dispose, initScene, setMeshInstances } from './viewer/scene';
+import { createLetterPairs, normalizeWord } from './word-pairs';
 
 const DEFAULT_WORD_LEFT = 'HELLO';
 const DEFAULT_WORD_RIGHT = 'WORLD';
 const ROTATED_GLYPH_Y_DEGREES = 90;
 const SCENE_MESH_Y_ROTATION_RADIANS = -Math.PI / 4;
-
-type LetterPair = {
-  leftCharacter: string;
-  rightCharacter: string;
-  index: number;
-};
 
 type Controls = {
   form: HTMLFormElement;
@@ -40,34 +35,7 @@ function getControls(): Controls {
   };
 }
 
-function normalizeWord(value: string): string {
-  return value.trim();
-}
 
-function assertWordsPresent(wordLeft: string, wordRight: string) {
-  if (wordLeft.length === 0 || wordRight.length === 0) {
-    throw new Error('Both words are required.');
-  }
-}
-
-function assertSameLength(wordLeft: string, wordRight: string) {
-  if (wordLeft.length !== wordRight.length) {
-    throw new Error(
-      `Expected words of equal length, got ${JSON.stringify(wordLeft)} (${wordLeft.length}) and ${JSON.stringify(wordRight)} (${wordRight.length})`,
-    );
-  }
-}
-
-function createLetterPairs(wordLeft: string, wordRight: string): LetterPair[] {
-  assertWordsPresent(wordLeft, wordRight);
-  assertSameLength(wordLeft, wordRight);
-
-  return Array.from(wordLeft, (leftCharacter, index) => ({
-    leftCharacter,
-    rightCharacter: wordRight[index]!,
-    index,
-  }));
-}
 
 function renderWordPairPreview(font: Font, wordLeft: string, wordRight: string) {
   const normalizedWordLeft = normalizeWord(wordLeft);
@@ -81,9 +49,8 @@ function renderWordPairPreview(font: Font, wordLeft: string, wordRight: string) 
     rotatedGlyphYDegrees: ROTATED_GLYPH_Y_DEGREES,
   });
 
-  const meshInstances = letterPairs.map(({ leftCharacter, rightCharacter, index }) => {
+  const meshInstances = letterPairs.map(({ leftCharacter, rightCharacter }) => {
     console.log('Creating intersected pair', {
-      index,
       leftCharacter,
       rightCharacter,
     });
