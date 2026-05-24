@@ -120,13 +120,12 @@ export function initScene(container: HTMLElement) {
   glyphGroup = new THREE.Group();
   scene.add(glyphGroup);
 
-  const placeholder = new THREE.Mesh(new THREE.BoxGeometry(), getGlyphMaterial(currentMaterialMode));
-  glyphGroup.add(placeholder);
-  meshes = [placeholder];
+
 
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.05;
+  controls.enablePan = false;
   controls.autoRotate = false;
   controls.target.set(0, 0, 0);
   controls.update();
