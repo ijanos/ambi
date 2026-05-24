@@ -235,7 +235,11 @@ export function setCameraMode(mode: CameraMode) {
 }
 
 export function exportGlyphGroupBinaryStl(): DataView<ArrayBuffer> {
-  return stlExporter.parse(glyphGroup, { binary: true }) as DataView<ArrayBuffer>;
+  const exportRoot = glyphGroup.clone();
+  exportRoot.rotation.x = Math.PI / 2;
+  exportRoot.updateMatrixWorld(true);
+
+  return stlExporter.parse(exportRoot, { binary: true }) as DataView<ArrayBuffer>;
 }
 
 export function setMaterialMode(mode: MaterialMode) {
