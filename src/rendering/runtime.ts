@@ -6,6 +6,7 @@ import {
   setCameraMode,
   setMaterialMode,
   setMeshInstances,
+  setGlyphGap,
   exportGlyphGroupBinaryStl,
   dispose,
 } from '../viewer/scene';
@@ -19,6 +20,7 @@ export type RenderOptions = {
   sceneMeshYRotationRadians: number;
   cameraMode: CameraMode;
   materialMode: MaterialMode;
+  letterSpacing: number;
 };
 
 export type RenderingRuntime = {
@@ -55,6 +57,7 @@ export async function createRenderingRuntime(container: HTMLElement): Promise<Re
         rotatedGlyphYDegrees: options.rotatedGlyphYDegrees,
         sceneMeshYRotationRadians: options.sceneMeshYRotationRadians,
       });
+      setGlyphGap(options.letterSpacing);
       setMeshInstances(meshInstances);
     },
     exportMesh(request) {

@@ -23,6 +23,7 @@ async function main() {
 
     let renderingRuntimePromise: Promise<RenderingRuntime> | undefined;
     let lastRenderedFileBasename: string | undefined;
+    let lastRenderedLetterSpacing: number | undefined;
 
     const getRenderingRuntime = () => {
       if (!renderingRuntimePromise) {
@@ -44,6 +45,7 @@ async function main() {
         sceneMeshYRotationRadians: SCENE_MESH_Y_ROTATION_RADIANS,
         cameraMode: settings.cameraMode,
         materialMode: settings.materialMode,
+        letterSpacing: settings.letterSpacing,
       };
     };
 
@@ -53,7 +55,9 @@ async function main() {
       const validation = controlsPanel.syncValidation();
       const isDirty = !validation.isValid
         || !lastRenderedFileBasename
-        || getFileBasename(validation.normalizedWordLeft, validation.normalizedWordRight) !== lastRenderedFileBasename;
+        || lastRenderedLetterSpacing === undefined
+        || getFileBasename(validation.normalizedWordLeft, validation.normalizedWordRight) !== lastRenderedFileBasename
+        || controlsPanel.getRenderSettings().letterSpacing !== lastRenderedLetterSpacing;
 
       controlsPanel.setDownloadDisabled(isDirty);
     };
@@ -65,19 +69,23 @@ async function main() {
         return;
       }
 
+      const renderOptions = getRenderOptions();
+
       const renderingRuntime = await getRenderingRuntime();
       renderingRuntime.renderIntersectedLetterPairs(
         validation.normalizedWordLeft,
         validation.normalizedWordRight,
-        getRenderOptions(),
+        renderOptions,
       );
 
       lastRenderedFileBasename = getFileBasename(validation.normalizedWordLeft, validation.normalizedWordRight);
+      lastRenderedLetterSpacing = renderOptions.letterSpacing;
       controlsPanel.setDownloadDisabled(false);
     };
 
     controlsPanel.enableLiveValidation();
     controlsPanel.onWordsChange(syncDownloadDirtyState);
+    controlsPanel.onLetterSpacingChange(syncDownloadDirtyState);
     controlsPanel.onCameraModeChange((cameraMode) => {
       void getRenderingRuntime().then((runtime) => {
         runtime.setCameraMode(cameraMode);

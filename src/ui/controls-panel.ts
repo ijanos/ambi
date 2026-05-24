@@ -13,6 +13,7 @@ export type WordValidation = {
 export type RenderSettings = {
   cameraMode: CameraMode;
   materialMode: MaterialMode;
+  letterSpacing: number;
 };
 
 export type ControlsPanel = {
@@ -21,6 +22,7 @@ export type ControlsPanel = {
   setDownloadDisabled(isDisabled: boolean): void;
   enableLiveValidation(): void;
   onWordsChange(handler: () => void): void;
+  onLetterSpacingChange(handler: (letterSpacing: number) => void): void;
   onCameraModeChange(handler: (cameraMode: CameraMode) => void): void;
   onMaterialModeChange(handler: (materialMode: MaterialMode) => void): void;
   onDownload(handler: () => void): void;
@@ -33,6 +35,7 @@ type Controls = {
   wordRightInput: HTMLInputElement;
   wordLeftLabel: HTMLLabelElement;
   wordRightLabel: HTMLLabelElement;
+  letterSpacingInput: HTMLInputElement;
   cameraModeSelect: HTMLSelectElement;
   materialModeSelect: HTMLSelectElement;
   downloadStlButton: HTMLButtonElement;
@@ -60,6 +63,7 @@ function getControls(): Controls {
     wordRightInput: requireElement<HTMLInputElement>('#word2'),
     wordLeftLabel: requireElement<HTMLLabelElement>('#word1-label'),
     wordRightLabel: requireElement<HTMLLabelElement>('#word2-label'),
+    letterSpacingInput: requireElement<HTMLInputElement>('#letter-spacing'),
     cameraModeSelect: requireElement<HTMLSelectElement>('#camera-mode'),
     materialModeSelect: requireElement<HTMLSelectElement>('#material-mode'),
     downloadStlButton: requireElement<HTMLButtonElement>('#download-stl-btn'),
@@ -78,6 +82,11 @@ function parseCameraMode(value: string): CameraMode {
 
 function parseMaterialMode(value: string): MaterialMode {
   return value === 'normal-vectors' ? 'normal-vectors' : 'base-color';
+}
+
+function parseLetterSpacing(value: string): number {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
 }
 
 function validateWords(wordLeft: string, wordRight: string): WordValidation {
@@ -138,6 +147,7 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
   const getRenderSettings = (): RenderSettings => ({
     cameraMode: parseCameraMode(controls.cameraModeSelect.value),
     materialMode: parseMaterialMode(controls.materialModeSelect.value),
+    letterSpacing: parseLetterSpacing(controls.letterSpacingInput.value),
   });
 
   return {
@@ -153,6 +163,11 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
     onWordsChange(handler) {
       controls.wordLeftInput.addEventListener('input', handler);
       controls.wordRightInput.addEventListener('input', handler);
+    },
+    onLetterSpacingChange(handler) {
+      controls.letterSpacingInput.addEventListener('input', () => {
+        handler(parseLetterSpacing(controls.letterSpacingInput.value));
+      });
     },
     onCameraModeChange(handler) {
       controls.cameraModeSelect.addEventListener('change', () => {

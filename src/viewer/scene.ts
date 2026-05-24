@@ -14,7 +14,7 @@ let meshes: THREE.Mesh[] = [];
 let animationFrameId: number;
 
 const DEFAULT_VIEW_DIRECTION = new THREE.Vector3(0, 0.25, 1).normalize();
-const GLYPH_GAP = 40;
+const DEFAULT_GLYPH_GAP = 40;
 const GRID_SIZE = 4500;
 const GRID_DIVISIONS = 60;
 const DEFAULT_ORTHOGRAPHIC_FRUSTUM_HEIGHT = 300;
@@ -31,6 +31,7 @@ export type MaterialMode = 'base-color' | 'normal-vectors';
 let currentCameraMode: CameraMode = 'perspective';
 let currentMaterialMode: MaterialMode = 'base-color';
 let orthographicFrustumHeight = DEFAULT_ORTHOGRAPHIC_FRUSTUM_HEIGHT;
+let glyphGap = DEFAULT_GLYPH_GAP;
 
 export interface MeshInstance {
   geometry: THREE.BufferGeometry;
@@ -172,13 +173,13 @@ function layoutMeshes() {
     return box ? box.max.x - box.min.x : 0;
   });
 
-  const totalWidth = widths.reduce((sum, width) => sum + width, 0) + GLYPH_GAP * Math.max(meshes.length - 1, 0);
+  const totalWidth = widths.reduce((sum, width) => sum + width, 0) + glyphGap * Math.max(meshes.length - 1, 0);
   let cursor = -totalWidth / 2;
 
   meshes.forEach((mesh, index) => {
     const width = widths[index];
     mesh.position.set(cursor + width / 2, 0, 0);
-    cursor += width + GLYPH_GAP;
+    cursor += width + glyphGap;
   });
 }
 
@@ -232,6 +233,10 @@ export function setMeshInstances(instances: MeshInstance[]) {
 
 export function setCameraMode(mode: CameraMode) {
   applyCameraMode(mode);
+}
+
+export function setGlyphGap(nextGlyphGap: number) {
+  glyphGap = Number.isFinite(nextGlyphGap) ? Math.max(0, nextGlyphGap) : DEFAULT_GLYPH_GAP;
 }
 
 export function exportGlyphGroupBinaryStl(): DataView<ArrayBuffer> {

@@ -5,14 +5,15 @@ Ambi is a browser-based tool for creating 3D printable 3D [ambigrams](https://en
 Successor to [3dwords.rekettye.com](https://3dwords.rekettye.com/) ([GitHub link](https://github.com/ijanos/two-words-one-stl))
 
 
-## TODOs
+## TODOs & Ideas
 
-Not in order of priority.
+Not in order of priority or importance.
 
 - [x] Optional orthographic camera
+- [x] Custom spacing between characters
+- [ ] per-character spacing between characters?
 - [ ] Multiple font choices
 - [ ] Custom font loading
-- [ ] Custom spacing between characters
 - [ ] Per-side font choices
 - [ ] Parametrized tessellation for smoother meshes?
 - [ ] Export to STL / 3MF / something else?
@@ -22,6 +23,7 @@ Not in order of priority.
 - [ ] Warnings for floating geometry
 - [ ] Emojis? How would that even work?
 - [ ] Maybe per-character font choices?
+- [ ] Editing features in the 3D scene?
 
 ## License
 
