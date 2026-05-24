@@ -1,3 +1,5 @@
+import type { FontId } from '../fonts/catalog';
+import { isFontId } from '../fonts/catalog';
 import type { CameraMode, MaterialMode } from '../rendering/runtime';
 import { assertSameLength, assertWordsPresent, normalizeWord } from '../word-pairs';
 
@@ -14,6 +16,12 @@ export type RenderSettings = {
   cameraMode: CameraMode;
   materialMode: MaterialMode;
   letterSpacing: number;
+  fontId: FontId;
+};
+
+export type FontOption = {
+  id: FontId;
+  label: string;
 };
 
 export type ControlsPanel = {
@@ -23,6 +31,7 @@ export type ControlsPanel = {
   enableLiveValidation(): void;
   onWordsChange(handler: () => void): void;
   onLetterSpacingChange(handler: (letterSpacing: number) => void): void;
+  onFontChange(handler: (fontId: FontId) => void): void;
   onCameraModeChange(handler: (cameraMode: CameraMode) => void): void;
   onMaterialModeChange(handler: (materialMode: MaterialMode) => void): void;
   onDownload(handler: () => void): void;
@@ -36,6 +45,7 @@ type Controls = {
   wordLeftLabel: HTMLLabelElement;
   wordRightLabel: HTMLLabelElement;
   letterSpacingInput: HTMLInputElement;
+  fontSelect: HTMLSelectElement;
   cameraModeSelect: HTMLSelectElement;
   materialModeSelect: HTMLSelectElement;
   downloadStlButton: HTMLButtonElement;
@@ -45,6 +55,8 @@ type Controls = {
 type ControlsPanelOptions = {
   defaultWordLeft: string;
   defaultWordRight: string;
+  defaultFontId: FontId;
+  fontOptions: readonly FontOption[];
 };
 
 function requireElement<T extends Element>(selector: string): T {
@@ -64,11 +76,29 @@ function getControls(): Controls {
     wordLeftLabel: requireElement<HTMLLabelElement>('#word1-label'),
     wordRightLabel: requireElement<HTMLLabelElement>('#word2-label'),
     letterSpacingInput: requireElement<HTMLInputElement>('#letter-spacing'),
+    fontSelect: requireElement<HTMLSelectElement>('#font-selector'),
     cameraModeSelect: requireElement<HTMLSelectElement>('#camera-mode'),
     materialModeSelect: requireElement<HTMLSelectElement>('#material-mode'),
     downloadStlButton: requireElement<HTMLButtonElement>('#download-stl-btn'),
     validationMessage: requireElement<HTMLDivElement>('#validation-message'),
   };
+}
+
+function setFontOptions(
+  fontSelect: HTMLSelectElement,
+  fontOptions: readonly FontOption[],
+  defaultFontId: FontId,
+) {
+  fontSelect.replaceChildren(
+    ...fontOptions.map((fontOption) => {
+      const optionElement = document.createElement('option');
+      optionElement.value = fontOption.id;
+      optionElement.textContent = fontOption.label;
+      return optionElement;
+    }),
+  );
+
+  fontSelect.value = defaultFontId;
 }
 
 function formatWordLabel(baseLabel: string, letterCount: number): string {
@@ -87,6 +117,10 @@ function parseMaterialMode(value: string): MaterialMode {
 function parseLetterSpacing(value: string): number {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function parseFontId(value: string, fallbackFontId: FontId): FontId {
+  return isFontId(value) ? value : fallbackFontId;
 }
 
 function validateWords(wordLeft: string, wordRight: string): WordValidation {
@@ -138,6 +172,7 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
   const controls = getControls();
   controls.wordLeftInput.value = options.defaultWordLeft;
   controls.wordRightInput.value = options.defaultWordRight;
+  setFontOptions(controls.fontSelect, options.fontOptions, options.defaultFontId);
 
   const syncValidation = () => updateValidationUI(
     controls,
@@ -148,6 +183,7 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
     cameraMode: parseCameraMode(controls.cameraModeSelect.value),
     materialMode: parseMaterialMode(controls.materialModeSelect.value),
     letterSpacing: parseLetterSpacing(controls.letterSpacingInput.value),
+    fontId: parseFontId(controls.fontSelect.value, options.defaultFontId),
   });
 
   return {
@@ -167,6 +203,11 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
     onLetterSpacingChange(handler) {
       controls.letterSpacingInput.addEventListener('input', () => {
         handler(parseLetterSpacing(controls.letterSpacingInput.value));
+      });
+    },
+    onFontChange(handler) {
+      controls.fontSelect.addEventListener('change', () => {
+        handler(parseFontId(controls.fontSelect.value, options.defaultFontId));
       });
     },
     onCameraModeChange(handler) {

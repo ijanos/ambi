@@ -1,4 +1,5 @@
 import './style.css';
+import { DEFAULT_FONT_ID, FONT_OPTIONS, type FontId } from './fonts/catalog';
 import type { RenderOptions, RenderingRuntime } from './rendering/runtime';
 import { initControlsPanel } from './ui/controls-panel';
 
@@ -19,11 +20,14 @@ async function main() {
     const controlsPanel = initControlsPanel({
       defaultWordLeft: DEFAULT_WORD_LEFT,
       defaultWordRight: DEFAULT_WORD_RIGHT,
+      defaultFontId: DEFAULT_FONT_ID,
+      fontOptions: FONT_OPTIONS,
     });
 
     let renderingRuntimePromise: Promise<RenderingRuntime> | undefined;
     let lastRenderedFileBasename: string | undefined;
     let lastRenderedLetterSpacing: number | undefined;
+    let lastRenderedFontId: FontId | undefined;
 
     const getRenderingRuntime = () => {
       if (!renderingRuntimePromise) {
@@ -46,6 +50,7 @@ async function main() {
         cameraMode: settings.cameraMode,
         materialMode: settings.materialMode,
         letterSpacing: settings.letterSpacing,
+        fontId: settings.fontId,
       };
     };
 
@@ -57,7 +62,8 @@ async function main() {
         || !lastRenderedFileBasename
         || lastRenderedLetterSpacing === undefined
         || getFileBasename(validation.normalizedWordLeft, validation.normalizedWordRight) !== lastRenderedFileBasename
-        || controlsPanel.getRenderSettings().letterSpacing !== lastRenderedLetterSpacing;
+        || controlsPanel.getRenderSettings().letterSpacing !== lastRenderedLetterSpacing
+        || controlsPanel.getRenderSettings().fontId !== lastRenderedFontId;
 
       controlsPanel.setDownloadDisabled(isDirty);
     };
@@ -72,7 +78,7 @@ async function main() {
       const renderOptions = getRenderOptions();
 
       const renderingRuntime = await getRenderingRuntime();
-      renderingRuntime.renderIntersectedLetterPairs(
+      await renderingRuntime.renderIntersectedLetterPairs(
         validation.normalizedWordLeft,
         validation.normalizedWordRight,
         renderOptions,
@@ -80,12 +86,14 @@ async function main() {
 
       lastRenderedFileBasename = getFileBasename(validation.normalizedWordLeft, validation.normalizedWordRight);
       lastRenderedLetterSpacing = renderOptions.letterSpacing;
+      lastRenderedFontId = renderOptions.fontId;
       controlsPanel.setDownloadDisabled(false);
     };
 
     controlsPanel.enableLiveValidation();
     controlsPanel.onWordsChange(syncDownloadDirtyState);
     controlsPanel.onLetterSpacingChange(syncDownloadDirtyState);
+    controlsPanel.onFontChange(syncDownloadDirtyState);
     controlsPanel.onCameraModeChange((cameraMode) => {
       void getRenderingRuntime().then((runtime) => {
         runtime.setCameraMode(cameraMode);

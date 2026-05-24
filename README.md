@@ -11,8 +11,8 @@ Not in order of priority or importance.
 
 - [x] Optional orthographic camera
 - [x] Custom spacing between characters
+- [x] Multiple font choices
 - [ ] per-character spacing between characters?
-- [ ] Multiple font choices
 - [ ] Custom font loading
 - [ ] Per-side font choices
 - [ ] Parametrized tessellation for smoother meshes?
@@ -33,4 +33,4 @@ The source code in the repository is licensed under either of
 
 at your option.
 
-Fonts are downloaded from [typefaces](https://github.com/components-ai/typefaces) and they are under the [MIT license](https://opensource.org/licenses/MIT).
+Fonts have their own licenses, either downloaded from [typefaces](https://github.com/components-ai/typefaces) or from Three.js. They should be under the [MIT license](https://opensource.org/licenses/MIT).

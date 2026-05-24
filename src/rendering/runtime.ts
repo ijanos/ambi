@@ -1,6 +1,7 @@
 import { createMeshExporter, type MeshExportRequest } from '../exporting/mesh-exporter';
 import { initManifold } from '../geometry/manifold';
-import { loadMondaFont } from '../fonts/load-font';
+import type { FontId } from '../fonts/catalog';
+import { loadFont } from '../fonts/load-font';
 import {
   initScene,
   setCameraMode,
@@ -21,10 +22,11 @@ export type RenderOptions = {
   cameraMode: CameraMode;
   materialMode: MaterialMode;
   letterSpacing: number;
+  fontId: FontId;
 };
 
 export type RenderingRuntime = {
-  renderIntersectedLetterPairs(wordLeft: string, wordRight: string, options: RenderOptions): void;
+  renderIntersectedLetterPairs(wordLeft: string, wordRight: string, options: RenderOptions): Promise<void>;
   exportMesh(request: MeshExportRequest): void;
   setCameraMode(cameraMode: CameraMode): void;
   setMaterialMode(materialMode: MaterialMode): void;
@@ -40,18 +42,18 @@ export async function createRenderingRuntime(container: HTMLElement): Promise<Re
   initScene(container);
   console.log('Scene initialized');
 
-  console.log('Loading Monda font...');
-  const font = await loadMondaFont();
-  console.log('Monda font loaded');
-
   const meshExporter = createMeshExporter({
     exportGlyphGroupBinaryStl,
   });
 
   return {
-    renderIntersectedLetterPairs(wordLeft, wordRight, options) {
+    async renderIntersectedLetterPairs(wordLeft, wordRight, options) {
       setCameraMode(options.cameraMode);
       setMaterialMode(options.materialMode);
+
+      console.log('Loading font...', { fontId: options.fontId });
+      const font = await loadFont(options.fontId);
+      console.log('Font loaded', { fontId: options.fontId });
 
       const meshInstances = buildIntersectedLetterPairMeshInstances(font, wordLeft, wordRight, {
         rotatedGlyphYDegrees: options.rotatedGlyphYDegrees,
