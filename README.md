@@ -4,6 +4,16 @@ Ambi is a browser-based tool for creating 3D printable 3D [ambigrams](https://en
 
 Successor to [3dwords.rekettye.com](https://3dwords.rekettye.com/) ([GitHub link](https://github.com/ijanos/two-words-one-stl))
 
+## Installation & development
+
+Standard vite-based setup.
+
+```sh
+npm install
+npm run dev # starts the development server
+npm run build # builds the production bundle
+npm run preview # starts a preview server with the production bundle
+```
 
 ## TODOs & Ideas
 
@@ -12,11 +22,14 @@ Not in order of priority or importance.
 - [x] Optional orthographic camera
 - [x] Custom spacing between characters
 - [x] Multiple font choices
+- [x] Export to STL
 - [ ] per-character spacing between characters?
 - [ ] Custom font loading
 - [ ] Per-side font choices
+- [ ] Cache glyphs instead of generating them all the time
+- [ ] Indicate loading status
 - [ ] Parametrized tessellation for smoother meshes?
-- [ ] Export to STL / 3MF / something else?
+- [ ] Export to 3MF / something else?
 - [ ] Glyph height normalization? (ascenders and descenders can be cut off with some fonts)
 - [ ] Optional base platform with customizable height and width
 - [ ] Show mesh statistics
@@ -24,6 +37,7 @@ Not in order of priority or importance.
 - [ ] Emojis? How would that even work?
 - [ ] Maybe per-character font choices?
 - [ ] Editing features in the 3D scene?
+- [ ] Integrate with 3D printing services to order prints? 
 
 ## License
 
@@ -33,4 +47,4 @@ The source code in the repository is licensed under either of
 
 at your option.
 
-Fonts have their own licenses, either downloaded from [typefaces](https://github.com/components-ai/typefaces) or from Three.js. They should be under the [MIT license](https://opensource.org/licenses/MIT).
+Fonts have their own licenses. They are downloaded from [typefaces](https://github.com/components-ai/typefaces) or copied from Three.js.
