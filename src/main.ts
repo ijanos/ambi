@@ -22,6 +22,7 @@ async function main() {
     });
 
     let renderingRuntimePromise: Promise<RenderingRuntime> | undefined;
+    let lastRenderedFileBasename: string | undefined;
 
     const getRenderingRuntime = () => {
       if (!renderingRuntimePromise) {
@@ -46,9 +47,21 @@ async function main() {
       };
     };
 
+    const getFileBasename = (wordLeft: string, wordRight: string): string => `${wordLeft}_${wordRight}`;
+
+    const syncDownloadDirtyState = () => {
+      const validation = controlsPanel.syncValidation();
+      const isDirty = !validation.isValid
+        || !lastRenderedFileBasename
+        || getFileBasename(validation.normalizedWordLeft, validation.normalizedWordRight) !== lastRenderedFileBasename;
+
+      controlsPanel.setDownloadDisabled(isDirty);
+    };
+
     const renderFromInputs = async () => {
       const validation = controlsPanel.syncValidation();
       if (!validation.isValid) {
+        controlsPanel.setDownloadDisabled(true);
         return;
       }
 
@@ -58,9 +71,13 @@ async function main() {
         validation.normalizedWordRight,
         getRenderOptions(),
       );
+
+      lastRenderedFileBasename = getFileBasename(validation.normalizedWordLeft, validation.normalizedWordRight);
+      controlsPanel.setDownloadDisabled(false);
     };
 
     controlsPanel.enableLiveValidation();
+    controlsPanel.onWordsChange(syncDownloadDirtyState);
     controlsPanel.onCameraModeChange((cameraMode) => {
       void getRenderingRuntime().then((runtime) => {
         runtime.setCameraMode(cameraMode);
@@ -71,10 +88,26 @@ async function main() {
         runtime.setMaterialMode(materialMode);
       });
     });
+    controlsPanel.onDownload(() => {
+      if (!lastRenderedFileBasename) {
+        return;
+      }
+
+      const fileBasename = lastRenderedFileBasename;
+
+      void getRenderingRuntime().then((runtime) => {
+        runtime.exportMesh({
+          format: 'stl',
+          source: 'glyph-group',
+          fileBasename,
+        });
+      });
+    });
     controlsPanel.onSubmit(() => {
       void renderFromInputs();
     });
 
+    controlsPanel.setDownloadDisabled(true);
     await renderFromInputs();
   } catch (error) {
     console.error('Error during initialization:', error);

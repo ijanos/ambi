@@ -1,8 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { STLExporter } from 'three/addons/exporters/STLExporter.js';
 
 let scene: THREE.Scene;
 let camera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
+const stlExporter = new STLExporter();
 let perspectiveCamera: THREE.PerspectiveCamera;
 let orthographicCamera: THREE.OrthographicCamera;
 let renderer: THREE.WebGLRenderer;
@@ -230,6 +232,10 @@ export function setMeshInstances(instances: MeshInstance[]) {
 
 export function setCameraMode(mode: CameraMode) {
   applyCameraMode(mode);
+}
+
+export function exportGlyphGroupBinaryStl(): DataView<ArrayBuffer> {
+  return stlExporter.parse(glyphGroup, { binary: true }) as DataView<ArrayBuffer>;
 }
 
 export function setMaterialMode(mode: MaterialMode) {

@@ -18,9 +18,12 @@ export type RenderSettings = {
 export type ControlsPanel = {
   syncValidation(): WordValidation;
   getRenderSettings(): RenderSettings;
+  setDownloadDisabled(isDisabled: boolean): void;
   enableLiveValidation(): void;
+  onWordsChange(handler: () => void): void;
   onCameraModeChange(handler: (cameraMode: CameraMode) => void): void;
   onMaterialModeChange(handler: (materialMode: MaterialMode) => void): void;
+  onDownload(handler: () => void): void;
   onSubmit(handler: () => void): void;
 };
 
@@ -32,6 +35,7 @@ type Controls = {
   wordRightLabel: HTMLLabelElement;
   cameraModeSelect: HTMLSelectElement;
   materialModeSelect: HTMLSelectElement;
+  downloadStlButton: HTMLButtonElement;
   validationMessage: HTMLDivElement;
 };
 
@@ -58,6 +62,7 @@ function getControls(): Controls {
     wordRightLabel: requireElement<HTMLLabelElement>('#word2-label'),
     cameraModeSelect: requireElement<HTMLSelectElement>('#camera-mode'),
     materialModeSelect: requireElement<HTMLSelectElement>('#material-mode'),
+    downloadStlButton: requireElement<HTMLButtonElement>('#download-stl-btn'),
     validationMessage: requireElement<HTMLDivElement>('#validation-message'),
   };
 }
@@ -138,9 +143,16 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
   return {
     syncValidation,
     getRenderSettings,
+    setDownloadDisabled(isDisabled) {
+      controls.downloadStlButton.disabled = isDisabled;
+    },
     enableLiveValidation() {
       controls.wordLeftInput.addEventListener('input', syncValidation);
       controls.wordRightInput.addEventListener('input', syncValidation);
+    },
+    onWordsChange(handler) {
+      controls.wordLeftInput.addEventListener('input', handler);
+      controls.wordRightInput.addEventListener('input', handler);
     },
     onCameraModeChange(handler) {
       controls.cameraModeSelect.addEventListener('change', () => {
@@ -151,6 +163,9 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
       controls.materialModeSelect.addEventListener('change', () => {
         handler(parseMaterialMode(controls.materialModeSelect.value));
       });
+    },
+    onDownload(handler) {
+      controls.downloadStlButton.addEventListener('click', handler);
     },
     onSubmit(handler) {
       controls.form.addEventListener('submit', (event) => {

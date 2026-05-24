@@ -211,6 +211,16 @@ h2 {
   opacity: 0.9;
 }
 
+.controls-form > .generate-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.controls-form > .generate-btn:disabled:hover,
+.controls-form > .generate-btn:disabled:active {
+  opacity: 0.45;
+}
+
 /* ==========================================================================
    VIEWPORT COMPONENT
    ========================================================================== */

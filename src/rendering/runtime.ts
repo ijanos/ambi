@@ -1,6 +1,14 @@
+import { createMeshExporter, type MeshExportRequest } from '../exporting/mesh-exporter';
 import { initManifold } from '../geometry/manifold';
 import { loadMondaFont } from '../fonts/load-font';
-import { initScene, setCameraMode, setMaterialMode, setMeshInstances, dispose } from '../viewer/scene';
+import {
+  initScene,
+  setCameraMode,
+  setMaterialMode,
+  setMeshInstances,
+  exportGlyphGroupBinaryStl,
+  dispose,
+} from '../viewer/scene';
 import type { CameraMode, MaterialMode } from '../viewer/scene';
 import { buildIntersectedLetterPairMeshInstances } from './intersected-letter-pairs';
 
@@ -15,6 +23,7 @@ export type RenderOptions = {
 
 export type RenderingRuntime = {
   renderIntersectedLetterPairs(wordLeft: string, wordRight: string, options: RenderOptions): void;
+  exportMesh(request: MeshExportRequest): void;
   setCameraMode(cameraMode: CameraMode): void;
   setMaterialMode(materialMode: MaterialMode): void;
   dispose(): void;
@@ -33,6 +42,10 @@ export async function createRenderingRuntime(container: HTMLElement): Promise<Re
   const font = await loadMondaFont();
   console.log('Monda font loaded');
 
+  const meshExporter = createMeshExporter({
+    exportGlyphGroupBinaryStl,
+  });
+
   return {
     renderIntersectedLetterPairs(wordLeft, wordRight, options) {
       setCameraMode(options.cameraMode);
@@ -43,6 +56,9 @@ export async function createRenderingRuntime(container: HTMLElement): Promise<Re
         sceneMeshYRotationRadians: options.sceneMeshYRotationRadians,
       });
       setMeshInstances(meshInstances);
+    },
+    exportMesh(request) {
+      meshExporter.exportMesh(request);
     },
     setCameraMode,
     setMaterialMode,
