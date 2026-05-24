@@ -226,12 +226,56 @@ h2 {
    ========================================================================== */
 
 .viewport {
+  position: relative;
   background: var(--bg);
   padding: 20px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.viewport > canvas {
+  opacity: 0;
+  transition: opacity 0.16s ease;
+}
+
+
+
+.viewport.is-ready > canvas {
+  opacity: 1;
+}
+
+.viewer-loader {
+  position: absolute;
+  inset: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: opacity 0.16s ease;
+}
+
+.viewport.is-ready > .viewer-loader {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.viewer-loader-svg {
+  display: block;
+}
+
+.viewer-loader-track {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 3;
+}
+
+.viewer-loader-head {
+  fill: none;
+  stroke: var(--text-h);
+  stroke-width: 3;
+  stroke-linecap: round;
 }
 
 .viewport > p {

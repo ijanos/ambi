@@ -24,6 +24,8 @@ async function main() {
       fontOptions: FONT_OPTIONS,
     });
 
+    let hasCompletedInitialRender = false;
+
     let renderingRuntimePromise: Promise<RenderingRuntime> | undefined;
     let lastRenderedFileBasename: string | undefined;
     let lastRenderedLetterSpacing: number | undefined;
@@ -87,6 +89,13 @@ async function main() {
       lastRenderedFileBasename = getFileBasename(validation.normalizedWordLeft, validation.normalizedWordRight);
       lastRenderedLetterSpacing = renderOptions.letterSpacing;
       lastRenderedFontId = renderOptions.fontId;
+
+      if (!hasCompletedInitialRender) {
+        hasCompletedInitialRender = true;
+        viewerContainer.classList.add('is-ready');
+        viewerContainer.setAttribute('aria-busy', 'false');
+      }
+
       controlsPanel.setDownloadDisabled(false);
     };
 
