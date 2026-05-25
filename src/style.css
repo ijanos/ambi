@@ -74,7 +74,7 @@ h2 {
 
 #app {
   display: grid;
-  grid-template-columns: 250px 1fr;
+  grid-template-columns: 265px 1fr;
   gap: 0;
 }
 
@@ -92,12 +92,20 @@ h2 {
 }
 
 .sidebar > .title {
-  margin: 0 0 24px 0;
+  margin: 0 0 4px 0;
   font-size: 28px;
   line-height: 1.1;
   font-weight: 700;
   letter-spacing: -0.03em;
   color: var(--text-h);
+}
+
+.sidebar > .subtitle {
+  margin: 0 0 24px 0;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1.4;
 }
 
 .sidebar > .content {
