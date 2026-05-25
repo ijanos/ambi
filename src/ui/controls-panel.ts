@@ -119,7 +119,9 @@ function parseCameraMode(value: string): CameraMode {
 }
 
 function parseMaterialMode(value: string): MaterialMode {
-  return value === 'normal-vectors' ? 'normal-vectors' : 'base-color';
+  if (value === 'normal-vectors') return 'normal-vectors';
+  if (value === 'wireframe') return 'wireframe';
+  return 'base-color';
 }
 
 function parseLetterSpacing(value: string): number {

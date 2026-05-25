@@ -28,6 +28,11 @@ const baseColorMaterial = new THREE.MeshMatcapMaterial({
   flatShading: true,
 });
 const normalMaterial = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide, flatShading: true });
+const wireframeMaterial = new THREE.MeshStandardMaterial({
+  color: 0x6b6375,
+  side: THREE.DoubleSide,
+  wireframe: true,
+});
 
 let currentCameraMode: CameraMode = 'perspective';
 let currentMaterialMode: MaterialMode = 'base-color';
@@ -41,7 +46,9 @@ export interface MeshInstance {
 }
 
 function getGlyphMaterial(mode: MaterialMode): THREE.Material {
-  return mode === 'normal-vectors' ? normalMaterial : baseColorMaterial;
+  if (mode === 'normal-vectors') return normalMaterial;
+  if (mode === 'wireframe') return wireframeMaterial;
+  return baseColorMaterial;
 }
 
 function applyMaterialMode(mode: MaterialMode) {
@@ -300,4 +307,5 @@ export function dispose() {
   renderer.dispose();
   baseColorMaterial.dispose();
   normalMaterial.dispose();
+  wireframeMaterial.dispose();
 }

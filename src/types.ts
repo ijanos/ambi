@@ -1,2 +1,2 @@
 export type CameraMode = 'perspective' | 'orthographic';
-export type MaterialMode = 'base-color' | 'normal-vectors';
+export type MaterialMode = 'base-color' | 'normal-vectors' | 'wireframe';
