@@ -170,6 +170,54 @@ export function createIntersectedGlyphSolidFromFont(
   using rotatedSecondGlyph = secondGlyph.rotate(0, rotatedGlyphYDegrees, 0);
   const intersection = firstGlyph.intersect(rotatedSecondGlyph);
 
+  // Detect disconnected components in the intersection result.
+  // decompose() splits the solid into topologically disconnected pieces.
+  // A component is only a problem for 3D printing if it's elevated above
+  // the baseplate (Y=0); components touching Y≈0 can be printed fine.
+  const components = intersection.decompose();
+  try {
+    if (components.length > 1) {
+      const baseplateTolerance = Math.max(EPSILON, intersection.tolerance());
+      const componentInfo = components.map((comp, i) => {
+        const box = comp.boundingBox();
+        return {
+          index: i,
+          volume: comp.volume(),
+          minY: box.min[1],
+          onBaseplate: box.min[1] <= baseplateTolerance,
+        };
+      });
+
+      // Sort by volume descending so the largest component is first
+      componentInfo.sort((a, b) => b.volume - a.volume);
+
+      const baseplateComponents = componentInfo.filter(c => c.onBaseplate);
+      const floatingComponents = componentInfo.filter(c => !c.onBaseplate);
+
+      if (floatingComponents.length > 0) {
+        console.warn('[font-glyph] Truly floating geometry in intersection', {
+          characters: `${firstCharacter}/${secondCharacter}`,
+          totalComponents: components.length,
+          baseplateComponents: baseplateComponents.length,
+          floatingComponents: floatingComponents.length,
+          floatingVolumes: floatingComponents.map(c => c.volume.toFixed(2)),
+          floatingMinY: floatingComponents.map(c => c.minY.toFixed(3)),
+        });
+      } else {
+        console.info('[font-glyph] Disconnected components all touch baseplate (printable)', {
+          characters: `${firstCharacter}/${secondCharacter}`,
+          componentCount: components.length,
+          volumes: componentInfo.map(c => c.volume.toFixed(2)),
+        });
+      }
+    }
+  } finally {
+    // Dispose decomposed components; they are copies, not the original intersection.
+    for (const comp of components) {
+      comp.delete();
+    }
+  }
+
   logMeshStats(`${firstCharacter}/${secondCharacter} intersection`, intersection.getMesh());
   return intersection;
 }
