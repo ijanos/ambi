@@ -31,6 +31,7 @@ Not in order of priority or importance.
 - [ ] Persist custom fonts in local storage
 - [ ] Use proper units (most likely mm); currently using arbitrary units 
 - [ ] Per-side font choices
+- [ ] look at self loops (eg R in Roboto Slab)
 - [ ] Cache glyphs instead of generating them all the time
 - [ ] Parametrized tessellation for smoother meshes?
 - [ ] Export to 3MF / something else?
