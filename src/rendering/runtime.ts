@@ -23,6 +23,8 @@ export type RenderOptions = {
   materialMode: MaterialMode;
   letterSpacing: number;
   fontId: FontId;
+  baseEnabled: boolean;
+  baseHeight: number;
 };
 
 export type RenderingRuntime = {
@@ -60,7 +62,10 @@ export async function createRenderingRuntime(container: HTMLElement): Promise<Re
         sceneMeshYRotationRadians: options.sceneMeshYRotationRadians,
       });
       setGlyphGap(options.letterSpacing);
-      setMeshInstances(meshInstances);
+      setMeshInstances(meshInstances, {
+        enabled: options.baseEnabled,
+        height: options.baseHeight,
+      });
     },
     exportMesh(request) {
       meshExporter.exportMesh(request);

@@ -38,6 +38,8 @@ async function main() {
     let lastRenderedFileBasename: string | undefined;
     let lastRenderedLetterSpacing: number | undefined;
     let lastRenderedFontId: FontId | undefined;
+    let lastRenderedBaseEnabled: boolean | undefined;
+    let lastRenderedBaseHeight: number | undefined;
 
     const getRenderingRuntime = () => {
       if (!renderingRuntimePromise) {
@@ -61,6 +63,8 @@ async function main() {
         materialMode: settings.materialMode,
         letterSpacing: settings.letterSpacing,
         fontId: settings.fontId,
+        baseEnabled: settings.baseEnabled,
+        baseHeight: settings.baseHeight,
       };
     };
 
@@ -68,12 +72,15 @@ async function main() {
 
     const syncDownloadDirtyState = () => {
       const validation = controlsPanel.syncValidation();
+      const settings = controlsPanel.getRenderSettings();
       const isDirty = !validation.isValid
         || !lastRenderedFileBasename
         || lastRenderedLetterSpacing === undefined
         || getFileBasename(validation.normalizedWordLeft, validation.normalizedWordRight) !== lastRenderedFileBasename
-        || controlsPanel.getRenderSettings().letterSpacing !== lastRenderedLetterSpacing
-        || controlsPanel.getRenderSettings().fontId !== lastRenderedFontId;
+        || settings.letterSpacing !== lastRenderedLetterSpacing
+        || settings.fontId !== lastRenderedFontId
+        || settings.baseEnabled !== lastRenderedBaseEnabled
+        || settings.baseHeight !== lastRenderedBaseHeight;
 
       controlsPanel.setDownloadDisabled(isDirty);
     };
@@ -104,6 +111,8 @@ async function main() {
         lastRenderedFileBasename = getFileBasename(validation.normalizedWordLeft, validation.normalizedWordRight);
         lastRenderedLetterSpacing = renderOptions.letterSpacing;
         lastRenderedFontId = renderOptions.fontId;
+        lastRenderedBaseEnabled = renderOptions.baseEnabled;
+        lastRenderedBaseHeight = renderOptions.baseHeight;
 
         controlsPanel.setDownloadDisabled(false);
       } finally {
@@ -116,6 +125,7 @@ async function main() {
     controlsPanel.onWordsChange(syncDownloadDirtyState);
     controlsPanel.onLetterSpacingChange(syncDownloadDirtyState);
     controlsPanel.onFontChange(syncDownloadDirtyState);
+    controlsPanel.onBaseSettingsChange(syncDownloadDirtyState);
     controlsPanel.onCameraModeChange((cameraMode) => {
       void getRenderingRuntime().then((runtime) => {
         runtime.setCameraMode(cameraMode);

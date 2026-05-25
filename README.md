@@ -23,15 +23,16 @@ Not in order of priority or importance.
 - [x] Custom spacing between characters
 - [x] Multiple font choices
 - [x] Export to STL
+- [x] Indicate loading status
+- [x] Optional base platform with customizable height
 - [ ] per-character spacing between characters?
 - [ ] Custom font loading
+- [ ] Use proper units (most likely mm); currently using arbitrary units 
 - [ ] Per-side font choices
 - [ ] Cache glyphs instead of generating them all the time
-- [ ] Indicate loading status
 - [ ] Parametrized tessellation for smoother meshes?
 - [ ] Export to 3MF / something else?
 - [ ] Glyph height normalization? (ascenders and descenders can be cut off with some fonts)
-- [ ] Optional base platform with customizable height and width
 - [ ] Show mesh statistics
 - [ ] Warnings for floating geometry
 - [ ] Emojis? How would that even work?

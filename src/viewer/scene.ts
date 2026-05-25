@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { STLExporter } from 'three/addons/exporters/STLExporter.js';
+import { createChamferedBaseSolid } from '../geometry/base';
+import { manifoldToThree } from './mesh-bridge';
 
 let scene: THREE.Scene;
 let camera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
@@ -11,6 +13,7 @@ let renderer: THREE.WebGLRenderer;
 let controls: OrbitControls;
 let glyphGroup: THREE.Group;
 let meshes: THREE.Mesh[] = [];
+let baseMesh: THREE.Mesh | undefined;
 let animationFrameId: number;
 
 const DEFAULT_VIEW_DIRECTION = new THREE.Vector3(0, 0.25, 1).normalize();
@@ -49,6 +52,9 @@ function applyMaterialMode(mode: MaterialMode) {
 
   for (const mesh of meshes) {
     mesh.material = material;
+  }
+  if (baseMesh) {
+    baseMesh.material = material;
   }
 }
 
@@ -161,6 +167,12 @@ function clearMeshes() {
     mesh.geometry.dispose();
   }
   meshes = [];
+
+  if (baseMesh) {
+    glyphGroup.remove(baseMesh);
+    baseMesh.geometry.dispose();
+    baseMesh = undefined;
+  }
 }
 
 function layoutMeshes() {
@@ -203,7 +215,7 @@ function frameMeshes() {
   controls.update();
 }
 
-export function setMeshInstances(instances: MeshInstance[]) {
+export function setMeshInstances(instances: MeshInstance[], baseOptions?: { enabled: boolean; height: number }) {
   clearMeshes();
 
   const hasExplicitPositions = instances.some(({ position }) => position !== undefined);
@@ -225,6 +237,39 @@ export function setMeshInstances(instances: MeshInstance[]) {
 
   if (!hasExplicitPositions) {
     layoutMeshes();
+  }
+
+  if (baseOptions?.enabled && meshes.length > 0) {
+    const box = new THREE.Box3();
+    for (const mesh of meshes) {
+      box.expandByObject(mesh);
+    }
+
+    if (!box.isEmpty()) {
+      const size = new THREE.Vector3();
+      box.getSize(size);
+      const center = new THREE.Vector3();
+      box.getCenter(center);
+
+      const BASE_PADDING = 10;
+      const baseWidth = size.x + BASE_PADDING * 2;
+      const baseDepth = size.z + BASE_PADDING * 2;
+      const baseHeight = baseOptions.height;
+
+      using baseSolid = createChamferedBaseSolid(baseWidth, baseDepth, baseHeight);
+      const baseGeometry = manifoldToThree(baseSolid.getMesh());
+
+      baseMesh = new THREE.Mesh(baseGeometry, getGlyphMaterial(currentMaterialMode));
+      baseMesh.position.set(center.x, 0, center.z);
+
+      // Shift all letter meshes upwards so they sit on top of the base with 1 unit overlap
+      const shiftY = baseHeight - 1;
+      for (const mesh of meshes) {
+        mesh.position.y += shiftY;
+      }
+
+      glyphGroup.add(baseMesh);
+    }
   }
 
   frameMeshes();

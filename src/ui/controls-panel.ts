@@ -17,6 +17,8 @@ export type RenderSettings = {
   materialMode: MaterialMode;
   letterSpacing: number;
   fontId: FontId;
+  baseEnabled: boolean;
+  baseHeight: number;
 };
 
 export type FontOption = {
@@ -34,6 +36,7 @@ export type ControlsPanel = {
   onFontChange(handler: (fontId: FontId) => void): void;
   onCameraModeChange(handler: (cameraMode: CameraMode) => void): void;
   onMaterialModeChange(handler: (materialMode: MaterialMode) => void): void;
+  onBaseSettingsChange(handler: () => void): void;
   onDownload(handler: () => void): void;
   onSubmit(handler: () => void): void;
 };
@@ -50,6 +53,9 @@ type Controls = {
   materialModeSelect: HTMLSelectElement;
   downloadStlButton: HTMLButtonElement;
   validationMessage: HTMLDivElement;
+  baseEnabledInput: HTMLInputElement;
+  baseHeightInput: HTMLInputElement;
+  baseHeightLabel: HTMLLabelElement;
 };
 
 type ControlsPanelOptions = {
@@ -81,6 +87,9 @@ function getControls(): Controls {
     materialModeSelect: requireElement<HTMLSelectElement>('#material-mode'),
     downloadStlButton: requireElement<HTMLButtonElement>('#download-stl-btn'),
     validationMessage: requireElement<HTMLDivElement>('#validation-message'),
+    baseEnabledInput: requireElement<HTMLInputElement>('#base-enabled'),
+    baseHeightInput: requireElement<HTMLInputElement>('#base-height'),
+    baseHeightLabel: requireElement<HTMLLabelElement>('#base-height-label'),
   };
 }
 
@@ -179,11 +188,30 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
     validateWords(controls.wordLeftInput.value, controls.wordRightInput.value),
   );
 
+  const updateBaseHeightLabel = () => {
+    controls.baseHeightLabel.textContent = `Base Height (${controls.baseHeightInput.value})`;
+  };
+  controls.baseHeightInput.addEventListener('input', updateBaseHeightLabel);
+  updateBaseHeightLabel();
+
+  const updateBaseHeightVisibility = () => {
+    const isEnabled = controls.baseEnabledInput.checked;
+    controls.baseHeightInput.disabled = !isEnabled;
+    const baseHeightGroup = document.getElementById('base-height-group');
+    if (baseHeightGroup) {
+      baseHeightGroup.style.opacity = isEnabled ? '1' : '0.5';
+    }
+  };
+  controls.baseEnabledInput.addEventListener('change', updateBaseHeightVisibility);
+  updateBaseHeightVisibility();
+
   const getRenderSettings = (): RenderSettings => ({
     cameraMode: parseCameraMode(controls.cameraModeSelect.value),
     materialMode: parseMaterialMode(controls.materialModeSelect.value),
     letterSpacing: parseLetterSpacing(controls.letterSpacingInput.value),
     fontId: parseFontId(controls.fontSelect.value, options.defaultFontId),
+    baseEnabled: controls.baseEnabledInput.checked,
+    baseHeight: Number(controls.baseHeightInput.value),
   });
 
   return {
@@ -219,6 +247,10 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
       controls.materialModeSelect.addEventListener('change', () => {
         handler(parseMaterialMode(controls.materialModeSelect.value));
       });
+    },
+    onBaseSettingsChange(handler) {
+      controls.baseEnabledInput.addEventListener('change', handler);
+      controls.baseHeightInput.addEventListener('input', handler);
     },
     onDownload(handler) {
       controls.downloadStlButton.addEventListener('click', handler);
