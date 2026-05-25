@@ -28,6 +28,7 @@ export async function initManifold(): Promise<void> {
 
   // Patch prototypes to implement the Explicit Resource Management (Disposable) protocol
   if (typeof Symbol !== 'undefined' && Symbol.dispose) {
+    // biome-ignore lint/suspicious/noExplicitAny: prototype patching requires any
     const manifoldProto = manifold.Manifold.prototype as any;
     if (!(Symbol.dispose in manifoldProto)) {
       Object.defineProperty(manifoldProto, Symbol.dispose, {
@@ -36,6 +37,7 @@ export async function initManifold(): Promise<void> {
         writable: true,
       });
     }
+    // biome-ignore lint/suspicious/noExplicitAny: prototype patching requires any
     const xsProto = manifold.CrossSection.prototype as any;
     if (!(Symbol.dispose in xsProto)) {
       Object.defineProperty(xsProto, Symbol.dispose, {

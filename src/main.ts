@@ -10,7 +10,7 @@ if (typeof Symbol !== 'undefined' && !Symbol.dispose) {
 
 import './style.css';
 import { DEFAULT_FONT_ID, FONT_OPTIONS, type FontId } from './fonts/catalog';
-import type { RenderOptions, RenderingRuntime } from './rendering/runtime';
+import type { RenderingRuntime, RenderOptions } from './rendering/runtime';
 import { initControlsPanel } from './ui/controls-panel';
 
 const DEFAULT_WORD_LEFT = 'HELLO';
@@ -47,17 +47,20 @@ async function main() {
 
     const getRenderingRuntime = () => {
       if (!renderingRuntimePromise) {
-        renderingRuntimePromise = import('./rendering/runtime').then(async ({ createRenderingRuntime }) => {
-          const runtime = await createRenderingRuntime(viewerContainer);
-          disposeRenderingRuntime = runtime.dispose;
-          return runtime;
-        });
+        renderingRuntimePromise = import('./rendering/runtime').then(
+          async ({ createRenderingRuntime }) => {
+            const runtime = await createRenderingRuntime(viewerContainer);
+            disposeRenderingRuntime = runtime.dispose;
+            return runtime;
+          },
+        );
       }
 
       return renderingRuntimePromise;
     };
 
-    const getFileBasename = (wordLeft: string, wordRight: string): string => `${wordLeft}_${wordRight}`;
+    const getFileBasename = (wordLeft: string, wordRight: string): string =>
+      `${wordLeft}_${wordRight}`;
 
     const syncDownloadDirtyState = () => {
       const validation = controlsPanel.syncValidation();
@@ -67,12 +70,16 @@ async function main() {
       }
 
       const settings = controlsPanel.getRenderSettings();
-      const currentBasename = getFileBasename(validation.normalizedWordLeft, validation.normalizedWordRight);
-      const isDirty = currentBasename !== lastRendered.fileBasename
-        || settings.letterSpacing !== lastRendered.letterSpacing
-        || settings.fontId !== lastRendered.fontId
-        || settings.baseEnabled !== lastRendered.baseEnabled
-        || settings.baseHeight !== lastRendered.baseHeight;
+      const currentBasename = getFileBasename(
+        validation.normalizedWordLeft,
+        validation.normalizedWordRight,
+      );
+      const isDirty =
+        currentBasename !== lastRendered.fileBasename ||
+        settings.letterSpacing !== lastRendered.letterSpacing ||
+        settings.fontId !== lastRendered.fontId ||
+        settings.baseEnabled !== lastRendered.baseEnabled ||
+        settings.baseHeight !== lastRendered.baseHeight;
 
       controlsPanel.setDownloadDisabled(isDirty);
     };
@@ -117,7 +124,10 @@ async function main() {
         }
 
         lastRendered = {
-          fileBasename: getFileBasename(validation.normalizedWordLeft, validation.normalizedWordRight),
+          fileBasename: getFileBasename(
+            validation.normalizedWordLeft,
+            validation.normalizedWordRight,
+          ),
           letterSpacing: renderOptions.letterSpacing,
           fontId: renderOptions.fontId,
           baseEnabled: renderOptions.baseEnabled,

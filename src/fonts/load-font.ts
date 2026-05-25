@@ -1,4 +1,4 @@
-import { FontLoader, type Font } from 'three/addons/loaders/FontLoader.js';
+import { type Font, FontLoader } from 'three/addons/loaders/FontLoader.js';
 import type { FontId } from './catalog';
 import { getFontDefinition } from './catalog';
 

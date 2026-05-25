@@ -21,13 +21,17 @@ function fontCatalogPlugin(): Plugin {
           }
         } catch (error) {
           server.config.logger.error('[font-catalog] generation failed');
-          server.config.logger.error(error instanceof Error ? error.stack ?? error.message : String(error));
+          server.config.logger.error(
+            error instanceof Error ? (error.stack ?? error.message) : String(error),
+          );
         }
       };
 
       void generateFontCatalog().catch((error) => {
         server.config.logger.error('[font-catalog] initial generation failed');
-        server.config.logger.error(error instanceof Error ? error.stack ?? error.message : String(error));
+        server.config.logger.error(
+          error instanceof Error ? (error.stack ?? error.message) : String(error),
+        );
       });
 
       server.watcher.on('add', regenerate);

@@ -11,9 +11,9 @@
   --warning: #d97706;
   --warning-soft: rgba(217, 119, 6, 0.14);
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --sans: system-ui, "Segoe UI", Roboto, sans-serif;
 
-  font: 16px/1.5 var(--sans);
+  font: 16px / 1.5 var(--sans);
   color-scheme: light dark;
   color: var(--text);
   background: var(--bg);
@@ -216,11 +216,11 @@ h2 {
   color: var(--text);
 }
 
-.validation-message[data-state='error'] {
+.validation-message[data-state="error"] {
   color: var(--warning);
 }
 
-.validation-message[data-state='warning'] {
+.validation-message[data-state="warning"] {
   background: var(--warning-soft);
   border: 1px solid var(--warning);
   border-radius: 4px;
@@ -279,8 +279,6 @@ h2 {
   opacity: 0;
   transition: opacity 0.16s ease;
 }
-
-
 
 .viewport.is-ready > canvas {
   opacity: 1;

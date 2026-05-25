@@ -1,18 +1,21 @@
 import { createMeshExporter, type MeshExportRequest } from '../exporting/mesh-exporter';
-import { initManifold } from '../geometry/manifold';
 import type { FontId } from '../fonts/catalog';
 import { loadFont } from '../fonts/load-font';
+import { initManifold } from '../geometry/manifold';
 import type { CameraMode, MaterialMode } from '../types';
 import {
+  dispose,
+  exportGlyphGroupBinaryStl,
   initScene,
   setCameraMode,
+  setGlyphGap,
   setMaterialMode,
   setMeshInstances,
-  setGlyphGap,
-  exportGlyphGroupBinaryStl,
-  dispose,
 } from '../viewer/scene';
-import { buildIntersectedLetterPairMeshInstances, type BuildResult } from './intersected-letter-pairs';
+import {
+  type BuildResult,
+  buildIntersectedLetterPairMeshInstances,
+} from './intersected-letter-pairs';
 
 export type RenderOptions = {
   rotatedGlyphYDegrees: number;
@@ -26,7 +29,11 @@ export type RenderOptions = {
 };
 
 export type RenderingRuntime = {
-  renderIntersectedLetterPairs(wordLeft: string, wordRight: string, options: RenderOptions): Promise<BuildResult>;
+  renderIntersectedLetterPairs(
+    wordLeft: string,
+    wordRight: string,
+    options: RenderOptions,
+  ): Promise<BuildResult>;
   exportMesh(request: MeshExportRequest): void;
   setCameraMode(cameraMode: CameraMode): void;
   setMaterialMode(materialMode: MaterialMode): void;

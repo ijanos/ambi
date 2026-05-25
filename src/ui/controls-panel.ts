@@ -186,10 +186,11 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
   controls.wordRightInput.value = options.defaultWordRight;
   setFontOptions(controls.fontSelect, options.fontOptions, options.defaultFontId);
 
-  const syncValidation = () => updateValidationUI(
-    controls,
-    validateWords(controls.wordLeftInput.value, controls.wordRightInput.value),
-  );
+  const syncValidation = () =>
+    updateValidationUI(
+      controls,
+      validateWords(controls.wordLeftInput.value, controls.wordRightInput.value),
+    );
 
   const updateBaseHeightLabel = () => {
     controls.baseHeightLabel.textContent = `Base Height (${controls.baseHeightInput.value})`;
@@ -233,8 +234,7 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
     },
     showFloaterWarning(floaterPairs) {
       const pairs = floaterPairs.join(', ');
-      floaterWarning.textContent =
-        `Floating geometry in ${floaterPairs.length === 1 ? 'pair' : 'pairs'} ${pairs}. Result may need extra supports for 3D printing and may not stand on its own.`;
+      floaterWarning.textContent = `Floating geometry in ${floaterPairs.length === 1 ? 'pair' : 'pairs'} ${pairs}. Result may need extra supports for 3D printing and may not stand on its own.`;
       floaterWarning.hidden = false;
     },
     clearFloaterWarning() {

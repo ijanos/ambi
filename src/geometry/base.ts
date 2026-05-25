@@ -1,5 +1,5 @@
-import { getManifold } from './manifold';
 import type { Manifold as ManifoldSolid, SimplePolygon } from 'manifold-3d';
+import { getManifold } from './manifold';
 
 /**
  * Creates a 3D base geometry in Manifold with a top chamfer and vertical side chamfers,

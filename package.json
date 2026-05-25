@@ -6,12 +6,15 @@
   "scripts": {
     "generate:fonts": "node scripts/font-catalog-generator.mjs",
     "dev": "vite",
-    "build": "npm run generate:fonts && tsc && vite build",
+    "build": "npm run generate:fonts && biome check && tsc && vite build",
     "test": "vitest run",
+    "lint": "biome check",
+    "format": "biome check --write",
     "preview": "vite preview",
     "deploy": "npm run build && npx wrangler pages deploy dist/"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.4.15",
     "@types/three": "^0.184.1",
     "typescript": "~6.0.2",
     "vite": "^8.0.12",

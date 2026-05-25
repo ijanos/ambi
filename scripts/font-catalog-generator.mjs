@@ -1,6 +1,6 @@
+import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { promises as fs } from 'node:fs';
 
 const FONT_FILE_SUFFIX = '.typeface.json';
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
@@ -208,7 +208,7 @@ export async function generateFontCatalog() {
   let previousContent;
   try {
     previousContent = await fs.readFile(OUTPUT_FILE, 'utf8');
-  } catch (error) {
+  } catch (_error) {
     previousContent = undefined;
   }
 
@@ -225,8 +225,6 @@ export function isFontAssetPath(filePath) {
   const fontsRoot = path.normalize(FONTS_DIR + path.sep);
   return normalizedPath.startsWith(fontsRoot) && normalizedPath.endsWith(FONT_FILE_SUFFIX);
 }
-
-
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   generateFontCatalog()

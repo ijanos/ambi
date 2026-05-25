@@ -27,6 +27,7 @@ export function createLetterPairs(wordLeft: string, wordRight: string): LetterPa
 
   return Array.from(wordLeft, (leftCharacter, index) => ({
     leftCharacter,
+    // biome-ignore lint/style/noNonNullAssertion: Array.from is bounded by wordLeft.length; assertSameLength guarantees wordRight has matching length
     rightCharacter: wordRight[index]!,
   }));
 }

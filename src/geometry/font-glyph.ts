@@ -1,4 +1,3 @@
-import type { Font } from 'three/addons/loaders/FontLoader.js';
 import type {
   FillRule,
   Manifold as ManifoldSolid,
@@ -8,6 +7,7 @@ import type {
   Vec2,
   Vec3,
 } from 'manifold-3d';
+import type { Font } from 'three/addons/loaders/FontLoader.js';
 import { getManifold } from './manifold';
 
 const GLYPH_SIZE = 100;
@@ -104,7 +104,7 @@ function logOutlineStats(character: string, contours: SimplePolygon[]) {
 }
 
 function logMeshStats(character: string, manifoldMesh: Mesh) {
-  if (!manifoldMesh || !manifoldMesh.triVerts || !manifoldMesh.vertProperties) {
+  if (!manifoldMesh?.triVerts || !manifoldMesh.vertProperties) {
     throw new Error(`Invalid mesh data returned from Manifold for glyph ${character}`);
   }
 
@@ -198,8 +198,8 @@ export function createIntersectedGlyphSolidFromFont(
       // Sort by volume descending so the largest component is first
       componentInfo.sort((a, b) => b.volume - a.volume);
 
-      const baseplateComponents = componentInfo.filter(c => c.onBaseplate);
-      const floatingComponents = componentInfo.filter(c => !c.onBaseplate);
+      const baseplateComponents = componentInfo.filter((c) => c.onBaseplate);
+      const floatingComponents = componentInfo.filter((c) => !c.onBaseplate);
       floaterCount = floatingComponents.length;
 
       if (floatingComponents.length > 0) {
@@ -208,14 +208,14 @@ export function createIntersectedGlyphSolidFromFont(
           totalComponents: components.length,
           baseplateComponents: baseplateComponents.length,
           floatingComponents: floatingComponents.length,
-          floatingVolumes: floatingComponents.map(c => c.volume.toFixed(2)),
-          floatingMinY: floatingComponents.map(c => c.minY.toFixed(3)),
+          floatingVolumes: floatingComponents.map((c) => c.volume.toFixed(2)),
+          floatingMinY: floatingComponents.map((c) => c.minY.toFixed(3)),
         });
       } else {
         console.info('[font-glyph] Disconnected components all touch baseplate (printable)', {
           characters: `${firstCharacter}/${secondCharacter}`,
           componentCount: components.length,
-          volumes: componentInfo.map(c => c.volume.toFixed(2)),
+          volumes: componentInfo.map((c) => c.volume.toFixed(2)),
         });
       }
     }

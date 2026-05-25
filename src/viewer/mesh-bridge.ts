@@ -10,7 +10,9 @@ function extractPositions(mesh: ManifoldMesh): Float32Array {
   const { vertProperties, numProp } = mesh;
 
   if (numProp < 3) {
-    throw new Error(`Invalid Manifold mesh: expected at least 3 properties per vertex, got ${numProp}`);
+    throw new Error(
+      `Invalid Manifold mesh: expected at least 3 properties per vertex, got ${numProp}`,
+    );
   }
 
   const vertexCount = vertProperties.length / numProp;

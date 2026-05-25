@@ -131,8 +131,6 @@ export function initScene(container: HTMLElement) {
   glyphGroup = new THREE.Group();
   scene.add(glyphGroup);
 
-
-
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.05;
@@ -189,7 +187,8 @@ function layoutMeshes() {
     return box ? box.max.x - box.min.x : 0;
   });
 
-  const totalWidth = widths.reduce((sum, width) => sum + width, 0) + glyphGap * Math.max(meshes.length - 1, 0);
+  const totalWidth =
+    widths.reduce((sum, width) => sum + width, 0) + glyphGap * Math.max(meshes.length - 1, 0);
   let cursor = -totalWidth / 2;
 
   meshes.forEach((mesh, index) => {
@@ -220,7 +219,10 @@ function frameMeshes() {
   controls.update();
 }
 
-export function setMeshInstances(instances: MeshInstance[], baseOptions?: { enabled: boolean; height: number }) {
+export function setMeshInstances(
+  instances: MeshInstance[],
+  baseOptions?: { enabled: boolean; height: number },
+) {
   clearMeshes();
 
   const hasExplicitPositions = instances.some(({ position }) => position !== undefined);
