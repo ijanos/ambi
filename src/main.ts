@@ -35,11 +35,15 @@ async function main() {
     });
 
     let renderingRuntimePromise: Promise<RenderingRuntime> | undefined;
-    let lastRenderedFileBasename: string | undefined;
-    let lastRenderedLetterSpacing: number | undefined;
-    let lastRenderedFontId: FontId | undefined;
-    let lastRenderedBaseEnabled: boolean | undefined;
-    let lastRenderedBaseHeight: number | undefined;
+
+    type RenderSnapshot = {
+      fileBasename: string;
+      letterSpacing: number;
+      fontId: FontId;
+      baseEnabled: boolean;
+      baseHeight: number;
+    };
+    let lastRendered: RenderSnapshot | undefined;
 
     const getRenderingRuntime = () => {
       if (!renderingRuntimePromise) {
@@ -53,34 +57,22 @@ async function main() {
       return renderingRuntimePromise;
     };
 
-    const getRenderOptions = (): RenderOptions => {
-      const settings = controlsPanel.getRenderSettings();
-
-      return {
-        rotatedGlyphYDegrees: ROTATED_GLYPH_Y_DEGREES,
-        sceneMeshYRotationRadians: SCENE_MESH_Y_ROTATION_RADIANS,
-        cameraMode: settings.cameraMode,
-        materialMode: settings.materialMode,
-        letterSpacing: settings.letterSpacing,
-        fontId: settings.fontId,
-        baseEnabled: settings.baseEnabled,
-        baseHeight: settings.baseHeight,
-      };
-    };
-
     const getFileBasename = (wordLeft: string, wordRight: string): string => `${wordLeft}_${wordRight}`;
 
     const syncDownloadDirtyState = () => {
       const validation = controlsPanel.syncValidation();
+      if (!validation.isValid || !lastRendered) {
+        controlsPanel.setDownloadDisabled(true);
+        return;
+      }
+
       const settings = controlsPanel.getRenderSettings();
-      const isDirty = !validation.isValid
-        || !lastRenderedFileBasename
-        || lastRenderedLetterSpacing === undefined
-        || getFileBasename(validation.normalizedWordLeft, validation.normalizedWordRight) !== lastRenderedFileBasename
-        || settings.letterSpacing !== lastRenderedLetterSpacing
-        || settings.fontId !== lastRenderedFontId
-        || settings.baseEnabled !== lastRenderedBaseEnabled
-        || settings.baseHeight !== lastRenderedBaseHeight;
+      const currentBasename = getFileBasename(validation.normalizedWordLeft, validation.normalizedWordRight);
+      const isDirty = currentBasename !== lastRendered.fileBasename
+        || settings.letterSpacing !== lastRendered.letterSpacing
+        || settings.fontId !== lastRendered.fontId
+        || settings.baseEnabled !== lastRendered.baseEnabled
+        || settings.baseHeight !== lastRendered.baseHeight;
 
       controlsPanel.setDownloadDisabled(isDirty);
     };
@@ -92,7 +84,17 @@ async function main() {
         return;
       }
 
-      const renderOptions = getRenderOptions();
+      const settings = controlsPanel.getRenderSettings();
+      const renderOptions: RenderOptions = {
+        rotatedGlyphYDegrees: ROTATED_GLYPH_Y_DEGREES,
+        sceneMeshYRotationRadians: SCENE_MESH_Y_ROTATION_RADIANS,
+        cameraMode: settings.cameraMode,
+        materialMode: settings.materialMode,
+        letterSpacing: settings.letterSpacing,
+        fontId: settings.fontId,
+        baseEnabled: settings.baseEnabled,
+        baseHeight: settings.baseHeight,
+      };
 
       viewerContainer.classList.remove('is-ready');
       viewerContainer.setAttribute('aria-busy', 'true');
@@ -108,11 +110,13 @@ async function main() {
           renderOptions,
         );
 
-        lastRenderedFileBasename = getFileBasename(validation.normalizedWordLeft, validation.normalizedWordRight);
-        lastRenderedLetterSpacing = renderOptions.letterSpacing;
-        lastRenderedFontId = renderOptions.fontId;
-        lastRenderedBaseEnabled = renderOptions.baseEnabled;
-        lastRenderedBaseHeight = renderOptions.baseHeight;
+        lastRendered = {
+          fileBasename: getFileBasename(validation.normalizedWordLeft, validation.normalizedWordRight),
+          letterSpacing: renderOptions.letterSpacing,
+          fontId: renderOptions.fontId,
+          baseEnabled: renderOptions.baseEnabled,
+          baseHeight: renderOptions.baseHeight,
+        };
 
         controlsPanel.setDownloadDisabled(false);
       } finally {
@@ -121,7 +125,6 @@ async function main() {
       }
     };
 
-    controlsPanel.enableLiveValidation();
     controlsPanel.onWordsChange(syncDownloadDirtyState);
     controlsPanel.onLetterSpacingChange(syncDownloadDirtyState);
     controlsPanel.onFontChange(syncDownloadDirtyState);
@@ -137,11 +140,11 @@ async function main() {
       });
     });
     controlsPanel.onDownload(() => {
-      if (!lastRenderedFileBasename) {
+      if (!lastRendered) {
         return;
       }
 
-      const fileBasename = lastRenderedFileBasename;
+      const { fileBasename } = lastRendered;
 
       void getRenderingRuntime().then((runtime) => {
         runtime.exportMesh({

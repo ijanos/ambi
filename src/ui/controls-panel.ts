@@ -1,6 +1,6 @@
 import type { FontId } from '../fonts/catalog';
 import { isFontId } from '../fonts/catalog';
-import type { CameraMode, MaterialMode } from '../rendering/runtime';
+import type { CameraMode, MaterialMode } from '../types';
 import { assertSameLength, assertWordsPresent, normalizeWord } from '../word-pairs';
 
 export type WordValidation = {
@@ -30,7 +30,6 @@ export type ControlsPanel = {
   syncValidation(): WordValidation;
   getRenderSettings(): RenderSettings;
   setDownloadDisabled(isDisabled: boolean): void;
-  enableLiveValidation(): void;
   onWordsChange(handler: () => void): void;
   onLetterSpacingChange(handler: (letterSpacing: number) => void): void;
   onFontChange(handler: (fontId: FontId) => void): void;
@@ -219,10 +218,6 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
     getRenderSettings,
     setDownloadDisabled(isDisabled) {
       controls.downloadStlButton.disabled = isDisabled;
-    },
-    enableLiveValidation() {
-      controls.wordLeftInput.addEventListener('input', syncValidation);
-      controls.wordRightInput.addEventListener('input', syncValidation);
     },
     onWordsChange(handler) {
       controls.wordLeftInput.addEventListener('input', handler);

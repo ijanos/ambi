@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { STLExporter } from 'three/addons/exporters/STLExporter.js';
 import { createChamferedBaseSolid } from '../geometry/base';
+import type { CameraMode, MaterialMode } from '../types';
 import { manifoldToThree } from './mesh-bridge';
 
 let scene: THREE.Scene;
@@ -27,9 +28,6 @@ const baseColorMaterial = new THREE.MeshMatcapMaterial({
   flatShading: true,
 });
 const normalMaterial = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide, flatShading: true });
-
-export type CameraMode = 'perspective' | 'orthographic';
-export type MaterialMode = 'base-color' | 'normal-vectors';
 
 let currentCameraMode: CameraMode = 'perspective';
 let currentMaterialMode: MaterialMode = 'base-color';

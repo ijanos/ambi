@@ -2,6 +2,7 @@ import { createMeshExporter, type MeshExportRequest } from '../exporting/mesh-ex
 import { initManifold } from '../geometry/manifold';
 import type { FontId } from '../fonts/catalog';
 import { loadFont } from '../fonts/load-font';
+import type { CameraMode, MaterialMode } from '../types';
 import {
   initScene,
   setCameraMode,
@@ -11,10 +12,7 @@ import {
   exportGlyphGroupBinaryStl,
   dispose,
 } from '../viewer/scene';
-import type { CameraMode, MaterialMode } from '../viewer/scene';
 import { buildIntersectedLetterPairMeshInstances } from './intersected-letter-pairs';
-
-export type { CameraMode, MaterialMode } from '../viewer/scene';
 
 export type RenderOptions = {
   rotatedGlyphYDegrees: number;
