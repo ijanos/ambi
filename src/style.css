@@ -150,6 +150,12 @@ h2 {
   transition: border-color 0.2s;
 }
 
+.controls-form > .form-group > input[type="range"] {
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
 .controls-form > .form-group > input:focus,
 .controls-form > .form-group > select:focus {
   outline: none;
