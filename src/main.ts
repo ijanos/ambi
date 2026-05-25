@@ -24,8 +24,6 @@ async function main() {
       fontOptions: FONT_OPTIONS,
     });
 
-    let hasCompletedInitialRender = false;
-
     let renderingRuntimePromise: Promise<RenderingRuntime> | undefined;
     let lastRenderedFileBasename: string | undefined;
     let lastRenderedLetterSpacing: number | undefined;
@@ -79,24 +77,29 @@ async function main() {
 
       const renderOptions = getRenderOptions();
 
-      const renderingRuntime = await getRenderingRuntime();
-      await renderingRuntime.renderIntersectedLetterPairs(
-        validation.normalizedWordLeft,
-        validation.normalizedWordRight,
-        renderOptions,
-      );
+      viewerContainer.classList.remove('is-ready');
+      viewerContainer.setAttribute('aria-busy', 'true');
 
-      lastRenderedFileBasename = getFileBasename(validation.normalizedWordLeft, validation.normalizedWordRight);
-      lastRenderedLetterSpacing = renderOptions.letterSpacing;
-      lastRenderedFontId = renderOptions.fontId;
+      // Yield control to the browser paint cycle to ensure the spinner is visible and animating before heavy synchronous operations block the thread.
+      await new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 0)));
 
-      if (!hasCompletedInitialRender) {
-        hasCompletedInitialRender = true;
+      try {
+        const renderingRuntime = await getRenderingRuntime();
+        await renderingRuntime.renderIntersectedLetterPairs(
+          validation.normalizedWordLeft,
+          validation.normalizedWordRight,
+          renderOptions,
+        );
+
+        lastRenderedFileBasename = getFileBasename(validation.normalizedWordLeft, validation.normalizedWordRight);
+        lastRenderedLetterSpacing = renderOptions.letterSpacing;
+        lastRenderedFontId = renderOptions.fontId;
+
+        controlsPanel.setDownloadDisabled(false);
+      } finally {
         viewerContainer.classList.add('is-ready');
         viewerContainer.setAttribute('aria-busy', 'false');
       }
-
-      controlsPanel.setDownloadDisabled(false);
     };
 
     controlsPanel.enableLiveValidation();

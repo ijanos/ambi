@@ -263,6 +263,18 @@ h2 {
 
 .viewer-loader-svg {
   display: block;
+  animation: viewer-spin 0.8s linear infinite;
+  transform-origin: center;
+  will-change: transform;
+}
+
+@keyframes viewer-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .viewer-loader-track {
