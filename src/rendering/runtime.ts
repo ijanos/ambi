@@ -12,7 +12,7 @@ import {
   exportGlyphGroupBinaryStl,
   dispose,
 } from '../viewer/scene';
-import { buildIntersectedLetterPairMeshInstances } from './intersected-letter-pairs';
+import { buildIntersectedLetterPairMeshInstances, type BuildResult } from './intersected-letter-pairs';
 
 export type RenderOptions = {
   rotatedGlyphYDegrees: number;
@@ -26,7 +26,7 @@ export type RenderOptions = {
 };
 
 export type RenderingRuntime = {
-  renderIntersectedLetterPairs(wordLeft: string, wordRight: string, options: RenderOptions): Promise<void>;
+  renderIntersectedLetterPairs(wordLeft: string, wordRight: string, options: RenderOptions): Promise<BuildResult>;
   exportMesh(request: MeshExportRequest): void;
   setCameraMode(cameraMode: CameraMode): void;
   setMaterialMode(materialMode: MaterialMode): void;
@@ -55,15 +55,17 @@ export async function createRenderingRuntime(container: HTMLElement): Promise<Re
       const font = await loadFont(options.fontId);
       console.log('Font loaded', { fontId: options.fontId });
 
-      const meshInstances = buildIntersectedLetterPairMeshInstances(font, wordLeft, wordRight, {
+      const result = buildIntersectedLetterPairMeshInstances(font, wordLeft, wordRight, {
         rotatedGlyphYDegrees: options.rotatedGlyphYDegrees,
         sceneMeshYRotationRadians: options.sceneMeshYRotationRadians,
       });
       setGlyphGap(options.letterSpacing);
-      setMeshInstances(meshInstances, {
+      setMeshInstances(result.meshInstances, {
         enabled: options.baseEnabled,
         height: options.baseHeight,
       });
+
+      return result;
     },
     exportMesh(request) {
       meshExporter.exportMesh(request);

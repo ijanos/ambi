@@ -145,6 +145,12 @@ function extrudeContours(
   return centeredSolid;
 }
 
+export type GlyphIntersectionResult = {
+  solid: ManifoldSolid;
+  /** Number of components that are elevated above the baseplate (Y=0). */
+  floaterCount: number;
+};
+
 export function createGlyphSolidFromFont(font: Font, character: string): ManifoldSolid {
   const manifold = getManifold();
   const shapes = font.generateShapes(character, GLYPH_SIZE);
@@ -164,7 +170,7 @@ export function createIntersectedGlyphSolidFromFont(
   firstCharacter: string,
   secondCharacter: string,
   rotatedGlyphYDegrees: number,
-): ManifoldSolid {
+): GlyphIntersectionResult {
   using firstGlyph = createGlyphSolidFromFont(font, firstCharacter);
   using secondGlyph = createGlyphSolidFromFont(font, secondCharacter);
   using rotatedSecondGlyph = secondGlyph.rotate(0, rotatedGlyphYDegrees, 0);
@@ -175,6 +181,7 @@ export function createIntersectedGlyphSolidFromFont(
   // A component is only a problem for 3D printing if it's elevated above
   // the baseplate (Y=0); components touching Y≈0 can be printed fine.
   const components = intersection.decompose();
+  let floaterCount = 0;
   try {
     if (components.length > 1) {
       const baseplateTolerance = Math.max(EPSILON, intersection.tolerance());
@@ -193,6 +200,7 @@ export function createIntersectedGlyphSolidFromFont(
 
       const baseplateComponents = componentInfo.filter(c => c.onBaseplate);
       const floatingComponents = componentInfo.filter(c => !c.onBaseplate);
+      floaterCount = floatingComponents.length;
 
       if (floatingComponents.length > 0) {
         console.warn('[font-glyph] Truly floating geometry in intersection', {
@@ -219,5 +227,6 @@ export function createIntersectedGlyphSolidFromFont(
   }
 
   logMeshStats(`${firstCharacter}/${secondCharacter} intersection`, intersection.getMesh());
-  return intersection;
+
+  return { solid: intersection, floaterCount };
 }

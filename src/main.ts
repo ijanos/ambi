@@ -104,11 +104,17 @@ async function main() {
 
       try {
         const renderingRuntime = await getRenderingRuntime();
-        await renderingRuntime.renderIntersectedLetterPairs(
+        const result = await renderingRuntime.renderIntersectedLetterPairs(
           validation.normalizedWordLeft,
           validation.normalizedWordRight,
           renderOptions,
         );
+
+        if (result.floaterPairs.length > 0) {
+          controlsPanel.showFloaterWarning(result.floaterPairs);
+        } else {
+          controlsPanel.clearFloaterWarning();
+        }
 
         lastRendered = {
           fileBasename: getFileBasename(validation.normalizedWordLeft, validation.normalizedWordRight),

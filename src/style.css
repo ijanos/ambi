@@ -220,6 +220,14 @@ h2 {
   color: var(--warning);
 }
 
+.validation-message[data-state='warning'] {
+  background: var(--warning-soft);
+  border: 1px solid var(--warning);
+  border-radius: 4px;
+  padding: 8px 10px;
+  color: var(--warning);
+}
+
 /* Generate Button */
 
 .controls-form > .generate-btn {

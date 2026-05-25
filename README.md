@@ -25,8 +25,10 @@ Not in order of priority or importance.
 - [x] Export to STL
 - [x] Indicate loading status
 - [x] Optional base platform with customizable height
+- [x] Warnings for floating geometry
 - [ ] per-character spacing between characters?
 - [ ] Custom font loading
+- [ ] Persist custom fonts in local storage
 - [ ] Use proper units (most likely mm); currently using arbitrary units 
 - [ ] Per-side font choices
 - [ ] Cache glyphs instead of generating them all the time
@@ -34,7 +36,6 @@ Not in order of priority or importance.
 - [ ] Export to 3MF / something else?
 - [ ] Glyph height normalization? (ascenders and descenders can be cut off with some fonts)
 - [ ] Show mesh statistics
-- [ ] Warnings for floating geometry
 - [ ] Emojis? How would that even work?
 - [ ] Maybe per-character font choices?
 - [ ] Editing features in the 3D scene?

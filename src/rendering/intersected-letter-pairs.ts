@@ -5,6 +5,12 @@ import { manifoldToThree } from '../viewer/mesh-bridge';
 import type { MeshInstance } from '../viewer/scene';
 import { createLetterPairs } from '../word-pairs';
 
+export type BuildResult = {
+  meshInstances: MeshInstance[];
+  /** Character pairs (e.g. "L/R") where floating geometry was detected. */
+  floaterPairs: string[];
+};
+
 type BuildIntersectedLetterPairMeshInstancesOptions = {
   rotatedGlyphYDegrees: number;
   sceneMeshYRotationRadians: number;
@@ -15,7 +21,7 @@ export function buildIntersectedLetterPairMeshInstances(
   wordLeft: string,
   wordRight: string,
   options: BuildIntersectedLetterPairMeshInstancesOptions,
-): MeshInstance[] {
+): BuildResult {
   const letterPairs = createLetterPairs(wordLeft, wordRight);
 
   console.log('Creating intersected letter pairs...', {
@@ -25,18 +31,26 @@ export function buildIntersectedLetterPairMeshInstances(
     rotatedGlyphYDegrees: options.rotatedGlyphYDegrees,
   });
 
+  const floaterPairs: string[] = [];
   const meshInstances = letterPairs.map(({ leftCharacter, rightCharacter }) => {
     console.log('Creating intersected pair', {
       leftCharacter,
       rightCharacter,
     });
 
-    using intersection = createIntersectedGlyphSolidFromFont(
+    const { solid: intersection, floaterCount } = createIntersectedGlyphSolidFromFont(
       font,
       leftCharacter,
       rightCharacter,
       options.rotatedGlyphYDegrees,
     );
+
+    // using takes ownership of the solid for automatic disposal
+    using _solid = intersection;
+
+    if (floaterCount > 0) {
+      floaterPairs.push(`${leftCharacter}/${rightCharacter}`);
+    }
 
     return {
       geometry: manifoldToThree(intersection.getMesh()),
@@ -48,5 +62,5 @@ export function buildIntersectedLetterPairMeshInstances(
     sceneMeshYRotationRadians: options.sceneMeshYRotationRadians,
   });
 
-  return meshInstances;
+  return { meshInstances, floaterPairs };
 }

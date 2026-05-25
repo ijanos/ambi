@@ -30,6 +30,8 @@ export type ControlsPanel = {
   syncValidation(): WordValidation;
   getRenderSettings(): RenderSettings;
   setDownloadDisabled(isDisabled: boolean): void;
+  showFloaterWarning(floaterPairs: string[]): void;
+  clearFloaterWarning(): void;
   onWordsChange(handler: () => void): void;
   onLetterSpacingChange(handler: (letterSpacing: number) => void): void;
   onFontChange(handler: (fontId: FontId) => void): void;
@@ -206,6 +208,14 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
   controls.baseEnabledInput.addEventListener('change', updateBaseHeightVisibility);
   updateBaseHeightVisibility();
 
+  // Floater warning element — created once, shown/hidden as needed
+  const floaterWarning = document.createElement('div');
+  floaterWarning.className = 'validation-message';
+  floaterWarning.dataset.state = 'warning';
+  floaterWarning.setAttribute('aria-live', 'polite');
+  floaterWarning.hidden = true;
+  controls.validationMessage.insertAdjacentElement('afterend', floaterWarning);
+
   const getRenderSettings = (): RenderSettings => ({
     cameraMode: parseCameraMode(controls.cameraModeSelect.value),
     materialMode: parseMaterialMode(controls.materialModeSelect.value),
@@ -220,6 +230,15 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
     getRenderSettings,
     setDownloadDisabled(isDisabled) {
       controls.downloadStlButton.disabled = isDisabled;
+    },
+    showFloaterWarning(floaterPairs) {
+      const pairs = floaterPairs.join(', ');
+      floaterWarning.textContent =
+        `Floating geometry in ${floaterPairs.length === 1 ? 'pair' : 'pairs'} ${pairs}. Result may need extra supports for 3D printing and may not stand on its own.`;
+      floaterWarning.hidden = false;
+    },
+    clearFloaterWarning() {
+      floaterWarning.hidden = true;
     },
     onWordsChange(handler) {
       controls.wordLeftInput.addEventListener('input', handler);
