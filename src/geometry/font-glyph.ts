@@ -137,8 +137,8 @@ function extrudeContours(
   character: string,
   contours: SimplePolygon[],
 ): ManifoldSolid {
-  const crossSection = manifold.CrossSection.ofPolygons(contours, FILL_RULE);
-  const solid = crossSection.extrude(GLYPH_DEPTH, 0, 0, [1, 1], true);
+  using crossSection = manifold.CrossSection.ofPolygons(contours, FILL_RULE);
+  using solid = crossSection.extrude(GLYPH_DEPTH, 0, 0, [1, 1], true);
   const centeredSolid = centerSolid(solid);
 
   logMeshStats(character, centeredSolid.getMesh());
@@ -165,8 +165,9 @@ export function createIntersectedGlyphSolidFromFont(
   secondCharacter: string,
   rotatedGlyphYDegrees: number,
 ): ManifoldSolid {
-  const firstGlyph = createGlyphSolidFromFont(font, firstCharacter);
-  const rotatedSecondGlyph = createGlyphSolidFromFont(font, secondCharacter).rotate(0, rotatedGlyphYDegrees, 0);
+  using firstGlyph = createGlyphSolidFromFont(font, firstCharacter);
+  using secondGlyph = createGlyphSolidFromFont(font, secondCharacter);
+  using rotatedSecondGlyph = secondGlyph.rotate(0, rotatedGlyphYDegrees, 0);
   const intersection = firstGlyph.intersect(rotatedSecondGlyph);
 
   logMeshStats(`${firstCharacter}/${secondCharacter} intersection`, intersection.getMesh());

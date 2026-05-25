@@ -31,7 +31,7 @@ export function buildIntersectedLetterPairMeshInstances(
       rightCharacter,
     });
 
-    const intersection = createIntersectedGlyphSolidFromFont(
+    using intersection = createIntersectedGlyphSolidFromFont(
       font,
       leftCharacter,
       rightCharacter,

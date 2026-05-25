@@ -1,3 +1,13 @@
+// Polyfill Symbol.dispose at the absolute entry point for all browser environments (like Safari)
+if (typeof Symbol !== 'undefined' && !Symbol.dispose) {
+  Object.defineProperty(Symbol, 'dispose', {
+    value: Symbol.for('Symbol.dispose'),
+    configurable: false,
+    enumerable: false,
+    writable: false,
+  });
+}
+
 import './style.css';
 import { DEFAULT_FONT_ID, FONT_OPTIONS, type FontId } from './fonts/catalog';
 import type { RenderOptions, RenderingRuntime } from './rendering/runtime';

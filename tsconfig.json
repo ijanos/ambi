@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es2023",
     "module": "esnext",
-    "lib": ["ES2023", "DOM"],
+    "lib": ["ES2024", "DOM", "ESNext.Disposable"],
     "types": ["vite/client", "three"],
     "skipLibCheck": true,
 
