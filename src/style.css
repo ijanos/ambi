@@ -153,7 +153,12 @@ h2 {
 
 .controls-form > .form-group.checkbox-group > .checkbox-label {
   cursor: pointer;
-  user-select: none;
+}
+
+@supports (user-select: none) {
+  .controls-form > .form-group.checkbox-group > .checkbox-label {
+    user-select: none;
+  }
 }
 
 .controls-form > .form-group > label {

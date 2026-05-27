@@ -15,6 +15,8 @@ npm run build # builds the production bundle
 npm run preview # starts a preview server with the production bundle
 ```
 
+
+
 ## TODOs & Ideas
 
 Not in order of priority or importance.
@@ -39,6 +41,7 @@ Not in order of priority or importance.
 - [ ] Show mesh statistics
 - [ ] Emojis? How would that even work?
 - [ ] Maybe per-character font choices?
+- [ ] Add an about dialog and mention that this is client side only and I do no tracking no cookies no nothing. 
 - [ ] Editing features in the 3D scene?
 - [ ] Integrate with 3D printing services to order prints? 
 

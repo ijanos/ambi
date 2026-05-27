@@ -45,6 +45,10 @@
   },
   "linter": {
     "enabled": true,
+    "domains": {
+      "types": "all",
+      "test": "all"
+    },
     "rules": {
       "recommended": true,
       "suspicious": {
@@ -84,7 +88,43 @@
         "useUniqueElementIds": "error",
         "noNodejsModules": "error",
         "noPrivateImports": "error"
+      },
+      "nursery": {
+        "useBaseline": {
+          "level": "error",
+          "options": {
+            "available": "newly"
+          }
+        },
+        "noInlineStyles": "error",
+        "noAmbiguousAnchorText": "error",
+        "noDuplicateAttributes": "error",
+        "noScriptUrl": "error",
+        "noSyncScripts": "error"
       }
+    }
+  },
+  "html": {
+    "linter": {
+      "enabled": true
+    },
+    "formatter": {
+      "enabled": true,
+      "indentStyle": "space",
+      "indentWidth": 2,
+      "lineWidth": 120
+    }
+  },
+  "css": {
+    "linter": {
+      "enabled": true
+    },
+    "formatter": {
+      "enabled": true,
+      "indentStyle": "space",
+      "indentWidth": 2,
+      "lineWidth": 80,
+      "quoteStyle": "double"
     }
   }
 }
