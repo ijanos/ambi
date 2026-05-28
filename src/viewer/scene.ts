@@ -184,7 +184,11 @@ function layoutMeshes() {
   const widths = meshes.map((mesh) => {
     mesh.geometry.computeBoundingBox();
     const box = mesh.geometry.boundingBox;
-    return box ? box.max.x - box.min.x : 0;
+    if (!box) return 0;
+    const width = box.max.x - box.min.x;
+    // Empty geometries produce degenerate bounding boxes (min=Infinity, max=-Infinity),
+    // resulting in non-finite widths. Guard against this to prevent cascading NaN layout.
+    return Number.isFinite(width) ? Math.max(0, width) : 0;
   });
 
   const totalWidth =

@@ -151,11 +151,22 @@ export type GlyphIntersectionResult = {
   floaterCount: number;
 };
 
+function isWhitespace(character: string): boolean {
+  return character.trim().length === 0;
+}
+
 export function createGlyphSolidFromFont(font: Font, character: string): ManifoldSolid {
   const manifold = getManifold();
   const shapes = font.generateShapes(character, GLYPH_SIZE);
 
   if (shapes.length === 0) {
+    // Space and other whitespace characters are valid glyphs with no outlines.
+    // Return an empty solid that acts as a no-op spacer: when intersected with
+    // any real glyph it produces nothing, leaving a gap in the output.
+    if (isWhitespace(character)) {
+      using cube = manifold.Manifold.cube([1, 1, 1]);
+      return cube.subtract(cube);
+    }
     throw new Error(`No glyph shapes generated for character ${JSON.stringify(character)}`);
   }
 
