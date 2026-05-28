@@ -28,15 +28,18 @@ Not in order of priority or importance.
 - [x] Indicate loading status
 - [x] Optional base platform with customizable height
 - [x] Warnings for floating geometry
+- [x] look at self loops (eg R in Roboto Slab)
 - [ ] per-character spacing between characters?
 - [ ] Custom font loading
 - [ ] Persist custom fonts in local storage
 - [ ] Use proper units (most likely mm); currently using arbitrary units 
+- [ ] Add limits to camera zoom or add a camera home button
 - [ ] Per-side font choices
-- [ ] look at self loops (eg R in Roboto Slab)
 - [ ] Cache glyphs instead of generating them all the time
 - [ ] Parametrized tessellation for smoother meshes?
 - [ ] Export to 3MF / something else?
+- [ ] Shareable URLs 
+- [ ] Playwright ba/sed tests? 
 - [ ] Glyph height normalization? (ascenders and descenders can be cut off with some fonts)
 - [ ] Show mesh statistics
 - [ ] Emojis? How would that even work?

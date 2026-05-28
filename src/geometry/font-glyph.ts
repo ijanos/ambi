@@ -13,7 +13,7 @@ import { getManifold } from './manifold';
 const GLYPH_SIZE = 100;
 const GLYPH_DEPTH = 200;
 const CURVE_SEGMENTS = 12;
-const FILL_RULE: FillRule = 'EvenOdd';
+const FILL_RULE: FillRule = 'NonZero';
 const EPSILON = 1e-6;
 
 type OutlinePoint = {
