@@ -208,6 +208,8 @@ function frameMeshes() {
 
   const sphere = box.getBoundingSphere(new THREE.Sphere());
   const radius = Math.max(sphere.radius, 1);
+  controls.minDistance = radius * 0.3;
+  controls.maxDistance = radius * 10;
 
   controls.target.copy(sphere.center);
   setCameraPositionAndRange(sphere.center, radius);
