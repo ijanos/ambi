@@ -17,7 +17,8 @@ type BuildIntersectedLetterPairMeshInstancesOptions = {
 };
 
 export function buildIntersectedLetterPairMeshInstances(
-  font: Font,
+  fontLeft: Font,
+  fontRight: Font,
   wordLeft: string,
   wordRight: string,
   options: BuildIntersectedLetterPairMeshInstancesOptions,
@@ -39,7 +40,8 @@ export function buildIntersectedLetterPairMeshInstances(
     });
 
     const { solid: intersection, floaterCount } = createIntersectedGlyphSolidFromFont(
-      font,
+      fontLeft,
+      fontRight,
       leftCharacter,
       rightCharacter,
       options.rotatedGlyphYDegrees,

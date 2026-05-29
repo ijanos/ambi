@@ -39,7 +39,7 @@ Not in order of priority or importance.
 - [ ] Parametrized tessellation for smoother meshes?
 - [ ] Export to 3MF / something else?
 - [ ] Shareable URLs 
-- [ ] Playwright ba/sed tests? 
+- [ ] Playwright based tests? 
 - [ ] Glyph height normalization? (ascenders and descenders can be cut off with some fonts)
 - [ ] Show mesh statistics
 - [ ] Emojis? How would that even work?

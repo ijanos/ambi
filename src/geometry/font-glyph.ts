@@ -177,13 +177,14 @@ export function createGlyphSolidFromFont(font: Font, character: string): Manifol
 }
 
 export function createIntersectedGlyphSolidFromFont(
-  font: Font,
+  fontLeft: Font,
+  fontRight: Font,
   firstCharacter: string,
   secondCharacter: string,
   rotatedGlyphYDegrees: number,
 ): GlyphIntersectionResult {
-  using firstGlyph = createGlyphSolidFromFont(font, firstCharacter);
-  using secondGlyph = createGlyphSolidFromFont(font, secondCharacter);
+  using firstGlyph = createGlyphSolidFromFont(fontLeft, firstCharacter);
+  using secondGlyph = createGlyphSolidFromFont(fontRight, secondCharacter);
   using rotatedSecondGlyph = secondGlyph.rotate(0, rotatedGlyphYDegrees, 0);
   const intersection = firstGlyph.intersect(rotatedSecondGlyph);
 

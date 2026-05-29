@@ -23,7 +23,8 @@ export type RenderOptions = {
   cameraMode: CameraMode;
   materialMode: MaterialMode;
   letterSpacing: number;
-  fontId: FontId;
+  fontIdLeft: FontId;
+  fontIdRight: FontId;
   baseEnabled: boolean;
   baseHeight: number;
 };
@@ -58,11 +59,14 @@ export async function createRenderingRuntime(container: HTMLElement): Promise<Re
       setCameraMode(options.cameraMode);
       setMaterialMode(options.materialMode);
 
-      console.log('Loading font...', { fontId: options.fontId });
-      const font = await loadFont(options.fontId);
-      console.log('Font loaded', { fontId: options.fontId });
+      console.log('Loading fonts...', { fontIdLeft: options.fontIdLeft, fontIdRight: options.fontIdRight });
+      const [fontLeft, fontRight] = await Promise.all([
+        loadFont(options.fontIdLeft),
+        loadFont(options.fontIdRight),
+      ]);
+      console.log('Fonts loaded');
 
-      const result = buildIntersectedLetterPairMeshInstances(font, wordLeft, wordRight, {
+      const result = buildIntersectedLetterPairMeshInstances(fontLeft, fontRight, wordLeft, wordRight, {
         rotatedGlyphYDegrees: options.rotatedGlyphYDegrees,
         sceneMeshYRotationRadians: options.sceneMeshYRotationRadians,
       });

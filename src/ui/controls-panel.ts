@@ -16,7 +16,8 @@ export type RenderSettings = {
   cameraMode: CameraMode;
   materialMode: MaterialMode;
   letterSpacing: number;
-  fontId: FontId;
+  fontIdLeft: FontId;
+  fontIdRight: FontId;
   baseEnabled: boolean;
   baseHeight: number;
 };
@@ -34,7 +35,7 @@ export type ControlsPanel = {
   clearFloaterWarning(): void;
   onWordsChange(handler: () => void): void;
   onLetterSpacingChange(handler: (letterSpacing: number) => void): void;
-  onFontChange(handler: (fontId: FontId) => void): void;
+  onFontChange(handler: (fontIdLeft: FontId, fontIdRight: FontId) => void): void;
   onCameraModeChange(handler: (cameraMode: CameraMode) => void): void;
   onMaterialModeChange(handler: (materialMode: MaterialMode) => void): void;
   onBaseSettingsChange(handler: () => void): void;
@@ -50,6 +51,7 @@ type Controls = {
   wordRightLabel: HTMLLabelElement;
   letterSpacingInput: HTMLInputElement;
   fontSelect: HTMLSelectElement;
+  fontSelect2: HTMLSelectElement;
   cameraModeSelect: HTMLSelectElement;
   materialModeSelect: HTMLSelectElement;
   downloadStlButton: HTMLButtonElement;
@@ -84,6 +86,7 @@ function getControls(): Controls {
     wordRightLabel: requireElement<HTMLLabelElement>('#word2-label'),
     letterSpacingInput: requireElement<HTMLInputElement>('#letter-spacing'),
     fontSelect: requireElement<HTMLSelectElement>('#font-selector'),
+    fontSelect2: requireElement<HTMLSelectElement>('#font-selector-2'),
     cameraModeSelect: requireElement<HTMLSelectElement>('#camera-mode'),
     materialModeSelect: requireElement<HTMLSelectElement>('#material-mode'),
     downloadStlButton: requireElement<HTMLButtonElement>('#download-stl-btn'),
@@ -185,6 +188,22 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
   controls.wordLeftInput.value = options.defaultWordLeft;
   controls.wordRightInput.value = options.defaultWordRight;
   setFontOptions(controls.fontSelect, options.fontOptions, options.defaultFontId);
+  // Font 2 gets the same options plus a sentinel "Same as Word 1" at the top
+  controls.fontSelect2.replaceChildren(
+    (() => {
+      const opt = document.createElement('option');
+      opt.value = '__same__';
+      opt.textContent = 'Same as Word 1';
+      return opt;
+    })(),
+    ...options.fontOptions.map((fontOption) => {
+      const optionElement = document.createElement('option');
+      optionElement.value = fontOption.id;
+      optionElement.textContent = fontOption.label;
+      return optionElement;
+    }),
+  );
+  controls.fontSelect2.value = '__same__';
 
   const syncValidation = () =>
     updateValidationUI(
@@ -217,18 +236,24 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
   floaterWarning.hidden = true;
   controls.validationMessage.insertAdjacentElement('afterend', floaterWarning);
 
-  const getRenderSettings = (): RenderSettings => ({
-    cameraMode: parseCameraMode(controls.cameraModeSelect.value),
-    materialMode: parseMaterialMode(controls.materialModeSelect.value),
-    letterSpacing: parseLetterSpacing(controls.letterSpacingInput.value),
-    fontId: parseFontId(controls.fontSelect.value, options.defaultFontId),
-    baseEnabled: controls.baseEnabledInput.checked,
-    baseHeight: Number(controls.baseHeightInput.value),
-  });
-
   return {
     syncValidation,
-    getRenderSettings,
+    getRenderSettings: (): RenderSettings => {
+      const fontIdLeft = parseFontId(controls.fontSelect.value, options.defaultFontId);
+      const fontIdRight = controls.fontSelect2.value === '__same__'
+        ? fontIdLeft
+        : parseFontId(controls.fontSelect2.value, options.defaultFontId);
+
+      return {
+        cameraMode: parseCameraMode(controls.cameraModeSelect.value),
+        materialMode: parseMaterialMode(controls.materialModeSelect.value),
+        letterSpacing: parseLetterSpacing(controls.letterSpacingInput.value),
+        fontIdLeft,
+        fontIdRight,
+        baseEnabled: controls.baseEnabledInput.checked,
+        baseHeight: Number(controls.baseHeightInput.value),
+      };
+    },
     setDownloadDisabled(isDisabled) {
       controls.downloadStlButton.disabled = isDisabled;
     },
@@ -295,9 +320,15 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
       });
     },
     onFontChange(handler) {
-      controls.fontSelect.addEventListener('change', () => {
-        handler(parseFontId(controls.fontSelect.value, options.defaultFontId));
-      });
+      const fireFontChange = () => {
+        const fontIdLeft = parseFontId(controls.fontSelect.value, options.defaultFontId);
+        const fontIdRight = controls.fontSelect2.value === '__same__'
+          ? fontIdLeft
+          : parseFontId(controls.fontSelect2.value, options.defaultFontId);
+        handler(fontIdLeft, fontIdRight);
+      };
+      controls.fontSelect.addEventListener('change', fireFontChange);
+      controls.fontSelect2.addEventListener('change', fireFontChange);
     },
     onCameraModeChange(handler) {
       controls.cameraModeSelect.addEventListener('change', () => {

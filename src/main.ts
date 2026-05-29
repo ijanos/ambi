@@ -39,7 +39,8 @@ async function main() {
     type RenderSnapshot = {
       fileBasename: string;
       letterSpacing: number;
-      fontId: FontId;
+      fontIdLeft: FontId;
+      fontIdRight: FontId;
       baseEnabled: boolean;
       baseHeight: number;
     };
@@ -77,7 +78,8 @@ async function main() {
       const isDirty =
         currentBasename !== lastRendered.fileBasename ||
         settings.letterSpacing !== lastRendered.letterSpacing ||
-        settings.fontId !== lastRendered.fontId ||
+        settings.fontIdLeft !== lastRendered.fontIdLeft ||
+        settings.fontIdRight !== lastRendered.fontIdRight ||
         settings.baseEnabled !== lastRendered.baseEnabled ||
         settings.baseHeight !== lastRendered.baseHeight;
 
@@ -98,7 +100,8 @@ async function main() {
         cameraMode: settings.cameraMode,
         materialMode: settings.materialMode,
         letterSpacing: settings.letterSpacing,
-        fontId: settings.fontId,
+        fontIdLeft: settings.fontIdLeft,
+        fontIdRight: settings.fontIdRight,
         baseEnabled: settings.baseEnabled,
         baseHeight: settings.baseHeight,
       };
@@ -129,7 +132,8 @@ async function main() {
             validation.normalizedWordRight,
           ),
           letterSpacing: renderOptions.letterSpacing,
-          fontId: renderOptions.fontId,
+          fontIdLeft: renderOptions.fontIdLeft,
+          fontIdRight: renderOptions.fontIdRight,
           baseEnabled: renderOptions.baseEnabled,
           baseHeight: renderOptions.baseHeight,
         };
