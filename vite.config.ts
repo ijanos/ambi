@@ -43,6 +43,10 @@ function fontCatalogPlugin(): Plugin {
 
 export default defineConfig({
   plugins: [fontCatalogPlugin()],
+  build: {
+    // Three.js + Manifold JS glue = ~620 kB; not splittable
+    chunkSizeWarningLimit: 700,
+  },
   optimizeDeps: {
     // Exclude Manifold WASM from pre-bundling
     exclude: ['manifold-3d'],
