@@ -39,6 +39,7 @@ Not in order of priority or importance.
 - [ ] Parametrized tessellation for smoother meshes?
 - [ ] Export to 3MF / something else?
 - [ ] Shareable URLs 
+- [ ] add option for top base? should make print more rugged? use these as a keychain? 
 - [ ] Playwright based tests? 
 - [ ] Glyph height normalization? (ascenders and descenders can be cut off with some fonts)
 - [ ] Show mesh statistics

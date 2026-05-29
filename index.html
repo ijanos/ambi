@@ -4,12 +4,35 @@
     <meta charset="UTF-8">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ambi</title>
+    <title>Ambi — 3D Ambigram Generator</title>
+    <meta
+      name="description"
+      content="Browser-based 3D ambigram generator. Type two words of equal length, pick fonts, and generate a 3D-printable ambigram mesh."
+    >
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://ambi.janosilles.com">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#16171d">
+    <meta property="og:title" content="Ambi — 3D Ambigram Generator">
+    <meta
+      property="og:description"
+      content="Browser-based 3D ambigram generator. Type two words of equal length, pick fonts, and generate a 3D-printable ambigram mesh."
+    >
+    <meta property="og:url" content="https://ambi.janosilles.com">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/favicon.svg">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Ambi — 3D Ambigram Generator">
+    <meta
+      name="twitter:description"
+      content="Browser-based 3D ambigram generator. Type two words of equal length, pick fonts, and generate a 3D-printable ambigram mesh."
+    >
+    <meta name="twitter:image" content="/favicon.svg">
   </head>
   <body>
     <div id="app">
       <aside class="sidebar">
-        <h2 class="title">Ambi</h2>
+        <h1 class="title">Ambi</h1>
         <p class="subtitle">3D Ambigram generator</p>
         <div class="content">
           <form id="controls-form" class="controls-form">
@@ -71,6 +94,16 @@
             <path d="M24 6a18 18 0 0 1 18 18" class="viewer-loader-head" />
           </svg>
         </div>
+        <noscript>
+          <style>
+          #viewer-loader {
+            display: none;
+          }
+          </style>
+          <div class="viewer-loader" role="alert" aria-label="JavaScript required">
+            <p>JavaScript and WebGL are required for this application.</p>
+          </div>
+        </noscript>
       </main>
     </div>
     <script type="module" src="/src/main.ts"></script>
