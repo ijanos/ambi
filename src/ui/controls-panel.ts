@@ -138,6 +138,24 @@ function parseFontId(value: string, fallbackFontId: FontId): FontId {
   return isFontId(value) ? value : fallbackFontId;
 }
 
+function hasMixedCasePair(left: string, right: string): boolean {
+  const len = Math.min(left.length, right.length);
+  for (let i = 0; i < len; i++) {
+    // biome-ignore lint/style/noNonNullAssertion: bounded by Math.min
+    const l = left[i]!;
+    // biome-ignore lint/style/noNonNullAssertion: bounded by Math.min
+    const r = right[i]!;
+    const lUpper = l >= 'A' && l <= 'Z';
+    const lLower = l >= 'a' && l <= 'z';
+    const rUpper = r >= 'A' && r <= 'Z';
+    const rLower = r >= 'a' && r <= 'z';
+    if ((lUpper && rLower) || (lLower && rUpper)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function validateWords(wordLeft: string, wordRight: string): WordValidation {
   const normalizedWordLeft = normalizeWord(wordLeft);
   const normalizedWordRight = normalizeWord(wordRight);
@@ -205,11 +223,20 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
   );
   controls.fontSelect2.value = '__same__';
 
-  const syncValidation = () =>
-    updateValidationUI(
+  const syncValidation = () => {
+    const validation = updateValidationUI(
       controls,
       validateWords(controls.wordLeftInput.value, controls.wordRightInput.value),
     );
+
+    const mixedCase = hasMixedCasePair(
+      validation.normalizedWordLeft,
+      validation.normalizedWordRight,
+    );
+    mixedCaseWarning.hidden = !mixedCase;
+
+    return validation;
+  };
 
   const updateBaseHeightLabel = () => {
     controls.baseHeightLabel.textContent = `Base Height (${controls.baseHeightInput.value})`;
@@ -228,21 +255,32 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
   controls.baseEnabledInput.addEventListener('change', updateBaseHeightVisibility);
   updateBaseHeightVisibility();
 
+  // Mixed case warning — shown when either word mixes upper/lower case letters
+  const mixedCaseWarning = document.createElement('div');
+  mixedCaseWarning.className = 'validation-message';
+  mixedCaseWarning.dataset.state = 'warning';
+  mixedCaseWarning.setAttribute('aria-live', 'polite');
+  mixedCaseWarning.textContent =
+    'Mixing uppercase and lowercase letters can produce uneven glyphs — 3D height is determined by the smallest letter.';
+  mixedCaseWarning.hidden = true;
+  controls.validationMessage.insertAdjacentElement('afterend', mixedCaseWarning);
+
   // Floater warning element — created once, shown/hidden as needed
   const floaterWarning = document.createElement('div');
   floaterWarning.className = 'validation-message';
   floaterWarning.dataset.state = 'warning';
   floaterWarning.setAttribute('aria-live', 'polite');
   floaterWarning.hidden = true;
-  controls.validationMessage.insertAdjacentElement('afterend', floaterWarning);
+  mixedCaseWarning.insertAdjacentElement('afterend', floaterWarning);
 
   return {
     syncValidation,
     getRenderSettings: (): RenderSettings => {
       const fontIdLeft = parseFontId(controls.fontSelect.value, options.defaultFontId);
-      const fontIdRight = controls.fontSelect2.value === '__same__'
-        ? fontIdLeft
-        : parseFontId(controls.fontSelect2.value, options.defaultFontId);
+      const fontIdRight =
+        controls.fontSelect2.value === '__same__'
+          ? fontIdLeft
+          : parseFontId(controls.fontSelect2.value, options.defaultFontId);
 
       return {
         cameraMode: parseCameraMode(controls.cameraModeSelect.value),
@@ -322,9 +360,10 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
     onFontChange(handler) {
       const fireFontChange = () => {
         const fontIdLeft = parseFontId(controls.fontSelect.value, options.defaultFontId);
-        const fontIdRight = controls.fontSelect2.value === '__same__'
-          ? fontIdLeft
-          : parseFontId(controls.fontSelect2.value, options.defaultFontId);
+        const fontIdRight =
+          controls.fontSelect2.value === '__same__'
+            ? fontIdLeft
+            : parseFontId(controls.fontSelect2.value, options.defaultFontId);
         handler(fontIdLeft, fontIdRight);
       };
       controls.fontSelect.addEventListener('change', fireFontChange);

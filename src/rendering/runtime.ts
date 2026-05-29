@@ -59,17 +59,26 @@ export async function createRenderingRuntime(container: HTMLElement): Promise<Re
       setCameraMode(options.cameraMode);
       setMaterialMode(options.materialMode);
 
-      console.log('Loading fonts...', { fontIdLeft: options.fontIdLeft, fontIdRight: options.fontIdRight });
+      console.log('Loading fonts...', {
+        fontIdLeft: options.fontIdLeft,
+        fontIdRight: options.fontIdRight,
+      });
       const [fontLeft, fontRight] = await Promise.all([
         loadFont(options.fontIdLeft),
         loadFont(options.fontIdRight),
       ]);
       console.log('Fonts loaded');
 
-      const result = buildIntersectedLetterPairMeshInstances(fontLeft, fontRight, wordLeft, wordRight, {
-        rotatedGlyphYDegrees: options.rotatedGlyphYDegrees,
-        sceneMeshYRotationRadians: options.sceneMeshYRotationRadians,
-      });
+      const result = buildIntersectedLetterPairMeshInstances(
+        fontLeft,
+        fontRight,
+        wordLeft,
+        wordRight,
+        {
+          rotatedGlyphYDegrees: options.rotatedGlyphYDegrees,
+          sceneMeshYRotationRadians: options.sceneMeshYRotationRadians,
+        },
+      );
       setGlyphGap(options.letterSpacing);
       setMeshInstances(result.meshInstances, {
         enabled: options.baseEnabled,
