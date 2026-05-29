@@ -241,8 +241,53 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
       floaterWarning.hidden = true;
     },
     onWordsChange(handler) {
-      controls.wordLeftInput.addEventListener('input', handler);
-      controls.wordRightInput.addEventListener('input', handler);
+      let syncing = false;
+
+      const syncSpaces = (source: HTMLInputElement, target: HTMLInputElement) => {
+        const sourceChars = Array.from(source.value);
+        let targetValue = target.value;
+
+        // Walk source from right to left so earlier indices are stable across
+        // insertions and deletions in the single pass.
+        let cursorOffset = 0;
+        for (let i = Math.min(sourceChars.length, targetValue.length) - 1; i >= 0; i--) {
+          const srcSpace = sourceChars[i] === ' ';
+          const tgtSpace = targetValue[i] === ' ';
+
+          if (srcSpace && !tgtSpace) {
+            // Insert a space in target at i, shifting everything right.
+            targetValue = `${targetValue.slice(0, i)} ${targetValue.slice(i)}`;
+            if (i <= (target.selectionStart ?? 0)) cursorOffset++;
+          } else if (!srcSpace && tgtSpace) {
+            // Delete the space from target at i, shifting everything left.
+            targetValue = targetValue.slice(0, i) + targetValue.slice(i + 1);
+            if (i < (target.selectionStart ?? 0)) cursorOffset--;
+          }
+        }
+
+        if (targetValue !== target.value) {
+          syncing = true;
+          try {
+            const selStart = (target.selectionStart ?? 0) + cursorOffset;
+            const selEnd = (target.selectionEnd ?? 0) + cursorOffset;
+            target.value = targetValue;
+            target.setSelectionRange(selStart, selEnd);
+          } finally {
+            syncing = false;
+          }
+        }
+      };
+
+      controls.wordLeftInput.addEventListener('input', () => {
+        if (syncing) return;
+        syncSpaces(controls.wordLeftInput, controls.wordRightInput);
+        handler();
+      });
+      controls.wordRightInput.addEventListener('input', () => {
+        if (syncing) return;
+        syncSpaces(controls.wordRightInput, controls.wordLeftInput);
+        handler();
+      });
     },
     onLetterSpacingChange(handler) {
       controls.letterSpacingInput.addEventListener('input', () => {
