@@ -2,6 +2,7 @@ import type { FontId } from '../fonts/catalog';
 import { isFontId } from '../fonts/catalog';
 import type { CameraMode, MaterialMode } from '../types';
 import { assertSameLength, assertWordsPresent, normalizeWord } from '../word-pairs';
+import { openGlyphViewer } from './glyph-viewer';
 
 export type WordValidation = {
   normalizedWordLeft: string;
@@ -222,6 +223,22 @@ export function initControlsPanel(options: ControlsPanelOptions): ControlsPanel 
     }),
   );
   controls.fontSelect2.value = '__same__';
+
+  // Glyph viewer buttons
+  const glyphBtn1 = document.getElementById('glyph-btn-1');
+  const glyphBtn2 = document.getElementById('glyph-btn-2');
+  glyphBtn1?.addEventListener('click', () => {
+    const fontId = parseFontId(controls.fontSelect.value, options.defaultFontId);
+    openGlyphViewer(fontId);
+  });
+  glyphBtn2?.addEventListener('click', () => {
+    const fontIdLeft = parseFontId(controls.fontSelect.value, options.defaultFontId);
+    const fontIdRight =
+      controls.fontSelect2.value === '__same__'
+        ? fontIdLeft
+        : parseFontId(controls.fontSelect2.value, options.defaultFontId);
+    openGlyphViewer(fontIdRight);
+  });
 
   const syncValidation = () => {
     const validation = updateValidationUI(

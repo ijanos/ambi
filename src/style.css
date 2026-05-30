@@ -170,7 +170,8 @@ h2 {
 /* Form Input Field */
 
 .controls-form > .form-group > input,
-.controls-form > .form-group > select {
+.controls-form > .form-group > select,
+.controls-form > .form-group > .font-select-row > select {
   padding: 8px 12px;
   border: 1px solid var(--border);
   border-radius: 4px;
@@ -188,13 +189,58 @@ h2 {
 }
 
 .controls-form > .form-group > input:focus,
-.controls-form > .form-group > select:focus {
+.controls-form > .form-group > select:focus,
+.controls-form > .form-group > .font-select-row > select:focus {
   outline: none;
   border-color: var(--text);
 }
 
-.controls-form > .form-group > select {
+.controls-form > .form-group > select,
+.controls-form > .form-group > .font-select-row > select {
   cursor: pointer;
+}
+
+/* Font Select Row (select + glyph button) */
+
+.font-select-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.controls-form > .form-group > .font-select-row > select {
+  flex: 1;
+  min-width: 0;
+}
+
+.glyph-btn {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--sans);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
+}
+
+.glyph-btn:hover {
+  border-color: var(--text);
+  color: var(--text-h);
+}
+
+.glyph-btn:active {
+  opacity: 0.8;
 }
 
 .controls-form > .form-group > input.is-invalid {
@@ -335,4 +381,149 @@ h2 {
 
 .viewport > p {
   color: var(--text);
+}
+
+/* ==========================================================================
+   GLYPH VIEWER DIALOG
+   ========================================================================== */
+
+.glyph-dialog {
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-bg);
+  color: var(--text);
+  max-width: 820px;
+  width: calc(100vw - 40px);
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The UA stylesheet hides closed dialogs with display:none, but our author-level
+   display:flex on .glyph-dialog overrides it due to cascade origin priority.
+   Explicitly restore display:none for closed dialogs at author level. */
+.glyph-dialog:not([open]) {
+  display: none;
+}
+
+.glyph-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+@media (prefers-color-scheme: dark) {
+  .glyph-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.6);
+  }
+}
+
+.glyph-dialog-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.glyph-dialog-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.glyph-dialog-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0;
+}
+
+.glyph-dialog-count {
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 400;
+  margin-left: 8px;
+}
+
+.glyph-dialog-close {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.glyph-dialog-close:hover {
+  background: var(--border);
+}
+
+.glyph-dialog-body {
+  padding: 16px 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.glyph-dialog-hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.glyph-dialog-error {
+  text-align: center;
+  padding: 24px 0;
+  color: var(--warning);
+  font-size: 14px;
+}
+
+.glyph-dialog-loading {
+  text-align: center;
+  padding: 24px 0;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.glyph-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  gap: 4px;
+}
+
+.glyph-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-h);
+  min-width: 0;
+  overflow: hidden;
+  transition: background 0.15s;
+}
+
+.glyph-cell:hover {
+  background: var(--border);
+  cursor: pointer;
+}
+
+.glyph-cell.glyph-cell--copied {
+  background: var(--text-h);
+  color: var(--bg);
+  transition: none;
 }
