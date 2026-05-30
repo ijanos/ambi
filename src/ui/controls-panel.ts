@@ -131,7 +131,7 @@ function parseMaterialMode(value: string): MaterialMode {
 }
 
 function parseLetterSpacing(value: string): number {
-  const parsed = Number(value);
+  const parsed = Number(value) / 10;
   return Number.isFinite(parsed) ? parsed : 0;
 }
 

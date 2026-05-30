@@ -18,9 +18,9 @@ let baseMesh: THREE.Mesh | undefined;
 let animationFrameId: number;
 
 const DEFAULT_VIEW_DIRECTION = new THREE.Vector3(0, 0.25, 1).normalize();
-const DEFAULT_GLYPH_GAP = 40;
-const GRID_SIZE = 4500;
-const GRID_DIVISIONS = 60;
+const DEFAULT_GLYPH_GAP = 5;
+const GRID_SIZE = 500;
+const GRID_DIVISIONS = 50;
 const DEFAULT_ORTHOGRAPHIC_FRUSTUM_HEIGHT = 300;
 const baseColorMaterial = new THREE.MeshMatcapMaterial({
   color: 'skyblue',
@@ -101,11 +101,11 @@ export function initScene(container: HTMLElement) {
   const height = container.clientHeight;
 
   perspectiveCamera = new THREE.PerspectiveCamera(75, width / height, 0.1, 10000);
-  perspectiveCamera.position.set(150, 150, 150);
+  perspectiveCamera.position.set(15, 15, 15);
   perspectiveCamera.lookAt(0, 0, 0);
 
   orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10000);
-  orthographicCamera.position.set(150, 150, 150);
+  orthographicCamera.position.set(15, 15, 15);
   orthographicCamera.lookAt(0, 0, 0);
   setOrthographicFrustum(width, height);
 
@@ -215,7 +215,7 @@ function frameMeshes() {
   setCameraPositionAndRange(sphere.center, radius);
 
   if (currentCameraMode === 'orthographic') {
-    orthographicFrustumHeight = radius * 2.8;
+    orthographicFrustumHeight = radius * 3.5;
     const container = renderer.domElement.parentElement;
     if (container) {
       setOrthographicFrustum(container.clientWidth, container.clientHeight);
@@ -264,10 +264,10 @@ export function setMeshInstances(
       const center = new THREE.Vector3();
       box.getCenter(center);
 
-      const BASE_PADDING = 10;
+      const BASE_PADDING = 1.5;
       const baseWidth = size.x + BASE_PADDING * 2;
       const baseDepth = size.z + BASE_PADDING * 2;
-      const baseHeight = baseOptions.height;
+      const baseHeight = baseOptions.height / 10;
 
       using baseSolid = createChamferedBaseSolid(baseWidth, baseDepth, baseHeight);
       const baseGeometry = manifoldToThree(baseSolid.getMesh());
@@ -275,8 +275,8 @@ export function setMeshInstances(
       baseMesh = new THREE.Mesh(baseGeometry, getGlyphMaterial(currentMaterialMode));
       baseMesh.position.set(center.x, 0, center.z);
 
-      // Shift all letter meshes upwards so they sit on top of the base with 1 unit overlap
-      const shiftY = baseHeight - 1;
+      // Shift all letter meshes upwards so they sit on top of the base with a small overlap
+      const shiftY = baseHeight - 0.15;
       for (const mesh of meshes) {
         mesh.position.y += shiftY;
       }

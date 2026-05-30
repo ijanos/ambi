@@ -14,7 +14,7 @@ export function createChamferedBaseSolid(
   width: number,
   depth: number,
   height: number,
-  chamfer: number = 1.5,
+  chamfer: number = 0.3,
 ): ManifoldSolid {
   const manifold = getManifold();
 

@@ -10,8 +10,8 @@ import type {
 import type { Font } from 'three/addons/loaders/FontLoader.js';
 import { getManifold } from './manifold';
 
-const GLYPH_SIZE = 100;
-const GLYPH_DEPTH = 200;
+const GLYPH_SIZE = 10;
+const GLYPH_DEPTH = 5 * GLYPH_SIZE;
 const CURVE_SEGMENTS = 12;
 const FILL_RULE: FillRule = 'NonZero';
 const EPSILON = 1e-6;
