@@ -46,13 +46,15 @@
 body {
   margin: 0;
   padding: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
 }
 
 html,
-body,
-#app {
+body {
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
 }
 
 h1,
@@ -68,14 +70,13 @@ h2 {
   color: var(--text-h);
 }
 
-/* ==========================================================================
-   APP LAYOUT
-   ========================================================================== */
-
 #app {
   display: grid;
   grid-template-columns: 265px 1fr;
   gap: 0;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
 }
 
 /* ==========================================================================
@@ -89,6 +90,7 @@ h2 {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .sidebar > .title {
@@ -324,6 +326,7 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 0;
 }
 
 .viewport > canvas {
