@@ -11,7 +11,7 @@ if (typeof Symbol !== 'undefined' && !Symbol.dispose) {
 import './style.css';
 import { DEFAULT_FONT_ID, FONT_OPTIONS, type FontId } from './fonts/catalog.generated';
 import type { RenderingRuntime, RenderOptions } from './rendering/runtime';
-import { initControlsPanel } from './ui/controls-panel';
+import { ControlsPanel } from './ui/controls-panel';
 
 const DEFAULT_WORD_LEFT = 'HELLO';
 const DEFAULT_WORD_RIGHT = 'WORLD';
@@ -27,7 +27,7 @@ async function main() {
       throw new Error('Viewer container not found');
     }
 
-    const controlsPanel = initControlsPanel({
+    const controlsPanel = new ControlsPanel({
       defaultWordLeft: DEFAULT_WORD_LEFT,
       defaultWordRight: DEFAULT_WORD_RIGHT,
       defaultFontId: DEFAULT_FONT_ID,
