@@ -63,17 +63,9 @@ p {
   margin: 0;
 }
 
-h1,
-h2 {
-  font-family: var(--sans);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
 #app {
   display: grid;
   grid-template-columns: 265px 1fr;
-  gap: 0;
   width: 100%;
   flex: 1;
   min-height: 0;
@@ -93,15 +85,6 @@ h2 {
   min-height: 0;
 }
 
-.sidebar > .title {
-  margin: 0 0 4px 0;
-  font-size: 28px;
-  line-height: 1.1;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  color: var(--text-h);
-}
-
 .sidebar > .subtitle {
   margin: 0 0 24px 0;
   font-size: 14px;
@@ -110,11 +93,7 @@ h2 {
   line-height: 1.4;
 }
 
-.sidebar > .content {
-  flex: 1;
-}
-
-.sidebar > .footer {
+.sidebar > footer {
   margin-top: 20px;
   padding-top: 20px;
   border-top: 1px solid var(--border);
@@ -123,7 +102,7 @@ h2 {
   text-align: center;
 }
 
-.sidebar > .footer a {
+.sidebar > footer a {
   color: var(--text);
   text-decoration: none;
 }
@@ -132,48 +111,44 @@ h2 {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  flex: 1;
 }
 
-.controls-form > .form-group {
+.controls-form .form-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.controls-form > .form-group.checkbox-group {
+.controls-form .form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+.controls-form .form-group.checkbox-group {
   flex-direction: row;
   align-items: center;
   gap: 8px;
   margin-top: 4px;
 }
 
-.controls-form > .form-group.checkbox-group > input[type="checkbox"] {
+.controls-form .form-group.checkbox-group input[type="checkbox"] {
   width: auto;
   margin: 0;
   cursor: pointer;
 }
 
-.controls-form > .form-group.checkbox-group > .checkbox-label {
+.controls-form .form-group.checkbox-group label {
   cursor: pointer;
-}
-
-@supports (user-select: none) {
-  .controls-form > .form-group.checkbox-group > .checkbox-label {
-    user-select: none;
-  }
-}
-
-.controls-form > .form-group > label {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-h);
+  /* biome-ignore lint/nursery/useBaseline: user-select has universal support */
+  user-select: none;
 }
 
 /* Form Input Field */
 
-.controls-form > .form-group > input,
-.controls-form > .form-group > select,
-.controls-form > .form-group > .font-select-row > select {
+.controls-form .form-group input,
+.controls-form .form-group select {
   padding: 8px 12px;
   border: 1px solid var(--border);
   border-radius: 4px;
@@ -182,24 +157,23 @@ h2 {
   font-size: 14px;
   font-family: var(--sans);
   transition: border-color 0.2s;
+  cursor: pointer;
 }
 
-.controls-form > .form-group > input[type="range"] {
+.controls-form .form-group input[type="text"] {
+  cursor: text;
+}
+
+.controls-form .form-group input[type="range"] {
   padding: 0;
   border: none;
   background: transparent;
 }
 
-.controls-form > .form-group > input:focus,
-.controls-form > .form-group > select:focus,
-.controls-form > .form-group > .font-select-row > select:focus {
+.controls-form .form-group input:focus,
+.controls-form .form-group select:focus {
   outline: none;
   border-color: var(--text);
-}
-
-.controls-form > .form-group > select,
-.controls-form > .form-group > .font-select-row > select {
-  cursor: pointer;
 }
 
 /* Font Select Row (select + glyph button) */
@@ -210,7 +184,7 @@ h2 {
   align-items: center;
 }
 
-.controls-form > .form-group > .font-select-row > select {
+.controls-form .form-group .font-select-row select {
   flex: 1;
   min-width: 0;
 }
@@ -245,12 +219,12 @@ h2 {
   opacity: 0.8;
 }
 
-.controls-form > .form-group > input.is-invalid {
+.controls-form .form-group input.is-invalid {
   border-color: var(--warning);
   box-shadow: 0 0 0 3px var(--warning-soft);
 }
 
-.controls-form > .settings-separator {
+.controls-form .settings-separator {
   margin-top: 4px;
   padding-top: 16px;
   border-top: 1px solid var(--border);
@@ -262,8 +236,6 @@ h2 {
 }
 
 .validation-message {
-  min-height: 0px;
-  margin-top: 0px;
   font-size: 13px;
   line-height: 1.4;
   color: var(--text);
@@ -283,7 +255,7 @@ h2 {
 
 /* Generate Button */
 
-.controls-form > .generate-btn {
+.controls-form .generate-btn {
   padding: 10px 16px;
   background: var(--text-h);
   color: var(--bg);
@@ -296,22 +268,17 @@ h2 {
   transition: opacity 0.2s;
 }
 
-.controls-form > .generate-btn:hover {
+.controls-form .generate-btn:hover {
   opacity: 0.8;
 }
 
-.controls-form > .generate-btn:active {
+.controls-form .generate-btn:active {
   opacity: 0.9;
 }
 
-.controls-form > .generate-btn:disabled {
+.controls-form .generate-btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
-}
-
-.controls-form > .generate-btn:disabled:hover,
-.controls-form > .generate-btn:disabled:active {
-  opacity: 0.45;
 }
 
 /* ==========================================================================
@@ -380,10 +347,6 @@ h2 {
   stroke: var(--text-h);
   stroke-width: 3;
   stroke-linecap: round;
-}
-
-.viewport > p {
-  color: var(--text);
 }
 
 /* ==========================================================================
@@ -507,18 +470,19 @@ h2 {
   line-height: 1.4;
 }
 
-.glyph-dialog-error {
-  text-align: center;
-  padding: 24px 0;
-  color: var(--warning);
-  font-size: 14px;
-}
-
+.glyph-dialog-error,
 .glyph-dialog-loading {
   text-align: center;
   padding: 24px 0;
-  color: var(--text);
   font-size: 14px;
+}
+
+.glyph-dialog-error {
+  color: var(--warning);
+}
+
+.glyph-dialog-loading {
+  color: var(--text);
 }
 
 .glyph-grid {
