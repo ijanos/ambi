@@ -35,10 +35,13 @@ type ControlsPanelOptions = {
   fontOptions: readonly FontOption[];
 };
 
-function requireElement<T extends Element>(selector: string): T {
+function requireElement<T extends Element>(selector: string, ctor: new (...args: never[]) => T): T {
   const element = document.querySelector(selector);
   if (!element) {
     throw new Error(`Required element not found: ${selector}`);
+  }
+  if (!(element instanceof ctor)) {
+    throw new Error(`Element "${selector}" is ${element.constructor.name}, expected ${ctor.name}`);
   }
   return element as T;
 }
@@ -92,21 +95,21 @@ export class ControlsPanel {
   constructor(options: ControlsPanelOptions) {
     this.#options = options;
 
-    this.#form = requireElement<HTMLFormElement>('#controls-form');
-    this.#wordLeftInput = requireElement<HTMLInputElement>('#word1');
-    this.#wordRightInput = requireElement<HTMLInputElement>('#word2');
-    this.#wordLeftLabel = requireElement<HTMLLabelElement>('#word1-label');
-    this.#wordRightLabel = requireElement<HTMLLabelElement>('#word2-label');
-    this.#letterSpacingInput = requireElement<HTMLInputElement>('#letter-spacing');
-    this.#fontSelect = requireElement<HTMLSelectElement>('#font-selector');
-    this.#fontSelect2 = requireElement<HTMLSelectElement>('#font-selector-2');
-    this.#cameraModeSelect = requireElement<HTMLSelectElement>('#camera-mode');
-    this.#materialModeSelect = requireElement<HTMLSelectElement>('#material-mode');
-    this.#downloadStlButton = requireElement<HTMLButtonElement>('#download-stl-btn');
-    this.#validationMessage = requireElement<HTMLDivElement>('#validation-message');
-    this.#baseEnabledInput = requireElement<HTMLInputElement>('#base-enabled');
-    this.#baseHeightInput = requireElement<HTMLInputElement>('#base-height');
-    this.#baseHeightLabel = requireElement<HTMLLabelElement>('#base-height-label');
+    this.#form = requireElement('#controls-form', HTMLFormElement);
+    this.#wordLeftInput = requireElement('#word1', HTMLInputElement);
+    this.#wordRightInput = requireElement('#word2', HTMLInputElement);
+    this.#wordLeftLabel = requireElement('#word1-label', HTMLLabelElement);
+    this.#wordRightLabel = requireElement('#word2-label', HTMLLabelElement);
+    this.#letterSpacingInput = requireElement('#letter-spacing', HTMLInputElement);
+    this.#fontSelect = requireElement('#font-selector', HTMLSelectElement);
+    this.#fontSelect2 = requireElement('#font-selector-2', HTMLSelectElement);
+    this.#cameraModeSelect = requireElement('#camera-mode', HTMLSelectElement);
+    this.#materialModeSelect = requireElement('#material-mode', HTMLSelectElement);
+    this.#downloadStlButton = requireElement('#download-stl-btn', HTMLButtonElement);
+    this.#validationMessage = requireElement('#validation-message', HTMLDivElement);
+    this.#baseEnabledInput = requireElement('#base-enabled', HTMLInputElement);
+    this.#baseHeightInput = requireElement('#base-height', HTMLInputElement);
+    this.#baseHeightLabel = requireElement('#base-height-label', HTMLLabelElement);
 
     this.#wordLeftInput.value = options.defaultWordLeft;
     this.#wordRightInput.value = options.defaultWordRight;
