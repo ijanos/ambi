@@ -88,7 +88,6 @@ p {
 .sidebar > .subtitle {
   margin: 0 0 24px 0;
   font-size: 14px;
-  font-weight: 400;
   color: var(--text);
   line-height: 1.4;
 }
@@ -432,7 +431,6 @@ p {
 .glyph-dialog-count {
   font-size: 13px;
   color: var(--text);
-  font-weight: 400;
   margin-left: 8px;
 }
 
