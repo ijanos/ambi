@@ -70,6 +70,14 @@ function getDialog(): DialogElements {
   return dialogElements;
 }
 
+function appendToWordInput(char: string): void {
+  const wordInput = document.getElementById('word1') as HTMLInputElement | null;
+  if (wordInput) {
+    wordInput.value += char;
+    wordInput.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+}
+
 function renderGlyphGrid(glyphKeys: string[]): void {
   const { body } = getDialog();
 
@@ -84,15 +92,19 @@ function renderGlyphGrid(glyphKeys: string[]): void {
     cell.textContent = c;
     cell.title = c;
     cell.addEventListener('click', () => {
-      navigator.clipboard.writeText(c).then(
-        () => {
-          cell.classList.add('glyph-cell--copied');
-          setTimeout(() => cell.classList.remove('glyph-cell--copied'), 600);
-        },
-        () => {
-          // Clipboard write failed; silently ignore.
-        },
-      );
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(c).then(
+          () => {
+            cell.classList.add('glyph-cell--copied');
+            setTimeout(() => cell.classList.remove('glyph-cell--copied'), 600);
+          },
+          () => {
+            appendToWordInput(c);
+          },
+        );
+      } else {
+        appendToWordInput(c);
+      }
     });
 
     grid.appendChild(cell);
