@@ -103,6 +103,28 @@ function logOutlineStats(character: string, contours: SimplePolygon[]) {
   });
 }
 
+function logBaselineInfo(character: string, contours: SimplePolygon[]) {
+  const DESCENDER_EPSILON = 0.19;
+  let minY = Number.POSITIVE_INFINITY;
+  for (const contour of contours) {
+    for (const [/* x */ , y] of contour) {
+      if (y < minY) minY = y;
+    }
+  }
+
+  if (minY < -DESCENDER_EPSILON) {
+    console.warn('[font-glyph] Glyph extends below baseline', {
+      character,
+      minY: minY.toFixed(3),
+    });
+  } else if (minY > EPSILON) {
+    console.warn('[font-glyph] Glyph floats above baseline', {
+      character,
+      minY: minY.toFixed(3),
+    });
+  }
+}
+
 function logMeshStats(character: string, manifoldMesh: Mesh) {
   if (!manifoldMesh?.triVerts || !manifoldMesh.vertProperties) {
     throw new Error(`Invalid mesh data returned from Manifold for glyph ${character}`);
@@ -172,6 +194,7 @@ export function createGlyphSolidFromFont(font: Font, character: string): Manifol
 
   const contours = collectContours(shapes);
   logOutlineStats(character, contours);
+  logBaselineInfo(character, contours);
 
   return extrudeContours(manifold, character, contours);
 }
