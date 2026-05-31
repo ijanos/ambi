@@ -8,7 +8,6 @@ if (typeof Symbol !== 'undefined' && !Symbol.dispose) {
   });
 }
 
-import './style.css';
 import { DEFAULT_FONT_ID, FONT_OPTIONS } from './fonts/catalog.generated';
 import type { RenderingRuntime, RenderOptions } from './rendering/runtime';
 import { ControlsPanel } from './ui/controls-panel';
