@@ -384,6 +384,28 @@ h2 {
 }
 
 /* ==========================================================================
+   ORIENTATION WARNING
+   ========================================================================== */
+
+.orientation-warning {
+  display: none;
+}
+
+@media (orientation: portrait) {
+  .orientation-warning {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 16px;
+    background: var(--panel-bg);
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text);
+    text-align: center;
+  }
+}
+
+/* ==========================================================================
    GLYPH VIEWER DIALOG
    ========================================================================== */
 
