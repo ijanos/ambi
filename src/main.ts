@@ -9,7 +9,7 @@ if (typeof Symbol !== 'undefined' && !Symbol.dispose) {
 }
 
 import './style.css';
-import { DEFAULT_FONT_ID, FONT_OPTIONS, type FontId } from './fonts/catalog.generated';
+import { DEFAULT_FONT_ID, FONT_OPTIONS } from './fonts/catalog.generated';
 import type { RenderingRuntime, RenderOptions } from './rendering/runtime';
 import { ControlsPanel } from './ui/controls-panel';
 
@@ -36,15 +36,8 @@ async function main() {
 
     let renderingRuntimePromise: Promise<RenderingRuntime> | undefined;
 
-    type RenderSnapshot = {
-      fileBasename: string;
-      letterSpacing: number;
-      fontIdLeft: FontId;
-      fontIdRight: FontId;
-      baseEnabled: boolean;
-      baseHeight: number;
-    };
-    let lastRendered: RenderSnapshot | undefined;
+    let lastBasename: string | undefined;
+    let lastFingerprint: string | undefined;
 
     const getRenderingRuntime = () => {
       if (!renderingRuntimePromise) {
@@ -65,23 +58,17 @@ async function main() {
 
     const syncDownloadDirtyState = () => {
       const validation = controlsPanel.syncValidation();
-      if (!validation.isValid || !lastRendered) {
+      if (!validation.isValid || !lastBasename) {
         controlsPanel.setDownloadDisabled(true);
         return;
       }
 
-      const settings = controlsPanel.getRenderSettings();
       const currentBasename = getFileBasename(
         validation.normalizedWordLeft,
         validation.normalizedWordRight,
       );
       const isDirty =
-        currentBasename !== lastRendered.fileBasename ||
-        settings.letterSpacing !== lastRendered.letterSpacing ||
-        settings.fontIdLeft !== lastRendered.fontIdLeft ||
-        settings.fontIdRight !== lastRendered.fontIdRight ||
-        settings.baseEnabled !== lastRendered.baseEnabled ||
-        settings.baseHeight !== lastRendered.baseHeight;
+        currentBasename !== lastBasename || controlsPanel.fingerprint !== lastFingerprint;
 
       controlsPanel.setDownloadDisabled(isDirty);
     };
@@ -126,17 +113,11 @@ async function main() {
           controlsPanel.clearFloaterWarning();
         }
 
-        lastRendered = {
-          fileBasename: getFileBasename(
-            validation.normalizedWordLeft,
-            validation.normalizedWordRight,
-          ),
-          letterSpacing: renderOptions.letterSpacing,
-          fontIdLeft: renderOptions.fontIdLeft,
-          fontIdRight: renderOptions.fontIdRight,
-          baseEnabled: renderOptions.baseEnabled,
-          baseHeight: renderOptions.baseHeight,
-        };
+        lastBasename = getFileBasename(
+          validation.normalizedWordLeft,
+          validation.normalizedWordRight,
+        );
+        lastFingerprint = controlsPanel.fingerprint;
 
         controlsPanel.setDownloadDisabled(false);
       } finally {
@@ -160,12 +141,11 @@ async function main() {
       });
     });
     controlsPanel.onDownload(() => {
-      if (!lastRendered) {
+      if (!lastBasename) {
         return;
       }
 
-      const { fileBasename } = lastRendered;
-
+      const fileBasename = lastBasename;
       void getRenderingRuntime().then((runtime) => {
         runtime.exportMesh({
           format: 'stl',

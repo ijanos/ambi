@@ -208,6 +208,12 @@ export class ControlsPanel {
     };
   }
 
+  get fingerprint(): string {
+    const { letterSpacing, fontIdLeft, fontIdRight, baseEnabled, baseHeight } =
+      this.getRenderSettings();
+    return `${letterSpacing}|${fontIdLeft}|${fontIdRight}|${baseEnabled}|${baseHeight}`;
+  }
+
   setDownloadDisabled(isDisabled: boolean): void {
     this.#downloadStlButton.disabled = isDisabled;
   }
