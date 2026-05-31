@@ -9,7 +9,7 @@ if (typeof Symbol !== 'undefined' && !Symbol.dispose) {
 }
 
 import './style.css';
-import { DEFAULT_FONT_ID, FONT_OPTIONS, type FontId } from './fonts/catalog';
+import { DEFAULT_FONT_ID, FONT_OPTIONS, type FontId } from './fonts/catalog.generated';
 import type { RenderingRuntime, RenderOptions } from './rendering/runtime';
 import { initControlsPanel } from './ui/controls-panel';
 

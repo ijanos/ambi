@@ -1,5 +1,5 @@
 import { createMeshExporter, type MeshExportRequest } from '../exporting/mesh-exporter';
-import type { FontId } from '../fonts/catalog';
+import type { FontId } from '../fonts/catalog.generated';
 import { loadFont } from '../fonts/load-font';
 import { initManifold } from '../geometry/manifold';
 import type { CameraMode, MaterialMode } from '../types';

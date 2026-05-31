@@ -1,5 +1,5 @@
-import type { FontId } from '../fonts/catalog';
-import { getFontDefinition } from '../fonts/catalog';
+import type { FontId } from '../fonts/catalog.generated';
+import { getFontDefinition } from '../fonts/catalog.generated';
 import { loadFont } from '../fonts/load-font';
 
 const SKIP_GLYPHS = new Set([' ', '\t', '\n', '\r']);

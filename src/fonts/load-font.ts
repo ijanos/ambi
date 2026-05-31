@@ -1,6 +1,6 @@
 import { type Font, FontLoader } from 'three/addons/loaders/FontLoader.js';
-import type { FontId } from './catalog';
-import { getFontDefinition } from './catalog';
+import type { FontId } from './catalog.generated';
+import { getFontDefinition } from './catalog.generated';
 
 const loader = new FontLoader();
 const fontPromiseCache = new Map<FontId, Promise<Font>>();

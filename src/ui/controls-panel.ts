@@ -1,5 +1,5 @@
-import type { FontId } from '../fonts/catalog';
-import { isFontId } from '../fonts/catalog';
+import type { FontId } from '../fonts/catalog.generated';
+import { isFontId } from '../fonts/catalog.generated';
 import type { CameraMode, MaterialMode } from '../types';
 import { assertSameLength, assertWordsPresent, normalizeWord } from '../word-pairs';
 import { openGlyphViewer } from './glyph-viewer';
