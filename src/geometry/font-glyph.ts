@@ -103,7 +103,12 @@ function logOutlineStats(character: string, contours: SimplePolygon[]) {
   });
 }
 
-function logBaselineInfo(character: string, contours: SimplePolygon[]) {
+export type BaselineStatus = {
+  hasDescender: boolean;
+  isElevated: boolean;
+};
+
+function checkBaseline(character: string, contours: SimplePolygon[]): BaselineStatus {
   const DESCENDER_EPSILON = 0.19;
   let minY = Number.POSITIVE_INFINITY;
   for (const contour of contours) {
@@ -112,17 +117,22 @@ function logBaselineInfo(character: string, contours: SimplePolygon[]) {
     }
   }
 
-  if (minY < -DESCENDER_EPSILON) {
+  const hasDescender = minY < -DESCENDER_EPSILON;
+  const isElevated = minY > EPSILON;
+
+  if (hasDescender) {
     console.warn('[font-glyph] Glyph extends below baseline', {
       character,
       minY: minY.toFixed(3),
     });
-  } else if (minY > EPSILON) {
+  } else if (isElevated) {
     console.warn('[font-glyph] Glyph floats above baseline', {
       character,
       minY: minY.toFixed(3),
     });
   }
+
+  return { hasDescender, isElevated };
 }
 
 function logMeshStats(character: string, manifoldMesh: Mesh) {
@@ -167,17 +177,24 @@ function extrudeContours(
   return centeredSolid;
 }
 
+export type GlyphSolidResult = {
+  solid: ManifoldSolid;
+  baseline: BaselineStatus;
+};
+
 export type GlyphIntersectionResult = {
   solid: ManifoldSolid;
   /** Number of components that are elevated above the baseplate (Y=0). */
   floaterCount: number;
+  leftBaseline: BaselineStatus;
+  rightBaseline: BaselineStatus;
 };
 
 function isWhitespace(character: string): boolean {
   return character.trim().length === 0;
 }
 
-export function createGlyphSolidFromFont(font: Font, character: string): ManifoldSolid {
+export function createGlyphSolidFromFont(font: Font, character: string): GlyphSolidResult {
   const manifold = getManifold();
   const shapes = font.generateShapes(character, GLYPH_SIZE);
 
@@ -187,16 +204,16 @@ export function createGlyphSolidFromFont(font: Font, character: string): Manifol
     // any real glyph it produces nothing, leaving a gap in the output.
     if (isWhitespace(character)) {
       using cube = manifold.Manifold.cube([1, 1, 1]);
-      return cube.subtract(cube);
+      return { solid: cube.subtract(cube), baseline: { hasDescender: false, isElevated: false } };
     }
     throw new Error(`No glyph shapes generated for character ${JSON.stringify(character)}`);
   }
 
   const contours = collectContours(shapes);
   logOutlineStats(character, contours);
-  logBaselineInfo(character, contours);
+  const baseline = checkBaseline(character, contours);
 
-  return extrudeContours(manifold, character, contours);
+  return { solid: extrudeContours(manifold, character, contours), baseline };
 }
 
 export function createIntersectedGlyphSolidFromFont(
@@ -206,8 +223,10 @@ export function createIntersectedGlyphSolidFromFont(
   secondCharacter: string,
   rotatedGlyphYDegrees: number,
 ): GlyphIntersectionResult {
-  using firstGlyph = createGlyphSolidFromFont(fontLeft, firstCharacter);
-  using secondGlyph = createGlyphSolidFromFont(fontRight, secondCharacter);
+  const firstResult = createGlyphSolidFromFont(fontLeft, firstCharacter);
+  using firstGlyph = firstResult.solid;
+  const secondResult = createGlyphSolidFromFont(fontRight, secondCharacter);
+  using secondGlyph = secondResult.solid;
   using rotatedSecondGlyph = secondGlyph.rotate(0, rotatedGlyphYDegrees, 0);
   const intersection = firstGlyph.intersect(rotatedSecondGlyph);
 
@@ -263,5 +282,10 @@ export function createIntersectedGlyphSolidFromFont(
 
   logMeshStats(`${firstCharacter}/${secondCharacter} intersection`, intersection.getMesh());
 
-  return { solid: intersection, floaterCount };
+  return {
+    solid: intersection,
+    floaterCount,
+    leftBaseline: firstResult.baseline,
+    rightBaseline: secondResult.baseline,
+  };
 }

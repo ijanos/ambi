@@ -91,6 +91,7 @@ export class ControlsPanel {
   #syncing = false;
   #mixedCaseWarning: HTMLDivElement;
   #floaterWarning: HTMLDivElement;
+  #baselineWarning: HTMLDivElement;
 
   constructor(options: ControlsPanelOptions) {
     this.#options = options;
@@ -172,6 +173,14 @@ export class ControlsPanel {
     this.#floaterWarning.setAttribute('aria-live', 'polite');
     this.#floaterWarning.hidden = true;
     this.#mixedCaseWarning.insertAdjacentElement('afterend', this.#floaterWarning);
+
+    // Baseline warning element — created once, shown/hidden as needed
+    this.#baselineWarning = document.createElement('div');
+    this.#baselineWarning.className = 'validation-message';
+    this.#baselineWarning.dataset.state = 'warning';
+    this.#baselineWarning.setAttribute('aria-live', 'polite');
+    this.#baselineWarning.hidden = true;
+    this.#floaterWarning.insertAdjacentElement('afterend', this.#baselineWarning);
   }
 
   // ── Public API ──────────────────────────────────────────────────
@@ -226,6 +235,22 @@ export class ControlsPanel {
 
   clearFloaterWarning(): void {
     this.#floaterWarning.hidden = true;
+  }
+
+  showBaselineWarning(descenderPairs: string[], elevatedPairs: string[]): void {
+    const parts: string[] = [];
+    if (descenderPairs.length > 0) {
+      parts.push(`descenders below baseline in ${descenderPairs.join(', ')}`);
+    }
+    if (elevatedPairs.length > 0) {
+      parts.push(`glyphs floating above baseline in ${elevatedPairs.join(', ')}`);
+    }
+    this.#baselineWarning.textContent = `Baseline issue${parts.length > 1 ? 's' : ''}: ${parts.join('; ')}. Result may not 3D print as expected.`;
+    this.#baselineWarning.hidden = false;
+  }
+
+  clearBaselineWarning(): void {
+    this.#baselineWarning.hidden = true;
   }
 
   onWordsChange(handler: () => void): void {

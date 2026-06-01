@@ -112,6 +112,12 @@ async function main() {
           controlsPanel.clearFloaterWarning();
         }
 
+        if (result.descenderPairs.length > 0 || result.elevatedPairs.length > 0) {
+          controlsPanel.showBaselineWarning(result.descenderPairs, result.elevatedPairs);
+        } else {
+          controlsPanel.clearBaselineWarning();
+        }
+
         lastBasename = getFileBasename(
           validation.normalizedWordLeft,
           validation.normalizedWordRight,

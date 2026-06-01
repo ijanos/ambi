@@ -7,8 +7,12 @@ import { createLetterPairs } from '../word-pairs';
 
 export type BuildResult = {
   meshInstances: MeshInstance[];
-  /** Character pairs (e.g. "L/R") where floating geometry was detected. */
+  /** Character pairs (e.g. "L/R") where floating intersection geometry was detected. */
   floaterPairs: string[];
+  /** Character pairs where one or both glyph outlines extend below the baseline. */
+  descenderPairs: string[];
+  /** Character pairs where one or both glyph outlines are entirely above the baseline. */
+  elevatedPairs: string[];
 };
 
 type BuildIntersectedLetterPairMeshInstancesOptions = {
@@ -33,13 +37,20 @@ export function buildIntersectedLetterPairMeshInstances(
   });
 
   const floaterPairs: string[] = [];
+  const descenderPairs: string[] = [];
+  const elevatedPairs: string[] = [];
   const meshInstances = letterPairs.map(({ leftCharacter, rightCharacter }) => {
     console.log('Creating intersected pair', {
       leftCharacter,
       rightCharacter,
     });
 
-    const { solid: intersection, floaterCount } = createIntersectedGlyphSolidFromFont(
+    const {
+      solid: intersection,
+      floaterCount,
+      leftBaseline,
+      rightBaseline,
+    } = createIntersectedGlyphSolidFromFont(
       fontLeft,
       fontRight,
       leftCharacter,
@@ -53,6 +64,12 @@ export function buildIntersectedLetterPairMeshInstances(
     if (floaterCount > 0) {
       floaterPairs.push(`${leftCharacter}/${rightCharacter}`);
     }
+    if (leftBaseline.hasDescender || rightBaseline.hasDescender) {
+      descenderPairs.push(`${leftCharacter}/${rightCharacter}`);
+    }
+    if (leftBaseline.isElevated || rightBaseline.isElevated) {
+      elevatedPairs.push(`${leftCharacter}/${rightCharacter}`);
+    }
 
     return {
       geometry: manifoldToThree(intersection.getMesh()),
@@ -64,5 +81,5 @@ export function buildIntersectedLetterPairMeshInstances(
     sceneMeshYRotationRadians: options.sceneMeshYRotationRadians,
   });
 
-  return { meshInstances, floaterPairs };
+  return { meshInstances, floaterPairs, descenderPairs, elevatedPairs };
 }
