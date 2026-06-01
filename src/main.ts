@@ -17,6 +17,18 @@ const DEFAULT_WORD_RIGHT = 'WORLD';
 const ROTATED_GLYPH_Y_DEGREES = 90;
 const SCENE_MESH_Y_ROTATION_RADIANS = -Math.PI / 4;
 
+const EASTER_EGG_PAIRS: readonly [string, string][] = [
+  ['BAKE', 'CAKE'],
+  ['BOAT', 'COAT'],
+  ['CAT', 'BAT'],
+  ['CHAOS', 'ORDER'],
+  ['HISTORY', 'MYSTERY'],
+  ['LISTEN', 'SILENT'],
+  ['LOVE', 'HATE'],
+  ['MORE', 'LESS'],
+  ['WORK', 'PLAY'],
+];
+
 async function main() {
   let disposeRenderingRuntime: (() => void) | undefined;
 
@@ -158,6 +170,12 @@ async function main() {
     });
 
     controlsPanel.setDownloadDisabled(true);
+
+    controlsPanel.onLogoClick(() => {
+      const pair = EASTER_EGG_PAIRS[Math.floor(Math.random() * EASTER_EGG_PAIRS.length)];
+      controlsPanel.setWordsAndSubmit(pair[0], pair[1]);
+    });
+
     await renderFromInputs();
   } catch (error) {
     console.error('Error during initialization:', error);

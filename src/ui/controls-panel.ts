@@ -214,6 +214,17 @@ export class ControlsPanel {
     return `${letterSpacing}|${fontIdLeft}|${fontIdRight}|${baseEnabled}|${baseHeight}`;
   }
 
+  setWordsAndSubmit(left: string, right: string): void {
+    this.#wordLeftInput.value = left;
+    this.#wordRightInput.value = right;
+    this.#form.dispatchEvent(new Event('submit', { cancelable: true }));
+  }
+
+  onLogoClick(handler: () => void): void {
+    const logoImg = document.querySelector<HTMLImageElement>('.sidebar img[alt="Ambi logo"]');
+    logoImg?.addEventListener('click', handler);
+  }
+
   setDownloadDisabled(isDisabled: boolean): void {
     this.#downloadStlButton.disabled = isDisabled;
   }
