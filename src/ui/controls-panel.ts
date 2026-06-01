@@ -2,7 +2,6 @@ import type { FontId } from '../fonts/catalog.generated';
 import { isFontId } from '../fonts/catalog.generated';
 import type { CameraMode, MaterialMode } from '../types';
 import { assertSameLength, assertWordsPresent, normalizeWord } from '../word-pairs';
-import { openGlyphViewer } from './glyph-viewer';
 
 export type WordValidation = {
   normalizedWordLeft: string;
@@ -134,11 +133,13 @@ export class ControlsPanel {
     // Glyph viewer buttons
     const glyphBtn1 = document.getElementById('glyph-btn-1');
     const glyphBtn2 = document.getElementById('glyph-btn-2');
-    glyphBtn1?.addEventListener('click', () => {
+    glyphBtn1?.addEventListener('click', async () => {
+      const { openGlyphViewer } = await import('./glyph-viewer');
       const fontId = parseFontId(this.#fontSelect.value, options.defaultFontId);
       openGlyphViewer(fontId);
     });
-    glyphBtn2?.addEventListener('click', () => {
+    glyphBtn2?.addEventListener('click', async () => {
+      const { openGlyphViewer } = await import('./glyph-viewer');
       const fontIdLeft = parseFontId(this.#fontSelect.value, options.defaultFontId);
       const fontIdRight =
         this.#fontSelect2.value === '__same__'
