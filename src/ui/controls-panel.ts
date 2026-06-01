@@ -90,8 +90,7 @@ export class ControlsPanel {
   #options: ControlsPanelOptions;
   #syncing = false;
   #mixedCaseWarning: HTMLDivElement;
-  #floaterWarning: HTMLDivElement;
-  #baselineWarning: HTMLDivElement;
+  #geometryWarning: HTMLDivElement;
 
   constructor(options: ControlsPanelOptions) {
     this.#options = options;
@@ -166,21 +165,13 @@ export class ControlsPanel {
     this.#mixedCaseWarning.hidden = true;
     this.#validationMessage.insertAdjacentElement('afterend', this.#mixedCaseWarning);
 
-    // Floater warning element — created once, shown/hidden as needed
-    this.#floaterWarning = document.createElement('div');
-    this.#floaterWarning.className = 'validation-message';
-    this.#floaterWarning.dataset.state = 'warning';
-    this.#floaterWarning.setAttribute('aria-live', 'polite');
-    this.#floaterWarning.hidden = true;
-    this.#mixedCaseWarning.insertAdjacentElement('afterend', this.#floaterWarning);
-
-    // Baseline warning element — created once, shown/hidden as needed
-    this.#baselineWarning = document.createElement('div');
-    this.#baselineWarning.className = 'validation-message';
-    this.#baselineWarning.dataset.state = 'warning';
-    this.#baselineWarning.setAttribute('aria-live', 'polite');
-    this.#baselineWarning.hidden = true;
-    this.#floaterWarning.insertAdjacentElement('afterend', this.#baselineWarning);
+    // Geometry warning element — created once, shown/hidden as needed
+    this.#geometryWarning = document.createElement('div');
+    this.#geometryWarning.className = 'validation-message';
+    this.#geometryWarning.dataset.state = 'warning';
+    this.#geometryWarning.setAttribute('aria-live', 'polite');
+    this.#geometryWarning.hidden = true;
+    this.#mixedCaseWarning.insertAdjacentElement('afterend', this.#geometryWarning);
   }
 
   // ── Public API ──────────────────────────────────────────────────
@@ -227,30 +218,28 @@ export class ControlsPanel {
     this.#downloadStlButton.disabled = isDisabled;
   }
 
-  showFloaterWarning(floaterPairs: string[]): void {
-    const pairs = floaterPairs.join(', ');
-    this.#floaterWarning.textContent = `Floating geometry in ${floaterPairs.length === 1 ? 'pair' : 'pairs'} ${pairs}. Result may need extra supports for 3D printing and may not stand on its own.`;
-    this.#floaterWarning.hidden = false;
-  }
-
-  clearFloaterWarning(): void {
-    this.#floaterWarning.hidden = true;
-  }
-
-  showBaselineWarning(descenderPairs: string[], elevatedPairs: string[]): void {
+  showGeometryWarnings(
+    floaterPairs: string[],
+    descenderPairs: string[],
+    elevatedPairs: string[],
+  ): void {
     const parts: string[] = [];
+    if (floaterPairs.length > 0) {
+      const label = floaterPairs.length === 1 ? 'pair' : 'pairs';
+      parts.push(`floating geometry in ${label} ${floaterPairs.join(', ')}`);
+    }
     if (descenderPairs.length > 0) {
       parts.push(`descenders below baseline in ${descenderPairs.join(', ')}`);
     }
     if (elevatedPairs.length > 0) {
       parts.push(`glyphs floating above baseline in ${elevatedPairs.join(', ')}`);
     }
-    this.#baselineWarning.textContent = `Baseline issue${parts.length > 1 ? 's' : ''}: ${parts.join('; ')}. Result may not 3D print as expected.`;
-    this.#baselineWarning.hidden = false;
-  }
-
-  clearBaselineWarning(): void {
-    this.#baselineWarning.hidden = true;
+    if (parts.length > 0) {
+      this.#geometryWarning.textContent = `${parts.join('; ')}. Result may not 3D print as expected.`;
+      this.#geometryWarning.hidden = false;
+    } else {
+      this.#geometryWarning.hidden = true;
+    }
   }
 
   onWordsChange(handler: () => void): void {

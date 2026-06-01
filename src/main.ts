@@ -106,17 +106,11 @@ async function main() {
           renderOptions,
         );
 
-        if (result.floaterPairs.length > 0) {
-          controlsPanel.showFloaterWarning(result.floaterPairs);
-        } else {
-          controlsPanel.clearFloaterWarning();
-        }
-
-        if (result.descenderPairs.length > 0 || result.elevatedPairs.length > 0) {
-          controlsPanel.showBaselineWarning(result.descenderPairs, result.elevatedPairs);
-        } else {
-          controlsPanel.clearBaselineWarning();
-        }
+        controlsPanel.showGeometryWarnings(
+          result.floaterPairs,
+          result.descenderPairs,
+          result.elevatedPairs,
+        );
 
         lastBasename = getFileBasename(
           validation.normalizedWordLeft,
