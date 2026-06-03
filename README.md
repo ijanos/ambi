@@ -2,7 +2,7 @@
 
 **Browser-based tool for creating 3D-printable [ambigrams](https://en.wikipedia.org/wiki/Ambigram) from two words of the same length.**
 
-👉 **[Live demo → ambi.janosilles.com](https://ambi.janosilles.com)**
+👉 **[Live demo → ambi3d.com](https://ambi3d.com)**
 
 Successor to [3dwords.rekettye.com](https://3dwords.rekettye.com/) ([GitHub](https://github.com/ijanos/two-words-one-stl)).
 
