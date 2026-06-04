@@ -12,7 +12,9 @@
   --warning-soft: rgba(217, 119, 6, 0.14);
 
   --sans: system-ui, "Segoe UI", Roboto, sans-serif;
-  --mono: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+  --mono:
+    ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas,
+    "DejaVu Sans Mono", monospace;
 
   font: 16px / 1.5 var(--sans);
   color-scheme: light dark;
@@ -88,7 +90,7 @@ p {
 
 .sidebar > .subtitle {
   margin: 0 0 24px 0;
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--text);
   line-height: 1.4;
 }
@@ -97,7 +99,7 @@ p {
   margin-top: 20px;
   padding-top: 20px;
   border-top: 1px solid var(--border);
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--text);
   text-align: center;
 }
@@ -121,7 +123,7 @@ p {
 }
 
 .controls-form .form-group label {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
   color: var(--text-h);
 }
@@ -154,7 +156,7 @@ p {
   border-radius: 4px;
   background: var(--bg);
   color: var(--text);
-  font-size: 14px;
+  font-size: 0.875rem;
   font-family: var(--sans);
   transition: border-color 0.2s;
   cursor: pointer;
@@ -163,6 +165,8 @@ p {
 .controls-form .form-group input[type="text"] {
   cursor: text;
   font-family: var(--mono);
+  font-weight: 600;
+  font-size: 1.25rem;
 }
 
 .controls-form .form-group input[type="range"] {
@@ -199,7 +203,7 @@ p {
   border-radius: 4px;
   background: var(--bg);
   color: var(--text);
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
   font-family: var(--sans);
   cursor: pointer;
@@ -229,7 +233,7 @@ p {
   margin-top: 4px;
   padding-top: 16px;
   border-top: 1px solid var(--border);
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.02em;
   text-transform: uppercase;
@@ -237,7 +241,7 @@ p {
 }
 
 .validation-message {
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.4;
   color: var(--text);
 }
@@ -262,7 +266,7 @@ p {
   color: var(--bg);
   border: none;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
   font-family: var(--sans);
   cursor: pointer;
@@ -366,7 +370,7 @@ p {
     padding: 6px 16px;
     background: var(--panel-bg);
     border-bottom: 1px solid var(--border);
-    font-size: 13px;
+    font-size: 0.8125rem;
     color: var(--text);
     text-align: center;
   }
@@ -424,14 +428,14 @@ p {
 }
 
 .glyph-dialog-title {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--text-h);
   margin: 0;
 }
 
 .glyph-dialog-count {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--text);
   margin-left: 8px;
 }
@@ -444,7 +448,7 @@ p {
   border-radius: 4px;
   background: transparent;
   color: var(--text);
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1;
   cursor: pointer;
   display: flex;
@@ -465,7 +469,7 @@ p {
 
 .glyph-dialog-hint {
   margin: 0;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--text);
   line-height: 1.4;
 }
@@ -474,7 +478,7 @@ p {
 .glyph-dialog-loading {
   text-align: center;
   padding: 24px 0;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .glyph-dialog-error {
@@ -499,7 +503,7 @@ p {
   border: 1px solid var(--border);
   border-radius: 4px;
   background: var(--bg);
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 500;
   color: var(--text-h);
   min-width: 0;
