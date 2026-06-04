@@ -89,15 +89,15 @@ p {
 }
 
 .sidebar > .subtitle {
-  margin: 0 0 24px 0;
+  margin: 0 0 16px 0;
   font-size: 0.875rem;
   color: var(--text);
   line-height: 1.4;
 }
 
 .sidebar > footer {
-  margin-top: 20px;
-  padding-top: 20px;
+  margin-top: 12px;
+  padding-top: 12px;
   border-top: 1px solid var(--border);
   font-size: 0.75rem;
   color: var(--text);
@@ -112,7 +112,7 @@ p {
 .controls-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   flex: 1;
 }
 
@@ -132,7 +132,7 @@ p {
   flex-direction: row;
   align-items: center;
   gap: 8px;
-  margin-top: 4px;
+  margin-top: 0;
 }
 
 .controls-form .form-group.checkbox-group input[type="checkbox"] {
@@ -231,13 +231,21 @@ p {
 
 .controls-form .settings-separator {
   margin-top: 4px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.02em;
   text-transform: uppercase;
   color: var(--text);
+}
+
+.controls-form .settings-separator::before,
+.controls-form .settings-separator::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--border);
 }
 
 .validation-message {
@@ -261,7 +269,7 @@ p {
 /* Generate Button */
 
 .controls-form .generate-btn {
-  padding: 10px 16px;
+  padding: 8px 16px;
   background: var(--text-h);
   color: var(--bg);
   border: none;
