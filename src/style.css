@@ -243,7 +243,7 @@ p {
 
 .controls-form .settings-separator::before,
 .controls-form .settings-separator::after {
-  content: '';
+  content: "";
   flex: 1;
   border-top: 1px solid var(--border);
 }

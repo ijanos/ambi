@@ -16,7 +16,7 @@ Not in order of priority or importance.
 - [ ] Show mesh statistics
 - [ ] Dialog showing all available glyphs in a font
 - [ ] Emojis? How would that even work?
-- [ ] Per-character font choices
+- [ ] Per-character font choices / a rich text editor?
 - [ ] About dialog (mentioning we are client-side only, no tracking, no cookies)
 - [ ] In-scene editing features
 - [ ] Integrate with 3D printing services to order prints
