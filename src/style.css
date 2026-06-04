@@ -12,6 +12,7 @@
   --warning-soft: rgba(217, 119, 6, 0.14);
 
   --sans: system-ui, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, "DejaVu Sans Mono", monospace;
 
   font: 16px / 1.5 var(--sans);
   color-scheme: light dark;
@@ -161,6 +162,7 @@ p {
 
 .controls-form .form-group input[type="text"] {
   cursor: text;
+  font-family: var(--mono);
 }
 
 .controls-form .form-group input[type="range"] {
