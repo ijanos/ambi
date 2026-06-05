@@ -159,7 +159,8 @@ export class ControlsPanel {
     // Mixed case warning — shown when either word mixes upper/lower case letters
     this.#mixedCaseWarning = document.createElement('div');
     this.#mixedCaseWarning.className = 'validation-message';
-    this.#mixedCaseWarning.dataset.state = 'warning';
+    // biome-ignore lint/complexity/useLiteralKeys: noPropertyAccessFromIndexSignature requires bracket notation for DOMStringMap
+    this.#mixedCaseWarning.dataset['state'] = 'warning';
     this.#mixedCaseWarning.setAttribute('aria-live', 'polite');
     this.#mixedCaseWarning.textContent =
       'Mixing uppercase and lowercase letters can produce uneven glyphs — 3D height is determined by the smallest letter.';
@@ -169,7 +170,8 @@ export class ControlsPanel {
     // Geometry warning element — created once, shown/hidden as needed
     this.#geometryWarning = document.createElement('div');
     this.#geometryWarning.className = 'validation-message';
-    this.#geometryWarning.dataset.state = 'warning';
+    // biome-ignore lint/complexity/useLiteralKeys: noPropertyAccessFromIndexSignature requires bracket notation for DOMStringMap
+    this.#geometryWarning.dataset['state'] = 'warning';
     this.#geometryWarning.setAttribute('aria-live', 'polite');
     this.#geometryWarning.hidden = true;
     this.#mixedCaseWarning.insertAdjacentElement('afterend', this.#geometryWarning);
@@ -415,7 +417,8 @@ export class ControlsPanel {
     this.#wordRightInput.setAttribute('aria-invalid', String(!validation.isValid));
 
     this.#validationMessage.textContent = validation.message;
-    this.#validationMessage.dataset.state = validation.isValid ? 'ready' : 'error';
+    // biome-ignore lint/complexity/useLiteralKeys: noPropertyAccessFromIndexSignature requires bracket notation for DOMStringMap
+    this.#validationMessage.dataset['state'] = validation.isValid ? 'ready' : 'error';
 
     return validation;
   }

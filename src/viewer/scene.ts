@@ -196,7 +196,8 @@ function layoutMeshes() {
   let cursor = -totalWidth / 2;
 
   meshes.forEach((mesh, index) => {
-    const width = widths[index];
+    // biome-ignore lint/style/noNonNullAssertion: index is bounded by meshes.forEach
+    const width = widths[index]!;
     mesh.position.set(cursor + width / 2, 0, 0);
     cursor += width + glyphGap;
   });

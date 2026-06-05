@@ -172,7 +172,8 @@ async function main() {
     controlsPanel.setDownloadDisabled(true);
 
     controlsPanel.onLogoClick(() => {
-      const pair = EASTER_EGG_PAIRS[Math.floor(Math.random() * EASTER_EGG_PAIRS.length)];
+      // biome-ignore lint/style/noNonNullAssertion: random index is bounded by array length
+      const pair = EASTER_EGG_PAIRS[Math.floor(Math.random() * EASTER_EGG_PAIRS.length)]!;
       controlsPanel.setWordsAndSubmit(pair[0], pair[1]);
     });
 

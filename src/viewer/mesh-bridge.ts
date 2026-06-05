@@ -21,9 +21,12 @@ function extractPositions(mesh: ManifoldMesh): Float32Array {
   for (let i = 0; i < vertexCount; i++) {
     const src = i * numProp;
     const dst = i * 3;
-    positions[dst] = vertProperties[src];
-    positions[dst + 1] = vertProperties[src + 1];
-    positions[dst + 2] = vertProperties[src + 2];
+    // biome-ignore lint/style/noNonNullAssertion: src is bounded by i * numProp within vertProperties.length
+    positions[dst] = vertProperties[src]!;
+    // biome-ignore lint/style/noNonNullAssertion: src is bounded by i * numProp within vertProperties.length
+    positions[dst + 1] = vertProperties[src + 1]!;
+    // biome-ignore lint/style/noNonNullAssertion: src is bounded by i * numProp within vertProperties.length
+    positions[dst + 2] = vertProperties[src + 2]!;
   }
 
   return positions;

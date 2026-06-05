@@ -43,8 +43,10 @@ function removeClosingPoint(contour: Vec2[]) {
     return;
   }
 
-  const first = contour[0];
-  const last = contour[contour.length - 1];
+  // biome-ignore lint/style/noNonNullAssertion: guarded by length >= 2 check above
+  const first = contour[0]!;
+  // biome-ignore lint/style/noNonNullAssertion: guarded by length >= 2 check above
+  const last = contour[contour.length - 1]!;
   if (arePointsEqual(first, last)) {
     contour.pop();
   }

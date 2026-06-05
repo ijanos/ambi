@@ -6,12 +6,20 @@
     "types": ["vite/client", "three"],
     "skipLibCheck": true,
 
+    /* Strict */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noPropertyAccessFromIndexSignature": true,
+
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
+    "isolatedModules": true,
     "moduleDetection": "force",
     "noEmit": true,
+    "forceConsistentCasingInFileNames": true,
 
     /* Linting */
     "noUnusedLocals": true,
