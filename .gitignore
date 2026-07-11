@@ -1,5 +1,7 @@
 catalog.generated.ts
 
+.env
+
 node_modules/
 dist/
 build/
@@ -18,3 +20,5 @@ AGENT.md
 AGENTS.md
 CLAUDE.md
 GEMINI.md
+reasonix.toml
+.codegraph

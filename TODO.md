@@ -14,7 +14,7 @@ Not in order of priority or importance.
 - [ ] Playwright-based integration tests
 - [ ] Glyph height normalization (ascenders/descenders can get cut off with some fonts)
 - [ ] Show mesh statistics
-- [ ] Dialog showing all available glyphs in a font
+- [x] Dialog showing all available glyphs in a font
 - [ ] Emojis? How would that even work?
 - [ ] Per-character font choices / a rich text editor?
 - [ ] About dialog (mentioning we are client-side only, no tracking, no cookies)
