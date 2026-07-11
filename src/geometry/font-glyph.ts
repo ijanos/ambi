@@ -138,7 +138,7 @@ function checkBaseline(character: string, contours: SimplePolygon[]): BaselineSt
 }
 
 function logMeshStats(character: string, manifoldMesh: Mesh) {
-  if (!manifoldMesh?.triVerts || !manifoldMesh.vertProperties) {
+  if (!manifoldMesh.triVerts || !manifoldMesh.vertProperties) {
     throw new Error(`Invalid mesh data returned from Manifold for glyph ${character}`);
   }
 

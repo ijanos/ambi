@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.15/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.2/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -19,7 +19,12 @@
   ],
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!**/src/fonts/catalog.generated.ts", "!**/src/assets/fonts/*.typeface.json"]
+    "includes": [
+      "**",
+      "!**/src/fonts/catalog.generated.ts",
+      "!**/src/assets/fonts/*.typeface.json",
+      "!**/*.svg"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -50,7 +55,7 @@
       "test": "all"
     },
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "suspicious": {
         "noConsole": {
           "level": "warn",
@@ -87,7 +92,8 @@
         "noProcessGlobal": "error",
         "useUniqueElementIds": "error",
         "noNodejsModules": "error",
-        "noPrivateImports": "error"
+        "noPrivateImports": "error",
+        "noDuplicateAttributes": "error"
       },
       "nursery": {
         "useBaseline": {
@@ -96,10 +102,16 @@
             "available": "newly"
           }
         },
-        "noInlineStyles": "error",
+        "noInlineStyles": "error"
+      },
+      "a11y": {
         "noAmbiguousAnchorText": "error",
-        "noDuplicateAttributes": "error",
-        "noScriptUrl": "error",
+        "noSvgWithoutTitle": "off"
+      },
+      "security": {
+        "noScriptUrl": "error"
+      },
+      "performance": {
         "noSyncScripts": "error"
       }
     }

@@ -291,11 +291,13 @@ export class ControlsPanel {
     };
 
     this.#wordLeftInput.addEventListener('input', () => {
+      // biome-ignore lint/suspicious/noUnnecessaryConditions: guard prevents re-entrant sync
       if (this.#syncing) return;
       syncSpaces(this.#wordLeftInput, this.#wordRightInput);
       handler();
     });
     this.#wordRightInput.addEventListener('input', () => {
+      // biome-ignore lint/suspicious/noUnnecessaryConditions: guard prevents re-entrant sync
       if (this.#syncing) return;
       syncSpaces(this.#wordRightInput, this.#wordLeftInput);
       handler();
