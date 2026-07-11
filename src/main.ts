@@ -29,6 +29,32 @@ const EASTER_EGG_PAIRS: readonly [string, string][] = [
   ['WORK', 'PLAY'],
 ];
 
+function isWebGLAvailable(): boolean {
+  try {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl2') ?? canvas.getContext('webgl');
+    return !!gl;
+  } catch {
+    return false;
+  }
+}
+
+function showWebGlUnavailableWarning(container: HTMLElement): void {
+  const loader = container.querySelector('#viewer-loader');
+  loader?.remove();
+
+  const warning = document.createElement('div');
+  warning.className = 'viewer-loader';
+  warning.setAttribute('role', 'alert');
+  warning.setAttribute('aria-label', 'WebGL unavailable');
+  warning.innerHTML =
+    '<p>JavaScript is enabled, but WebGL is not available. WebGL is required for this application.</p>';
+  container.append(warning);
+
+  container.classList.remove('is-ready');
+  container.setAttribute('aria-busy', 'false');
+}
+
 async function main() {
   let disposeRenderingRuntime: (() => void) | undefined;
 
@@ -36,6 +62,11 @@ async function main() {
     const viewerContainer = document.getElementById('viewer');
     if (!viewerContainer) {
       throw new Error('Viewer container not found');
+    }
+
+    if (!isWebGLAvailable()) {
+      showWebGlUnavailableWarning(viewerContainer);
+      return;
     }
 
     const controlsPanel = new ControlsPanel({
