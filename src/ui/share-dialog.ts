@@ -3,6 +3,10 @@ type ShareDialogElements = {
   urlInput: HTMLInputElement;
   copyButton: HTMLButtonElement;
   copyLabel: HTMLSpanElement;
+  blueskyLink: HTMLAnchorElement;
+  twitterLink: HTMLAnchorElement;
+  redditLink: HTMLAnchorElement;
+  fbLink: HTMLAnchorElement;
 };
 
 let dialogElements: ShareDialogElements | undefined;
@@ -64,8 +68,49 @@ function getDialog(): ShareDialogElements {
   row.appendChild(urlInput);
   row.appendChild(copyButton);
 
+  const socialRow = document.createElement('div');
+  socialRow.className = 'share-dialog-social';
+
+  const socialLabel = document.createElement('span');
+  socialLabel.className = 'share-dialog-social-label';
+  socialLabel.textContent = 'Share on';
+  socialRow.appendChild(socialLabel);
+
+  const blueskyLink = document.createElement('a');
+  blueskyLink.className = 'share-dialog-social-btn share-dialog-social-btn--bluesky';
+  blueskyLink.textContent = 'Bluesky';
+  blueskyLink.setAttribute('aria-label', 'Share on Bluesky');
+  blueskyLink.target = '_blank';
+  blueskyLink.rel = 'noopener noreferrer';
+  socialRow.appendChild(blueskyLink);
+
+  const twitterLink = document.createElement('a');
+  twitterLink.className = 'share-dialog-social-btn share-dialog-social-btn--twitter';
+  twitterLink.textContent = 'Twitter/X';
+  twitterLink.setAttribute('aria-label', 'Share on Twitter/X');
+  twitterLink.target = '_blank';
+  twitterLink.rel = 'noopener noreferrer';
+  socialRow.appendChild(twitterLink);
+
+  const redditLink = document.createElement('a');
+  redditLink.className = 'share-dialog-social-btn share-dialog-social-btn--reddit';
+  redditLink.textContent = 'Reddit';
+  redditLink.setAttribute('aria-label', 'Share on Reddit');
+  redditLink.target = '_blank';
+  redditLink.rel = 'noopener noreferrer';
+  socialRow.appendChild(redditLink);
+
+  const fbLink = document.createElement('a');
+  fbLink.className = 'share-dialog-social-btn share-dialog-social-btn--facebook';
+  fbLink.textContent = 'Facebook';
+  fbLink.setAttribute('aria-label', 'Share on Facebook');
+  fbLink.target = '_blank';
+  fbLink.rel = 'noopener noreferrer';
+  socialRow.appendChild(fbLink);
+
   dialog.appendChild(header);
   dialog.appendChild(row);
+  dialog.appendChild(socialRow);
 
   dialog.addEventListener('click', (event) => {
     if (event.target === dialog) {
@@ -75,7 +120,16 @@ function getDialog(): ShareDialogElements {
 
   document.body.appendChild(dialog);
 
-  dialogElements = { dialog, urlInput, copyButton, copyLabel };
+  dialogElements = {
+    dialog,
+    urlInput,
+    copyButton,
+    copyLabel,
+    blueskyLink,
+    twitterLink,
+    redditLink,
+    fbLink,
+  };
   return dialogElements;
 }
 
@@ -95,9 +149,16 @@ function flashCopied(elements: ShareDialogElements, succeeded: boolean): void {
 
 export function openShareDialog(): void {
   const elements = getDialog();
-  const { dialog, urlInput, copyButton } = elements;
+  const { dialog, urlInput, copyButton, blueskyLink, twitterLink, redditLink, fbLink } = elements;
 
   urlInput.value = location.href;
+  const shareUrl = encodeURIComponent(location.href);
+  const shareTitle = encodeURIComponent(document.title);
+
+  blueskyLink.href = `https://bsky.app/intent/compose?text=${shareUrl}`;
+  twitterLink.href = `https://x.com/intent/tweet?text=${shareUrl}`;
+  redditLink.href = `https://www.reddit.com/submit?url=${shareUrl}&title=${shareTitle}`;
+  fbLink.href = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}&t=${shareTitle}`;
 
   copyButton.onclick = () => {
     if (navigator.clipboard) {

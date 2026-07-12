@@ -662,3 +662,43 @@ p {
 .share-dialog-copy--copied {
   background: var(--text);
 }
+
+.share-dialog-social {
+  display: flex;
+  gap: 8px;
+  padding: 0 20px 16px;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+.share-dialog-social-label {
+  font-size: 0.75rem;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.share-dialog-social-btn {
+  font-size: 0.75rem;
+  font-family: var(--sans);
+  font-weight: 500;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--text-h);
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+  white-space: nowrap;
+}
+
+.share-dialog-social-btn:hover {
+  background: var(--text-h);
+  color: var(--bg);
+}
+
+.share-dialog-social-btn:active {
+  opacity: 0.8;
+}
