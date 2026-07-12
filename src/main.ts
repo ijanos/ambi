@@ -26,8 +26,16 @@ const EASTER_EGG_PAIRS: readonly [string, string][] = [
   ['HISTORY', 'MYSTERY'],
   ['LISTEN', 'SILENT'],
   ['LOVE', 'HATE'],
+  ['PING', 'PONG'],
+  ['TIK', 'TOK'],
+  ['FLIP', 'FLOP'],
+  ['BLACK', 'WHITE'],
+  ['FAST', 'SLOW'],
   ['MORE', 'LESS'],
+  ['SING', 'SONG'],
+  ['DUSK', 'DAWN'],
   ['WORK', 'PLAY'],
+  ['PUSH', 'PULL'],
 ];
 
 function isWebGLAvailable(): boolean {
