@@ -11,6 +11,7 @@ if (typeof Symbol !== 'undefined' && !Symbol.dispose) {
 import { DEFAULT_FONT_ID, FONT_OPTIONS } from './fonts/catalog.generated';
 import type { RenderingRuntime, RenderOptions } from './rendering/runtime';
 import { ControlsPanel } from './ui/controls-panel';
+import { decodeState, encodeState } from './url-state';
 
 const DEFAULT_WORD_LEFT = 'HELLO';
 const DEFAULT_WORD_RIGHT = 'WORLD';
@@ -76,6 +77,19 @@ async function main() {
       fontOptions: FONT_OPTIONS,
     });
 
+    let appIsUpdatingHash = false;
+    const pushUrlState = () => {
+      appIsUpdatingHash = true;
+      try {
+        history.pushState(null, '', `#${encodeState(controlsPanel.getUrlState())}`);
+      } finally {
+        appIsUpdatingHash = false;
+      }
+    };
+
+    const defaultUrlState = controlsPanel.getUrlState();
+    controlsPanel.applyUrlState(decodeState(location.hash, defaultUrlState));
+
     let renderingRuntimePromise: Promise<RenderingRuntime> | undefined;
 
     let lastBasename: string | undefined;
@@ -115,7 +129,7 @@ async function main() {
       controlsPanel.setDownloadDisabled(isDirty);
     };
 
-    const renderFromInputs = async () => {
+    const renderFromInputs = async (opts: { skipHashWrite?: boolean } = {}) => {
       const validation = controlsPanel.syncValidation();
       if (!validation.isValid) {
         controlsPanel.setDownloadDisabled(true);
@@ -162,6 +176,9 @@ async function main() {
         lastFingerprint = controlsPanel.fingerprint;
 
         controlsPanel.setDownloadDisabled(false);
+        if (!opts.skipHashWrite) {
+          pushUrlState();
+        }
       } finally {
         viewerContainer.classList.add('is-ready');
         viewerContainer.setAttribute('aria-busy', 'false');
@@ -200,6 +217,12 @@ async function main() {
       void renderFromInputs();
     });
 
+    window.addEventListener('popstate', () => {
+      if (appIsUpdatingHash) return;
+      controlsPanel.applyUrlState(decodeState(location.hash, defaultUrlState));
+      void renderFromInputs({ skipHashWrite: true });
+    });
+
     controlsPanel.setDownloadDisabled(true);
 
     controlsPanel.onLogoClick(() => {
@@ -208,7 +231,7 @@ async function main() {
       controlsPanel.setWordsAndSubmit(pair[0], pair[1]);
     });
 
-    await renderFromInputs();
+    await renderFromInputs({ skipHashWrite: true });
   } catch (error) {
     console.error('Error during initialization:', error);
     if (error instanceof Error) {

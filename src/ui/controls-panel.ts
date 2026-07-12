@@ -1,6 +1,7 @@
 import type { FontId } from '../fonts/catalog.generated';
 import { isFontId } from '../fonts/catalog.generated';
 import type { CameraMode, MaterialMode } from '../types';
+import type { UrlState } from '../url-state';
 import { assertSameLength, assertWordsPresent, normalizeWord } from '../word-pairs';
 
 export type WordValidation = {
@@ -209,6 +210,36 @@ export class ControlsPanel {
       baseEnabled: this.#baseEnabledInput.checked,
       baseHeight: Number(this.#baseHeightInput.value),
     };
+  }
+
+  getUrlState(): UrlState {
+    const settings = this.getRenderSettings();
+    return {
+      wordLeft: this.#wordLeftInput.value,
+      wordRight: this.#wordRightInput.value,
+      letterSpacing: Number(this.#letterSpacingInput.value),
+      fontIdLeft: settings.fontIdLeft,
+      fontIdRight: this.#fontSelect2.value === '__same__' ? '__same__' : settings.fontIdRight,
+      baseEnabled: this.#baseEnabledInput.checked,
+      baseHeight: Number(this.#baseHeightInput.value),
+      cameraMode: settings.cameraMode,
+      materialMode: settings.materialMode,
+    };
+  }
+
+  applyUrlState(state: UrlState): void {
+    this.#wordLeftInput.value = state.wordLeft;
+    this.#wordRightInput.value = state.wordRight;
+    this.#letterSpacingInput.value = String(state.letterSpacing);
+    this.#fontSelect.value = state.fontIdLeft;
+    this.#fontSelect2.value = state.fontIdRight;
+    this.#baseEnabledInput.checked = state.baseEnabled;
+    this.#baseHeightInput.value = String(state.baseHeight);
+    this.#cameraModeSelect.value = state.cameraMode;
+    this.#materialModeSelect.value = state.materialMode;
+    this.#updateBaseHeightLabel();
+    this.#updateBaseHeightVisibility();
+    this.syncValidation();
   }
 
   get fingerprint(): string {
