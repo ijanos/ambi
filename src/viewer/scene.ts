@@ -136,6 +136,11 @@ export function initScene(container: HTMLElement) {
   controls.dampingFactor = 0.05;
   controls.enablePan = false;
   controls.autoRotate = false;
+  controls.mouseButtons = {
+    LEFT: THREE.MOUSE.ROTATE,
+    MIDDLE: THREE.MOUSE.DOLLY,
+    RIGHT: THREE.MOUSE.ROTATE,
+  };
   controls.target.set(0, 0, 0);
   controls.update();
 
