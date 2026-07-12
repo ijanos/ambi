@@ -123,7 +123,7 @@ async function main() {
     const syncDownloadDirtyState = () => {
       const validation = controlsPanel.syncValidation();
       if (!validation.isValid || !lastBasename) {
-        controlsPanel.setDownloadDisabled(true);
+        controlsPanel.setActionButtonsDisabled(true);
         return;
       }
 
@@ -134,13 +134,13 @@ async function main() {
       const isDirty =
         currentBasename !== lastBasename || controlsPanel.fingerprint !== lastFingerprint;
 
-      controlsPanel.setDownloadDisabled(isDirty);
+      controlsPanel.setActionButtonsDisabled(isDirty);
     };
 
     const renderFromInputs = async (opts: { skipHashWrite?: boolean } = {}) => {
       const validation = controlsPanel.syncValidation();
       if (!validation.isValid) {
-        controlsPanel.setDownloadDisabled(true);
+        controlsPanel.setActionButtonsDisabled(true);
         return;
       }
 
@@ -183,7 +183,7 @@ async function main() {
         );
         lastFingerprint = controlsPanel.fingerprint;
 
-        controlsPanel.setDownloadDisabled(false);
+        controlsPanel.setActionButtonsDisabled(false);
         if (!opts.skipHashWrite) {
           pushUrlState();
         }
@@ -221,6 +221,11 @@ async function main() {
         });
       });
     });
+    controlsPanel.onShare(() => {
+      void import('./ui/share-dialog').then(({ openShareDialog }) => {
+        openShareDialog();
+      });
+    });
     controlsPanel.onSubmit(() => {
       void renderFromInputs();
     });
@@ -231,7 +236,7 @@ async function main() {
       void renderFromInputs({ skipHashWrite: true });
     });
 
-    controlsPanel.setDownloadDisabled(true);
+    controlsPanel.setActionButtonsDisabled(true);
 
     controlsPanel.onLogoClick(() => {
       // biome-ignore lint/style/noNonNullAssertion: random index is bounded by array length

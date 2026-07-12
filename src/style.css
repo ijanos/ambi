@@ -529,3 +529,136 @@ p {
   color: var(--bg);
   transition: none;
 }
+
+/* ==========================================================================
+   SHARE DIALOG
+   ========================================================================== */
+
+.share-dialog {
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-bg);
+  color: var(--text);
+  max-width: 560px;
+  width: calc(100vw - 40px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.share-dialog:not([open]) {
+  display: none;
+}
+
+.share-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+@media (prefers-color-scheme: dark) {
+  .share-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.6);
+  }
+}
+
+.share-dialog-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.share-dialog-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.share-dialog-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0;
+}
+
+.share-dialog-close {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text);
+  font-size: 1.125rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.share-dialog-close:hover {
+  background: var(--border);
+}
+
+.share-dialog-hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.share-dialog-row {
+  display: flex;
+  gap: 8px;
+  padding: 16px 20px;
+  align-items: stretch;
+}
+
+.share-dialog-url {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 0.8125rem;
+  font-family: var(--sans);
+  overflow: hidden;
+}
+
+.share-dialog-url:focus {
+  outline: none;
+  border-color: var(--text-h);
+}
+
+.share-dialog-copy {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  background: var(--text-h);
+  color: var(--bg);
+  border: none;
+  border-radius: 4px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.share-dialog-copy:hover {
+  opacity: 0.8;
+}
+
+.share-dialog-copy:active {
+  opacity: 0.9;
+}
+
+.share-dialog-copy--copied {
+  background: var(--text);
+}

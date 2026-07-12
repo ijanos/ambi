@@ -81,6 +81,7 @@ export class ControlsPanel {
   #cameraModeSelect: HTMLSelectElement;
   #materialModeSelect: HTMLSelectElement;
   #downloadStlButton: HTMLButtonElement;
+  #shareButton: HTMLButtonElement;
   #validationMessage: HTMLDivElement;
   #baseEnabledInput: HTMLInputElement;
   #baseHeightInput: HTMLInputElement;
@@ -106,6 +107,7 @@ export class ControlsPanel {
     this.#cameraModeSelect = requireElement('#camera-mode', HTMLSelectElement);
     this.#materialModeSelect = requireElement('#material-mode', HTMLSelectElement);
     this.#downloadStlButton = requireElement('#download-stl-btn', HTMLButtonElement);
+    this.#shareButton = requireElement('#share-btn', HTMLButtonElement);
     this.#validationMessage = requireElement('#validation-message', HTMLDivElement);
     this.#baseEnabledInput = requireElement('#base-enabled', HTMLInputElement);
     this.#baseHeightInput = requireElement('#base-height', HTMLInputElement);
@@ -259,8 +261,9 @@ export class ControlsPanel {
     logoImg?.addEventListener('click', handler);
   }
 
-  setDownloadDisabled(isDisabled: boolean): void {
+  setActionButtonsDisabled(isDisabled: boolean): void {
     this.#downloadStlButton.disabled = isDisabled;
+    this.#shareButton.disabled = isDisabled;
   }
 
   showGeometryWarnings(
@@ -365,6 +368,10 @@ export class ControlsPanel {
 
   onDownload(handler: () => void): void {
     this.#downloadStlButton.addEventListener('click', handler);
+  }
+
+  onShare(handler: () => void): void {
+    this.#shareButton.addEventListener('click', handler);
   }
 
   onSubmit(handler: () => void): void {
