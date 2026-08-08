@@ -34,6 +34,7 @@ const EASTER_EGG_PAIRS: readonly [string, string][] = [
   ['MORE', 'LESS'],
   ['SING', 'SONG'],
   ['DUSK', 'DAWN'],
+  ['AMBI', 'GRAM'],
   ['WORK', 'PLAY'],
   ['PUSH', 'PULL'],
 ];
