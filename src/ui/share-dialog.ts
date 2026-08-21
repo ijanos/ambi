@@ -21,20 +21,20 @@ function getDialog(): ShareDialogElements {
   }
 
   const dialog = document.createElement('dialog');
-  dialog.className = 'share-dialog';
+  dialog.className = 'dialog share-dialog';
 
   const header = document.createElement('div');
-  header.className = 'share-dialog-header';
+  header.className = 'dialog-header';
 
   const headerRow = document.createElement('div');
-  headerRow.className = 'share-dialog-header-row';
+  headerRow.className = 'dialog-header-row';
 
   const title = document.createElement('h2');
-  title.className = 'share-dialog-title';
+  title.className = 'dialog-title';
   title.textContent = 'Share';
 
   const closeBtn = document.createElement('button');
-  closeBtn.className = 'share-dialog-close';
+  closeBtn.className = 'dialog-close';
   closeBtn.textContent = '✕';
   closeBtn.setAttribute('aria-label', 'Close share dialog');
   closeBtn.addEventListener('click', () => dialog.close());
@@ -44,7 +44,7 @@ function getDialog(): ShareDialogElements {
   header.appendChild(headerRow);
 
   const hint = document.createElement('p');
-  hint.className = 'share-dialog-hint';
+  hint.className = 'dialog-hint';
   hint.textContent = 'Use this URL to share your ambigram with others';
   header.appendChild(hint);
 

@@ -19,16 +19,16 @@ function getDialog(): DialogElements {
   }
 
   const dialog = document.createElement('dialog');
-  dialog.className = 'glyph-dialog';
+  dialog.className = 'dialog glyph-dialog';
 
   const header = document.createElement('div');
-  header.className = 'glyph-dialog-header';
+  header.className = 'dialog-header';
 
   const headerRow = document.createElement('div');
-  headerRow.className = 'glyph-dialog-header-row';
+  headerRow.className = 'dialog-header-row';
 
   const title = document.createElement('h2');
-  title.className = 'glyph-dialog-title';
+  title.className = 'dialog-title';
 
   const titleText = document.createElement('span');
   const count = document.createElement('span');
@@ -38,7 +38,7 @@ function getDialog(): DialogElements {
   title.appendChild(count);
 
   const closeBtn = document.createElement('button');
-  closeBtn.className = 'glyph-dialog-close';
+  closeBtn.className = 'dialog-close';
   closeBtn.textContent = '✕';
   closeBtn.setAttribute('aria-label', 'Close glyph viewer');
   closeBtn.addEventListener('click', () => dialog.close());
@@ -48,7 +48,7 @@ function getDialog(): DialogElements {
   header.appendChild(headerRow);
 
   const hint = document.createElement('p');
-  hint.className = 'glyph-dialog-hint';
+  hint.className = 'dialog-hint';
   hint.textContent = 'Click any glyph to copy it to your clipboard.';
   header.appendChild(hint);
 
