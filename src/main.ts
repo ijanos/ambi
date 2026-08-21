@@ -258,4 +258,4 @@ async function main() {
   });
 }
 
-void main();
+main().catch((error) => console.error(error));
