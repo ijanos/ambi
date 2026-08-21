@@ -118,8 +118,8 @@ async function main() {
       return renderingRuntimePromise;
     };
 
-    const getFileBasename = (wordLeft: string, wordRight: string): string =>
-      `${wordLeft}_${wordRight}`;
+    const getFileBasename = (left: string, right: string): string =>
+      `${left}_${right}`.replace(/[^\p{L}\p{N}_-]+/gu, '_');
 
     const syncDownloadDirtyState = () => {
       const validation = controlsPanel.syncValidation();
