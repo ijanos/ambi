@@ -90,7 +90,6 @@ function renderGlyphGrid(glyphKeys: string[]): void {
     const cell = document.createElement('div');
     cell.className = 'glyph-cell';
     cell.textContent = c;
-    cell.title = c;
     cell.addEventListener('click', () => {
       if (navigator.clipboard) {
         navigator.clipboard.writeText(c).then(

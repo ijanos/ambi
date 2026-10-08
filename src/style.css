@@ -523,18 +523,17 @@ p {
   color: var(--text-h);
   min-width: 0;
   overflow: hidden;
-  transition: background 0.15s;
+  cursor: pointer;
+  font-size: 2em;
 }
 
 .glyph-cell:hover {
   background: var(--border);
-  cursor: pointer;
 }
 
 .glyph-cell.glyph-cell--copied {
   background: var(--text-h);
   color: var(--bg);
-  transition: none;
 }
 
 /* ==========================================================================
