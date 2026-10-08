@@ -76,8 +76,8 @@ export class ControlsPanel {
   #wordLeftLabel: HTMLLabelElement;
   #wordRightLabel: HTMLLabelElement;
   #letterSpacingInput: HTMLInputElement;
-  #fontSelect: HTMLSelectElement;
-  #fontSelect2: HTMLSelectElement;
+  #fontSelectLeft: HTMLSelectElement;
+  #fontSelectRight: HTMLSelectElement;
   #cameraModeSelect: HTMLSelectElement;
   #materialModeSelect: HTMLSelectElement;
   #downloadStlButton: HTMLButtonElement;
@@ -102,8 +102,8 @@ export class ControlsPanel {
     this.#wordLeftLabel = requireElement('#word1-label', HTMLLabelElement);
     this.#wordRightLabel = requireElement('#word2-label', HTMLLabelElement);
     this.#letterSpacingInput = requireElement('#letter-spacing', HTMLInputElement);
-    this.#fontSelect = requireElement('#font-selector', HTMLSelectElement);
-    this.#fontSelect2 = requireElement('#font-selector-2', HTMLSelectElement);
+    this.#fontSelectLeft = requireElement('#font-selector', HTMLSelectElement);
+    this.#fontSelectRight = requireElement('#font-selector-2', HTMLSelectElement);
     this.#cameraModeSelect = requireElement('#camera-mode', HTMLSelectElement);
     this.#materialModeSelect = requireElement('#material-mode', HTMLSelectElement);
     this.#downloadStlButton = requireElement('#download-stl-btn', HTMLButtonElement);
@@ -115,39 +115,29 @@ export class ControlsPanel {
 
     this.#wordLeftInput.value = options.defaultWordLeft;
     this.#wordRightInput.value = options.defaultWordRight;
-    this.#setFontOptions(this.#fontSelect, options.fontOptions, options.defaultFontId);
-    // Font 2 gets the same options plus a sentinel "Same as Word 1" at the top
-    this.#fontSelect2.replaceChildren(
-      (() => {
-        const opt = document.createElement('option');
-        opt.value = '__same__';
-        opt.textContent = 'Same as Word 1';
-        return opt;
-      })(),
-      ...options.fontOptions.map((fontOption) => {
-        const optionElement = document.createElement('option');
-        optionElement.value = fontOption.id;
-        optionElement.textContent = fontOption.label;
-        return optionElement;
-      }),
-    );
-    this.#fontSelect2.value = '__same__';
+    this.#setFontOptions(this.#fontSelectLeft, options.fontOptions, options.defaultFontId);
+    this.#setFontOptions(this.#fontSelectRight, options.fontOptions, options.defaultFontId);
+    const sameFontOption = document.createElement('option');
+    sameFontOption.value = '__same__';
+    sameFontOption.textContent = 'Same as Word 1';
+    this.#fontSelectRight.prepend(sameFontOption);
+    this.#fontSelectRight.value = '__same__';
 
     // Glyph viewer buttons
     const glyphBtn1 = document.getElementById('glyph-btn-1');
     const glyphBtn2 = document.getElementById('glyph-btn-2');
     glyphBtn1?.addEventListener('click', async () => {
       const { openGlyphViewer } = await import('./glyph-viewer');
-      const fontId = parseFontId(this.#fontSelect.value, options.defaultFontId);
+      const fontId = parseFontId(this.#fontSelectLeft.value, options.defaultFontId);
       openGlyphViewer(fontId);
     });
     glyphBtn2?.addEventListener('click', async () => {
       const { openGlyphViewer } = await import('./glyph-viewer');
-      const fontIdLeft = parseFontId(this.#fontSelect.value, options.defaultFontId);
+      const fontIdLeft = parseFontId(this.#fontSelectLeft.value, options.defaultFontId);
       const fontIdRight =
-        this.#fontSelect2.value === '__same__'
+        this.#fontSelectRight.value === '__same__'
           ? fontIdLeft
-          : parseFontId(this.#fontSelect2.value, options.defaultFontId);
+          : parseFontId(this.#fontSelectRight.value, options.defaultFontId);
       openGlyphViewer(fontIdRight);
     });
 
@@ -197,11 +187,11 @@ export class ControlsPanel {
   }
 
   getRenderSettings(): RenderSettings {
-    const fontIdLeft = parseFontId(this.#fontSelect.value, this.#options.defaultFontId);
+    const fontIdLeft = parseFontId(this.#fontSelectLeft.value, this.#options.defaultFontId);
     const fontIdRight =
-      this.#fontSelect2.value === '__same__'
+      this.#fontSelectRight.value === '__same__'
         ? fontIdLeft
-        : parseFontId(this.#fontSelect2.value, this.#options.defaultFontId);
+        : parseFontId(this.#fontSelectRight.value, this.#options.defaultFontId);
 
     return {
       cameraMode: parseCameraMode(this.#cameraModeSelect.value),
@@ -221,7 +211,7 @@ export class ControlsPanel {
       wordRight: this.#wordRightInput.value,
       letterSpacing: Number(this.#letterSpacingInput.value),
       fontIdLeft: settings.fontIdLeft,
-      fontIdRight: this.#fontSelect2.value === '__same__' ? '__same__' : settings.fontIdRight,
+      fontIdRight: this.#fontSelectRight.value === '__same__' ? '__same__' : settings.fontIdRight,
       baseEnabled: this.#baseEnabledInput.checked,
       baseHeight: Number(this.#baseHeightInput.value),
       cameraMode: settings.cameraMode,
@@ -233,8 +223,8 @@ export class ControlsPanel {
     this.#wordLeftInput.value = state.wordLeft;
     this.#wordRightInput.value = state.wordRight;
     this.#letterSpacingInput.value = String(state.letterSpacing);
-    this.#fontSelect.value = state.fontIdLeft;
-    this.#fontSelect2.value = state.fontIdRight;
+    this.#fontSelectLeft.value = state.fontIdLeft;
+    this.#fontSelectRight.value = state.fontIdRight;
     this.#baseEnabledInput.checked = state.baseEnabled;
     this.#baseHeightInput.value = String(state.baseHeight);
     this.#cameraModeSelect.value = state.cameraMode;
@@ -338,15 +328,13 @@ export class ControlsPanel {
     });
   }
 
-  onLetterSpacingChange(handler: (letterSpacing: number) => void): void {
-    this.#letterSpacingInput.addEventListener('input', () => {
-      handler(parseLetterSpacing(this.#letterSpacingInput.value));
-    });
+  onLetterSpacingChange(handler: () => void): void {
+    this.#letterSpacingInput.addEventListener('input', handler);
   }
 
-  onFontChange(handler: (fontIdLeft: FontId, fontIdRight: FontId) => void): void {
-    this.#fontSelect.addEventListener('change', () => this.#fireFontChange(handler));
-    this.#fontSelect2.addEventListener('change', () => this.#fireFontChange(handler));
+  onFontChange(handler: () => void): void {
+    this.#fontSelectLeft.addEventListener('change', handler);
+    this.#fontSelectRight.addEventListener('change', handler);
   }
 
   onCameraModeChange(handler: (cameraMode: CameraMode) => void): void {
@@ -474,14 +462,5 @@ export class ControlsPanel {
     if (baseHeightGroup) {
       baseHeightGroup.style.opacity = isEnabled ? '1' : '0.5';
     }
-  }
-
-  #fireFontChange(handler: (fontIdLeft: FontId, fontIdRight: FontId) => void): void {
-    const fontIdLeft = parseFontId(this.#fontSelect.value, this.#options.defaultFontId);
-    const fontIdRight =
-      this.#fontSelect2.value === '__same__'
-        ? fontIdLeft
-        : parseFontId(this.#fontSelect2.value, this.#options.defaultFontId);
-    handler(fontIdLeft, fontIdRight);
   }
 }

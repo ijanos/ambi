@@ -518,7 +518,6 @@ p {
   border: 1px solid var(--border);
   border-radius: 4px;
   background: var(--bg);
-  font-size: 1rem;
   font-weight: 500;
   color: var(--text-h);
   min-width: 0;

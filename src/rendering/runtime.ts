@@ -1,4 +1,4 @@
-import { createMeshExporter, type MeshExportRequest } from '../exporting/mesh-exporter';
+import { downloadStl } from '../exporting/mesh-exporter';
 import type { FontId } from '../fonts/catalog.generated';
 import { loadFont } from '../fonts/load-font';
 import { initManifold } from '../geometry/manifold';
@@ -35,7 +35,7 @@ export type RenderingRuntime = {
     wordRight: string,
     options: RenderOptions,
   ): Promise<BuildResult>;
-  exportMesh(request: MeshExportRequest): void;
+  downloadStl(fileBasename: string): void;
   setCameraMode(cameraMode: CameraMode): void;
   setMaterialMode(materialMode: MaterialMode): void;
   dispose(): void;
@@ -49,10 +49,6 @@ export async function createRenderingRuntime(container: HTMLElement): Promise<Re
   console.log('Initializing scene...');
   initScene(container);
   console.log('Scene initialized');
-
-  const meshExporter = createMeshExporter({
-    exportGlyphGroupBinaryStl,
-  });
 
   return {
     async renderIntersectedLetterPairs(wordLeft, wordRight, options) {
@@ -87,8 +83,8 @@ export async function createRenderingRuntime(container: HTMLElement): Promise<Re
 
       return result;
     },
-    exportMesh(request) {
-      meshExporter.exportMesh(request);
+    downloadStl(fileBasename) {
+      downloadStl(fileBasename, exportGlyphGroupBinaryStl());
     },
     setCameraMode,
     setMaterialMode,

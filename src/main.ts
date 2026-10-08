@@ -147,15 +147,9 @@ async function main() {
 
       const settings = controlsPanel.getRenderSettings();
       const renderOptions: RenderOptions = {
+        ...settings,
         rotatedGlyphYDegrees: ROTATED_GLYPH_Y_DEGREES,
         sceneMeshYRotationRadians: SCENE_MESH_Y_ROTATION_RADIANS,
-        cameraMode: settings.cameraMode,
-        materialMode: settings.materialMode,
-        letterSpacing: settings.letterSpacing,
-        fontIdLeft: settings.fontIdLeft,
-        fontIdRight: settings.fontIdRight,
-        baseEnabled: settings.baseEnabled,
-        baseHeight: settings.baseHeight,
       };
 
       viewerContainer.classList.remove('is-ready');
@@ -215,11 +209,7 @@ async function main() {
 
       const fileBasename = lastBasename;
       void getRenderingRuntime().then((runtime) => {
-        runtime.exportMesh({
-          format: 'stl',
-          source: 'glyph-group',
-          fileBasename,
-        });
+        runtime.downloadStl(fileBasename);
       });
     });
     controlsPanel.onShare(() => {

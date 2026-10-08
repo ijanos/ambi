@@ -41,7 +41,6 @@ let glyphGap = DEFAULT_GLYPH_GAP;
 
 export interface MeshInstance {
   geometry: THREE.BufferGeometry;
-  position?: THREE.Vector3;
   rotation?: THREE.Vector3;
 }
 
@@ -51,7 +50,7 @@ function getGlyphMaterial(mode: MaterialMode): THREE.Material {
   return baseColorMaterial;
 }
 
-function applyMaterialMode(mode: MaterialMode) {
+export function setMaterialMode(mode: MaterialMode) {
   currentMaterialMode = mode;
   const material = getGlyphMaterial(mode);
 
@@ -85,7 +84,7 @@ function setCameraPositionAndRange(center: THREE.Vector3, radius: number) {
   camera.updateProjectionMatrix();
 }
 
-function applyCameraMode(mode: CameraMode) {
+export function setCameraMode(mode: CameraMode) {
   currentCameraMode = mode;
   camera = mode === 'orthographic' ? orthographicCamera : perspectiveCamera;
 
@@ -144,7 +143,7 @@ export function initScene(container: HTMLElement) {
   controls.target.set(0, 0, 0);
   controls.update();
 
-  applyCameraMode(currentCameraMode);
+  setCameraMode(currentCameraMode);
 
   window.addEventListener('resize', onWindowResize);
   animate();
@@ -237,14 +236,8 @@ export function setMeshInstances(
 ) {
   clearMeshes();
 
-  const hasExplicitPositions = instances.some(({ position }) => position !== undefined);
-
-  meshes = instances.map(({ geometry, position, rotation }) => {
+  meshes = instances.map(({ geometry, rotation }) => {
     const mesh = new THREE.Mesh(geometry, getGlyphMaterial(currentMaterialMode));
-
-    if (position) {
-      mesh.position.copy(position);
-    }
 
     if (rotation) {
       mesh.rotation.setFromVector3(rotation);
@@ -254,9 +247,7 @@ export function setMeshInstances(
     return mesh;
   });
 
-  if (!hasExplicitPositions) {
-    layoutMeshes();
-  }
+  layoutMeshes();
 
   if (baseOptions?.enabled && meshes.length > 0) {
     const box = new THREE.Box3();
@@ -294,10 +285,6 @@ export function setMeshInstances(
   frameMeshes();
 }
 
-export function setCameraMode(mode: CameraMode) {
-  applyCameraMode(mode);
-}
-
 export function setGlyphGap(nextGlyphGap: number) {
   glyphGap = Number.isFinite(nextGlyphGap) ? Math.max(0, nextGlyphGap) : DEFAULT_GLYPH_GAP;
 }
@@ -308,10 +295,6 @@ export function exportGlyphGroupBinaryStl(): DataView<ArrayBuffer> {
   exportRoot.updateMatrixWorld(true);
 
   return stlExporter.parse(exportRoot, { binary: true }) as DataView<ArrayBuffer>;
-}
-
-export function setMaterialMode(mode: MaterialMode) {
-  applyMaterialMode(mode);
 }
 
 export function dispose() {
