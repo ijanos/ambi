@@ -18,7 +18,7 @@
     "@types/three": "^0.186",
     "typescript": "~6.0.2",
     "vite": "^8.0.12",
-    "vitest": "^4.1.6"
+    "vitest": "^5"
   },
   "dependencies": {
     "manifold-3d": "^3.4.1",
