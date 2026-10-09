@@ -8,6 +8,7 @@ if (typeof Symbol !== 'undefined' && !Symbol.dispose) {
   });
 }
 
+import { type AppState, geometryFingerprint, toRenderSettings } from './app-state';
 import { DEFAULT_FONT_ID, FONT_OPTIONS } from './fonts/catalog.generated';
 import type { RenderingRuntime, RenderOptions } from './rendering/runtime';
 import { ControlsPanel } from './ui/controls-panel';
@@ -87,22 +88,22 @@ async function main() {
     });
 
     let appIsUpdatingHash = false;
-    const pushUrlState = () => {
+    const pushUrlState = (state: AppState) => {
       appIsUpdatingHash = true;
       try {
-        history.pushState(null, '', `#${encodeState(controlsPanel.getUrlState())}`);
+        history.pushState(null, '', `#${encodeState(state)}`);
       } finally {
         appIsUpdatingHash = false;
       }
     };
 
-    const defaultUrlState = controlsPanel.getUrlState();
-    controlsPanel.applyUrlState(decodeState(location.hash, defaultUrlState));
+    const defaultUrlState = controlsPanel.getState();
+    controlsPanel.applyState(decodeState(location.hash, defaultUrlState));
 
     let renderingRuntimePromise: Promise<RenderingRuntime> | undefined;
 
     let lastBasename: string | undefined;
-    let lastFingerprint: string | undefined;
+    let lastRenderedState: AppState | undefined;
 
     const getRenderingRuntime = () => {
       if (!renderingRuntimePromise) {
@@ -123,17 +124,13 @@ async function main() {
 
     const syncDownloadDirtyState = () => {
       const validation = controlsPanel.syncValidation();
-      if (!validation.isValid || !lastBasename) {
+      if (!validation.isValid || !lastRenderedState) {
         controlsPanel.setActionButtonsDisabled(true);
         return;
       }
 
-      const currentBasename = getFileBasename(
-        validation.normalizedWordLeft,
-        validation.normalizedWordRight,
-      );
       const isDirty =
-        currentBasename !== lastBasename || controlsPanel.fingerprint !== lastFingerprint;
+        geometryFingerprint(controlsPanel.getState()) !== geometryFingerprint(lastRenderedState);
 
       controlsPanel.setActionButtonsDisabled(isDirty);
     };
@@ -145,9 +142,9 @@ async function main() {
         return;
       }
 
-      const settings = controlsPanel.getRenderSettings();
+      const state = controlsPanel.getState();
       const renderOptions: RenderOptions = {
-        ...settings,
+        ...toRenderSettings(state),
         rotatedGlyphYDegrees: ROTATED_GLYPH_Y_DEGREES,
         sceneMeshYRotationRadians: SCENE_MESH_Y_ROTATION_RADIANS,
       };
@@ -176,11 +173,11 @@ async function main() {
           validation.normalizedWordLeft,
           validation.normalizedWordRight,
         );
-        lastFingerprint = controlsPanel.fingerprint;
+        lastRenderedState = state;
 
-        controlsPanel.setActionButtonsDisabled(false);
+        syncDownloadDirtyState();
         if (!opts.skipHashWrite) {
-          pushUrlState();
+          pushUrlState(state);
         }
       } finally {
         viewerContainer.classList.add('is-ready');
@@ -223,7 +220,7 @@ async function main() {
 
     window.addEventListener('popstate', () => {
       if (appIsUpdatingHash) return;
-      controlsPanel.applyUrlState(decodeState(location.hash, defaultUrlState));
+      controlsPanel.applyState(decodeState(location.hash, defaultUrlState));
       void renderFromInputs({ skipHashWrite: true });
     });
 

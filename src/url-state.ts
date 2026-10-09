@@ -1,17 +1,6 @@
+import type { AppState } from './app-state';
 import { DEFAULT_FONT_ID, type FontId, isFontId } from './fonts/catalog.generated';
 import type { CameraMode, MaterialMode } from './types';
-
-export type UrlState = {
-  wordLeft: string;
-  wordRight: string;
-  letterSpacing: number;
-  fontIdLeft: FontId;
-  fontIdRight: FontId | '__same__';
-  baseEnabled: boolean;
-  baseHeight: number;
-  cameraMode: CameraMode;
-  materialMode: MaterialMode;
-};
 
 const CAMERA_MODE_TO_SHORT: ReadonlyMap<CameraMode, string> = new Map([
   ['perspective', 'p'],
@@ -52,7 +41,7 @@ function parseFontIdRight(token: string): FontId | '__same__' {
   return isFontId(token) ? token : DEFAULT_FONT_ID;
 }
 
-export function encodeState(state: UrlState): string {
+export function encodeState(state: AppState): string {
   const parts = [
     encodeURIComponent(state.wordLeft),
     encodeURIComponent(state.wordRight),
@@ -67,7 +56,7 @@ export function encodeState(state: UrlState): string {
   return parts.join('&');
 }
 
-export function decodeState(hash: string, defaults: UrlState): UrlState {
+export function decodeState(hash: string, defaults: AppState): AppState {
   const body = hash.startsWith('#') ? hash.slice(1) : hash;
   if (body === '') return { ...defaults };
 

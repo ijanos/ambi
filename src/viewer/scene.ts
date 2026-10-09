@@ -264,7 +264,7 @@ export function setMeshInstances(
       const BASE_PADDING = 1.5;
       const baseWidth = size.x + BASE_PADDING * 2;
       const baseDepth = size.z + BASE_PADDING * 2;
-      const baseHeight = baseOptions.height / 10;
+      const baseHeight = baseOptions.height;
 
       using baseSolid = createChamferedBaseSolid(baseWidth, baseDepth, baseHeight);
       const baseGeometry = manifoldToThree(baseSolid.getMesh());

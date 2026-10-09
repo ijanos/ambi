@@ -1,7 +1,7 @@
+import { type AppState, toRenderSettings } from '../app-state';
 import type { FontId } from '../fonts/catalog.generated';
 import { isFontId } from '../fonts/catalog.generated';
 import type { CameraMode, MaterialMode } from '../types';
-import type { UrlState } from '../url-state';
 import { assertSameLength, assertWordsPresent, normalizeWord } from '../word-pairs';
 
 export type WordValidation = {
@@ -11,16 +11,6 @@ export type WordValidation = {
   rightCount: number;
   isValid: boolean;
   message: string;
-};
-
-export type RenderSettings = {
-  cameraMode: CameraMode;
-  materialMode: MaterialMode;
-  letterSpacing: number;
-  fontIdLeft: FontId;
-  fontIdRight: FontId;
-  baseEnabled: boolean;
-  baseHeight: number;
 };
 
 export type FontOption = {
@@ -59,11 +49,6 @@ function parseMaterialMode(value: string): MaterialMode {
   if (value === 'normal-vectors') return 'normal-vectors';
   if (value === 'wireframe') return 'wireframe';
   return 'base-color';
-}
-
-function parseLetterSpacing(value: string): number {
-  const parsed = Number(value) / 10;
-  return Number.isFinite(parsed) ? parsed : 0;
 }
 
 function parseFontId(value: string, fallbackFontId: FontId): FontId {
@@ -128,16 +113,12 @@ export class ControlsPanel {
     const glyphBtn2 = document.getElementById('glyph-btn-2');
     glyphBtn1?.addEventListener('click', async () => {
       const { openGlyphViewer } = await import('./glyph-viewer');
-      const fontId = parseFontId(this.#fontSelectLeft.value, options.defaultFontId);
+      const { fontIdLeft: fontId } = toRenderSettings(this.getState());
       openGlyphViewer(fontId);
     });
     glyphBtn2?.addEventListener('click', async () => {
       const { openGlyphViewer } = await import('./glyph-viewer');
-      const fontIdLeft = parseFontId(this.#fontSelectLeft.value, options.defaultFontId);
-      const fontIdRight =
-        this.#fontSelectRight.value === '__same__'
-          ? fontIdLeft
-          : parseFontId(this.#fontSelectRight.value, options.defaultFontId);
+      const { fontIdRight } = toRenderSettings(this.getState());
       openGlyphViewer(fontIdRight);
     });
 
@@ -186,40 +167,24 @@ export class ControlsPanel {
     return validation;
   }
 
-  getRenderSettings(): RenderSettings {
-    const fontIdLeft = parseFontId(this.#fontSelectLeft.value, this.#options.defaultFontId);
-    const fontIdRight =
-      this.#fontSelectRight.value === '__same__'
-        ? fontIdLeft
-        : parseFontId(this.#fontSelectRight.value, this.#options.defaultFontId);
-
-    return {
-      cameraMode: parseCameraMode(this.#cameraModeSelect.value),
-      materialMode: parseMaterialMode(this.#materialModeSelect.value),
-      letterSpacing: parseLetterSpacing(this.#letterSpacingInput.value),
-      fontIdLeft,
-      fontIdRight,
-      baseEnabled: this.#baseEnabledInput.checked,
-      baseHeight: Number(this.#baseHeightInput.value),
-    };
-  }
-
-  getUrlState(): UrlState {
-    const settings = this.getRenderSettings();
+  getState(): AppState {
     return {
       wordLeft: this.#wordLeftInput.value,
       wordRight: this.#wordRightInput.value,
       letterSpacing: Number(this.#letterSpacingInput.value),
-      fontIdLeft: settings.fontIdLeft,
-      fontIdRight: this.#fontSelectRight.value === '__same__' ? '__same__' : settings.fontIdRight,
+      fontIdLeft: parseFontId(this.#fontSelectLeft.value, this.#options.defaultFontId),
+      fontIdRight:
+        this.#fontSelectRight.value === '__same__'
+          ? '__same__'
+          : parseFontId(this.#fontSelectRight.value, this.#options.defaultFontId),
       baseEnabled: this.#baseEnabledInput.checked,
       baseHeight: Number(this.#baseHeightInput.value),
-      cameraMode: settings.cameraMode,
-      materialMode: settings.materialMode,
+      cameraMode: parseCameraMode(this.#cameraModeSelect.value),
+      materialMode: parseMaterialMode(this.#materialModeSelect.value),
     };
   }
 
-  applyUrlState(state: UrlState): void {
+  applyState(state: AppState): void {
     this.#wordLeftInput.value = state.wordLeft;
     this.#wordRightInput.value = state.wordRight;
     this.#letterSpacingInput.value = String(state.letterSpacing);
@@ -232,12 +197,6 @@ export class ControlsPanel {
     this.#updateBaseHeightLabel();
     this.#updateBaseHeightVisibility();
     this.syncValidation();
-  }
-
-  get fingerprint(): string {
-    const { letterSpacing, fontIdLeft, fontIdRight, baseEnabled, baseHeight } =
-      this.getRenderSettings();
-    return `${letterSpacing}|${fontIdLeft}|${fontIdRight}|${baseEnabled}|${baseHeight}`;
   }
 
   setWordsAndSubmit(left: string, right: string): void {

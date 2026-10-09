@@ -1,5 +1,5 @@
+import type { RenderSettings } from '../app-state';
 import { downloadStl } from '../exporting/mesh-exporter';
-import type { FontId } from '../fonts/catalog.generated';
 import { loadFont } from '../fonts/load-font';
 import { initManifold } from '../geometry/manifold';
 import type { CameraMode, MaterialMode } from '../types';
@@ -17,16 +17,9 @@ import {
   buildIntersectedLetterPairMeshInstances,
 } from './intersected-letter-pairs';
 
-export type RenderOptions = {
+export type RenderOptions = RenderSettings & {
   rotatedGlyphYDegrees: number;
   sceneMeshYRotationRadians: number;
-  cameraMode: CameraMode;
-  materialMode: MaterialMode;
-  letterSpacing: number;
-  fontIdLeft: FontId;
-  fontIdRight: FontId;
-  baseEnabled: boolean;
-  baseHeight: number;
 };
 
 export type RenderingRuntime = {

@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
+import type { AppState } from './app-state';
 import type { FontId } from './fonts/catalog.generated';
-import { decodeState, encodeState, type UrlState } from './url-state';
+import { decodeState, encodeState } from './url-state';
 
-const defaults: UrlState = {
+const defaults: AppState = {
   wordLeft: 'HELLO',
   wordRight: 'WORLD',
   letterSpacing: 50,
@@ -16,7 +17,7 @@ const defaults: UrlState = {
 
 describe('encodeState / decodeState round-trip', () => {
   it('round-trips a full state', () => {
-    const state: UrlState = {
+    const state: AppState = {
       wordLeft: 'LISTEN',
       wordRight: 'SILENT',
       letterSpacing: 75,
@@ -33,7 +34,7 @@ describe('encodeState / decodeState round-trip', () => {
   });
 
   it('round-trips the __same__ sentinel for fontIdRight', () => {
-    const state: UrlState = { ...defaults, fontIdLeft: 'lora-normal-400', fontIdRight: '__same__' };
+    const state: AppState = { ...defaults, fontIdLeft: 'lora-normal-400', fontIdRight: '__same__' };
     expect(encodeState(state)).toBe('HELLO&WORLD&50&lora-normal-400&__same__&1&20&p&c');
     expect(decodeState(encodeState(state), defaults)).toEqual(state);
   });
@@ -41,7 +42,7 @@ describe('encodeState / decodeState round-trip', () => {
   it('round-trips all camera and material short forms', () => {
     for (const cameraMode of ['perspective', 'orthographic'] as const) {
       for (const materialMode of ['base-color', 'normal-vectors', 'wireframe'] as const) {
-        const state: UrlState = { ...defaults, cameraMode, materialMode };
+        const state: AppState = { ...defaults, cameraMode, materialMode };
         expect(decodeState(encodeState(state), defaults)).toEqual(state);
       }
     }
@@ -156,13 +157,13 @@ describe('decodeState invalid fields fall back to defaults', () => {
 
 describe('encodeState escaping', () => {
   it('percent-encodes words', () => {
-    const state: UrlState = { ...defaults, wordLeft: 'A B', wordRight: 'C&D' };
+    const state: AppState = { ...defaults, wordLeft: 'A B', wordRight: 'C&D' };
     expect(encodeState(state)).toBe('A%20B&C%26D&50&monda&__same__&1&20&p&c');
     expect(decodeState(encodeState(state), defaults)).toEqual(state);
   });
 
   it('encodes literal percent signs and non-ASCII', () => {
-    const state: UrlState = { ...defaults, wordLeft: '50%', wordRight: 'café' };
+    const state: AppState = { ...defaults, wordLeft: '50%', wordRight: 'café' };
     const fragment = encodeState(state);
     expect(fragment.startsWith('50%25&caf%C3%A9&')).toBe(true);
     expect(decodeState(`#${fragment}`, defaults)).toEqual(state);
@@ -176,7 +177,7 @@ describe('encodeState escaping', () => {
 
   it('treats a valid FontId literal as a font id, not a sentinel', () => {
     const fontId: FontId = 'roboto-normal-800';
-    const state: UrlState = { ...defaults, fontIdLeft: fontId, fontIdRight: fontId };
+    const state: AppState = { ...defaults, fontIdLeft: fontId, fontIdRight: fontId };
     expect(encodeState(state)).toBe('HELLO&WORLD&50&roboto-normal-800&roboto-normal-800&1&20&p&c');
     expect(decodeState(encodeState(state), defaults)).toEqual(state);
   });
