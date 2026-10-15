@@ -109,6 +109,19 @@ p {
   text-decoration: none;
 }
 
+.sidebar > footer .license-note {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--border) 35%, var(--panel-bg));
+  font-size: 0.6875rem;
+  color: color-mix(in srgb, var(--text) 85%, var(--panel-bg));
+}
+
+.sidebar > footer .license-note a {
+  color: inherit;
+}
+
 .controls-form {
   display: flex;
   flex-direction: column;
