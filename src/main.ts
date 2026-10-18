@@ -187,7 +187,10 @@ async function main() {
     controlsPanel.onWordAngleChange(() => {
       void renderFromInputs();
     });
-    controlsPanel.onLetterSpacingChange(syncDownloadDirtyState);
+    controlsPanel.onLetterSpacingInput(syncDownloadDirtyState);
+    controlsPanel.onLetterSpacingChange(() => {
+      void renderFromInputs();
+    });
     controlsPanel.onFontChange(syncDownloadDirtyState);
     controlsPanel.onBaseSettingsChange(syncDownloadDirtyState);
     controlsPanel.onCameraModeChange((cameraMode) => {

@@ -297,8 +297,12 @@ export class ControlsPanel {
     });
   }
 
-  onLetterSpacingChange(handler: () => void): void {
+  onLetterSpacingInput(handler: () => void): void {
     this.#letterSpacingInput.addEventListener('input', handler);
+  }
+
+  onLetterSpacingChange(handler: () => void): void {
+    this.#letterSpacingInput.addEventListener('change', handler);
   }
 
   onWordAngleInput(handler: () => void): void {
