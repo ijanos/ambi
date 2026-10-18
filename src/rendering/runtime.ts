@@ -18,7 +18,6 @@ import {
 } from './intersected-letter-pairs';
 
 export type RenderOptions = RenderSettings & {
-  rotatedGlyphYDegrees: number;
   sceneMeshYRotationRadians: number;
 };
 
@@ -64,7 +63,7 @@ export async function createRenderingRuntime(container: HTMLElement): Promise<Re
         wordLeft,
         wordRight,
         {
-          rotatedGlyphYDegrees: options.rotatedGlyphYDegrees,
+          rotatedGlyphYDegrees: options.wordAngle,
           sceneMeshYRotationRadians: options.sceneMeshYRotationRadians,
         },
       );

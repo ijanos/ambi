@@ -5,6 +5,7 @@ import { decodeState, encodeState } from './url-state';
 const state: AppState = {
   wordLeft: 'HELLO',
   wordRight: 'WORLD',
+  wordAngle: 90,
   letterSpacing: 50,
   fontIdLeft: 'monda',
   fontIdRight: '__same__',
@@ -18,6 +19,7 @@ describe('render settings', () => {
   it('converts existing URL dimensions to scene units and resolves the linked font', () => {
     const decoded = decodeState('#HELLO&WORLD&75&monda&__same__&1&33&p&c', state);
     expect(toRenderSettings(decoded)).toEqual({
+      wordAngle: 90,
       letterSpacing: 7.5,
       fontIdLeft: 'monda',
       fontIdRight: 'monda',
@@ -26,7 +28,7 @@ describe('render settings', () => {
       cameraMode: 'perspective',
       materialMode: 'base-color',
     });
-    expect(encodeState(decoded)).toBe('HELLO&WORLD&75&monda&__same__&1&33&p&c');
+    expect(encodeState(decoded)).toBe('HELLO&WORLD&75&monda&__same__&1&33&p&c&90');
   });
 
   it('preserves an independently selected right font', () => {
@@ -67,6 +69,7 @@ describe('geometry fingerprint', () => {
   it.each<Partial<AppState>>([
     { wordLeft: 'WORLD' },
     { wordRight: 'HELLO' },
+    { wordAngle: 60 },
     { fontIdLeft: 'bungee-regular' },
     { fontIdRight: 'bungee-regular' },
     { letterSpacing: 75 },

@@ -52,6 +52,7 @@ export function encodeState(state: AppState): string {
     String(state.baseHeight),
     CAMERA_MODE_TO_SHORT.get(state.cameraMode) ?? 'p',
     MATERIAL_MODE_TO_SHORT.get(state.materialMode) ?? 'c',
+    String(state.wordAngle),
   ];
   return parts.join('&');
 }
@@ -92,5 +93,6 @@ export function decodeState(hash: string, defaults: AppState): AppState {
       (t) => SHORT_TO_MATERIAL_MODE.get(t) ?? defaults.materialMode,
       defaults.materialMode,
     ),
+    wordAngle: at(9, (t) => parseRawInt(t, 30, 150, defaults.wordAngle), defaults.wordAngle),
   };
 }

@@ -5,6 +5,7 @@ import { normalizeWord } from './word-pairs';
 export type AppState = {
   wordLeft: string;
   wordRight: string;
+  wordAngle: number;
   /** Slider and URL values are in tenths of a scene unit. */
   letterSpacing: number;
   fontIdLeft: FontId;
@@ -30,6 +31,7 @@ export type RenderSettings = Omit<
 /** Resolves the linked font and converts both dimensions to scene units. */
 export function toRenderSettings(state: AppState): RenderSettings {
   return {
+    wordAngle: state.wordAngle,
     letterSpacing: state.letterSpacing / 10,
     fontIdLeft: state.fontIdLeft,
     fontIdRight: state.fontIdRight === '__same__' ? state.fontIdLeft : state.fontIdRight,
@@ -41,11 +43,12 @@ export function toRenderSettings(state: AppState): RenderSettings {
 }
 
 export function geometryFingerprint(state: AppState): string {
-  const { letterSpacing, fontIdLeft, fontIdRight, baseEnabled, baseHeight } =
+  const { wordAngle, letterSpacing, fontIdLeft, fontIdRight, baseEnabled, baseHeight } =
     toRenderSettings(state);
   return JSON.stringify([
     normalizeWord(state.wordLeft),
     normalizeWord(state.wordRight),
+    wordAngle,
     letterSpacing,
     fontIdLeft,
     fontIdRight,

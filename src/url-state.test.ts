@@ -6,6 +6,7 @@ import { decodeState, encodeState } from './url-state';
 const defaults: AppState = {
   wordLeft: 'HELLO',
   wordRight: 'WORLD',
+  wordAngle: 90,
   letterSpacing: 50,
   fontIdLeft: 'monda',
   fontIdRight: '__same__',
@@ -20,6 +21,7 @@ describe('encodeState / decodeState round-trip', () => {
     const state: AppState = {
       wordLeft: 'LISTEN',
       wordRight: 'SILENT',
+      wordAngle: 60,
       letterSpacing: 75,
       fontIdLeft: 'bungee-regular',
       fontIdRight: 'orbitron-regular',
@@ -29,13 +31,13 @@ describe('encodeState / decodeState round-trip', () => {
       materialMode: 'wireframe',
     };
     const fragment = encodeState(state);
-    expect(fragment).toBe('LISTEN&SILENT&75&bungee-regular&orbitron-regular&0&33&o&w');
+    expect(fragment).toBe('LISTEN&SILENT&75&bungee-regular&orbitron-regular&0&33&o&w&60');
     expect(decodeState(`#${fragment}`, defaults)).toEqual(state);
   });
 
   it('round-trips the __same__ sentinel for fontIdRight', () => {
     const state: AppState = { ...defaults, fontIdLeft: 'lora-normal-400', fontIdRight: '__same__' };
-    expect(encodeState(state)).toBe('HELLO&WORLD&50&lora-normal-400&__same__&1&20&p&c');
+    expect(encodeState(state)).toBe('HELLO&WORLD&50&lora-normal-400&__same__&1&20&p&c&90');
     expect(decodeState(encodeState(state), defaults)).toEqual(state);
   });
 
@@ -60,9 +62,27 @@ describe('decodeState missing trailing fields', () => {
     expect(decodeState('', defaults)).toEqual(defaults);
     expect(decodeState('#', defaults)).toEqual(defaults);
   });
+
+  it('keeps existing shared links at the default angle', () => {
+    expect(decodeState('#HELLO&WORLD&50&monda&__same__&1&20&p&c', defaults)).toEqual(defaults);
+  });
 });
 
 describe('decodeState invalid fields fall back to defaults', () => {
+  it.each(['', 'notanumber', '29', '151', '90.5', 'Infinity'])(
+    'falls back on invalid word angle: %j',
+    (angle) => {
+      expect(
+        decodeState(`#HELLO&WORLD&50&monda&__same__&1&20&p&c&${angle}`, defaults).wordAngle,
+      ).toBe(90);
+    },
+  );
+
+  it.each([30, 90, 150])('preserves a supported word angle: %i', (wordAngle) => {
+    const state: AppState = { ...defaults, wordAngle };
+    expect(decodeState(encodeState(state), defaults)).toEqual(state);
+  });
+
   it('falls back on invalid letter spacing', () => {
     expect(
       decodeState('#A&B&notanumber&monda&__same__&1&20&p&c', {
@@ -158,7 +178,7 @@ describe('decodeState invalid fields fall back to defaults', () => {
 describe('encodeState escaping', () => {
   it('percent-encodes words', () => {
     const state: AppState = { ...defaults, wordLeft: 'A B', wordRight: 'C&D' };
-    expect(encodeState(state)).toBe('A%20B&C%26D&50&monda&__same__&1&20&p&c');
+    expect(encodeState(state)).toBe('A%20B&C%26D&50&monda&__same__&1&20&p&c&90');
     expect(decodeState(encodeState(state), defaults)).toEqual(state);
   });
 
@@ -178,7 +198,9 @@ describe('encodeState escaping', () => {
   it('treats a valid FontId literal as a font id, not a sentinel', () => {
     const fontId: FontId = 'roboto-normal-800';
     const state: AppState = { ...defaults, fontIdLeft: fontId, fontIdRight: fontId };
-    expect(encodeState(state)).toBe('HELLO&WORLD&50&roboto-normal-800&roboto-normal-800&1&20&p&c');
+    expect(encodeState(state)).toBe(
+      'HELLO&WORLD&50&roboto-normal-800&roboto-normal-800&1&20&p&c&90',
+    );
     expect(decodeState(encodeState(state), defaults)).toEqual(state);
   });
 });

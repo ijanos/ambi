@@ -16,8 +16,6 @@ import { decodeState, encodeState } from './url-state';
 
 const DEFAULT_WORD_LEFT = 'HELLO';
 const DEFAULT_WORD_RIGHT = 'WORLD';
-const ROTATED_GLYPH_Y_DEGREES = 90;
-const SCENE_MESH_Y_ROTATION_RADIANS = -Math.PI / 4;
 
 const EASTER_EGG_PAIRS: readonly [string, string][] = [
   ['BAKE', 'CAKE'],
@@ -145,8 +143,7 @@ async function main() {
       const state = controlsPanel.getState();
       const renderOptions: RenderOptions = {
         ...toRenderSettings(state),
-        rotatedGlyphYDegrees: ROTATED_GLYPH_Y_DEGREES,
-        sceneMeshYRotationRadians: SCENE_MESH_Y_ROTATION_RADIANS,
+        sceneMeshYRotationRadians: (-state.wordAngle * Math.PI) / 360,
       };
 
       viewerContainer.classList.remove('is-ready');
@@ -186,6 +183,10 @@ async function main() {
     };
 
     controlsPanel.onWordsChange(syncDownloadDirtyState);
+    controlsPanel.onWordAngleInput(syncDownloadDirtyState);
+    controlsPanel.onWordAngleChange(() => {
+      void renderFromInputs();
+    });
     controlsPanel.onLetterSpacingChange(syncDownloadDirtyState);
     controlsPanel.onFontChange(syncDownloadDirtyState);
     controlsPanel.onBaseSettingsChange(syncDownloadDirtyState);

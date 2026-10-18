@@ -60,6 +60,8 @@ export class ControlsPanel {
   #wordRightInput: HTMLInputElement;
   #wordLeftLabel: HTMLLabelElement;
   #wordRightLabel: HTMLLabelElement;
+  #wordAngleInput: HTMLInputElement;
+  #wordAngleLabel: HTMLLabelElement;
   #letterSpacingInput: HTMLInputElement;
   #fontSelectLeft: HTMLSelectElement;
   #fontSelectRight: HTMLSelectElement;
@@ -86,6 +88,8 @@ export class ControlsPanel {
     this.#wordRightInput = requireElement('#word2', HTMLInputElement);
     this.#wordLeftLabel = requireElement('#word1-label', HTMLLabelElement);
     this.#wordRightLabel = requireElement('#word2-label', HTMLLabelElement);
+    this.#wordAngleInput = requireElement('#word-angle', HTMLInputElement);
+    this.#wordAngleLabel = requireElement('#word-angle-label', HTMLLabelElement);
     this.#letterSpacingInput = requireElement('#letter-spacing', HTMLInputElement);
     this.#fontSelectLeft = requireElement('#font-selector', HTMLSelectElement);
     this.#fontSelectRight = requireElement('#font-selector-2', HTMLSelectElement);
@@ -107,6 +111,9 @@ export class ControlsPanel {
     sameFontOption.textContent = 'Same as Word 1';
     this.#fontSelectRight.prepend(sameFontOption);
     this.#fontSelectRight.value = '__same__';
+
+    this.#wordAngleInput.addEventListener('input', () => this.#updateWordAngleLabel());
+    this.#updateWordAngleLabel();
 
     // Glyph viewer buttons
     const glyphBtn1 = document.getElementById('glyph-btn-1');
@@ -171,6 +178,7 @@ export class ControlsPanel {
     return {
       wordLeft: this.#wordLeftInput.value,
       wordRight: this.#wordRightInput.value,
+      wordAngle: Number(this.#wordAngleInput.value),
       letterSpacing: Number(this.#letterSpacingInput.value),
       fontIdLeft: parseFontId(this.#fontSelectLeft.value, this.#options.defaultFontId),
       fontIdRight:
@@ -187,6 +195,7 @@ export class ControlsPanel {
   applyState(state: AppState): void {
     this.#wordLeftInput.value = state.wordLeft;
     this.#wordRightInput.value = state.wordRight;
+    this.#wordAngleInput.value = String(state.wordAngle);
     this.#letterSpacingInput.value = String(state.letterSpacing);
     this.#fontSelectLeft.value = state.fontIdLeft;
     this.#fontSelectRight.value = state.fontIdRight;
@@ -194,6 +203,7 @@ export class ControlsPanel {
     this.#baseHeightInput.value = String(state.baseHeight);
     this.#cameraModeSelect.value = state.cameraMode;
     this.#materialModeSelect.value = state.materialMode;
+    this.#updateWordAngleLabel();
     this.#updateBaseHeightLabel();
     this.#updateBaseHeightVisibility();
     this.syncValidation();
@@ -289,6 +299,14 @@ export class ControlsPanel {
 
   onLetterSpacingChange(handler: () => void): void {
     this.#letterSpacingInput.addEventListener('input', handler);
+  }
+
+  onWordAngleInput(handler: () => void): void {
+    this.#wordAngleInput.addEventListener('input', handler);
+  }
+
+  onWordAngleChange(handler: () => void): void {
+    this.#wordAngleInput.addEventListener('change', handler);
   }
 
   onFontChange(handler: () => void): void {
@@ -412,6 +430,11 @@ export class ControlsPanel {
 
   #updateBaseHeightLabel(): void {
     this.#baseHeightLabel.textContent = `Base Height (${this.#baseHeightInput.value})`;
+  }
+
+  #updateWordAngleLabel(): void {
+    this.#wordAngleLabel.textContent = `Word angle (${this.#wordAngleInput.value}°)`;
+    this.#wordAngleInput.setAttribute('aria-valuetext', `${this.#wordAngleInput.value} degrees`);
   }
 
   #updateBaseHeightVisibility(): void {
