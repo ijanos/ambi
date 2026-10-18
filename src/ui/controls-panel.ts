@@ -330,9 +330,14 @@ export class ControlsPanel {
     });
   }
 
+  onBaseSettingsInput(handler: () => void): void {
+    this.#baseEnabledInput.addEventListener('input', handler);
+    this.#baseHeightInput.addEventListener('input', handler);
+  }
+
   onBaseSettingsChange(handler: () => void): void {
     this.#baseEnabledInput.addEventListener('change', handler);
-    this.#baseHeightInput.addEventListener('input', handler);
+    this.#baseHeightInput.addEventListener('change', handler);
   }
 
   onDownload(handler: () => void): void {

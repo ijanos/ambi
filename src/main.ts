@@ -192,7 +192,10 @@ async function main() {
       void renderFromInputs();
     });
     controlsPanel.onFontChange(syncDownloadDirtyState);
-    controlsPanel.onBaseSettingsChange(syncDownloadDirtyState);
+    controlsPanel.onBaseSettingsInput(syncDownloadDirtyState);
+    controlsPanel.onBaseSettingsChange(() => {
+      void renderFromInputs();
+    });
     controlsPanel.onCameraModeChange((cameraMode) => {
       void getRenderingRuntime().then((runtime) => {
         runtime.setCameraMode(cameraMode);
