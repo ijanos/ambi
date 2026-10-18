@@ -14,9 +14,11 @@ export function assertWordsPresent(wordLeft: string, wordRight: string) {
 }
 
 export function assertSameLength(wordLeft: string, wordRight: string) {
-  if (wordLeft.length !== wordRight.length) {
+  const leftCount = Array.from(wordLeft).length;
+  const rightCount = Array.from(wordRight).length;
+  if (leftCount !== rightCount) {
     throw new Error(
-      `Expected words of equal length, got "${wordLeft}" (${wordLeft.length}) and "${wordRight}" (${wordRight.length})`,
+      `Expected words of equal length, got "${wordLeft}" (${leftCount}) and "${wordRight}" (${rightCount})`,
     );
   }
 }
@@ -24,10 +26,11 @@ export function assertSameLength(wordLeft: string, wordRight: string) {
 export function createLetterPairs(wordLeft: string, wordRight: string): LetterPair[] {
   assertWordsPresent(wordLeft, wordRight);
   assertSameLength(wordLeft, wordRight);
+  const rightCharacters = Array.from(wordRight);
 
   return Array.from(wordLeft, (leftCharacter, index) => ({
     leftCharacter,
-    // biome-ignore lint/style/noNonNullAssertion: Array.from is bounded by wordLeft.length; assertSameLength guarantees wordRight has matching length
-    rightCharacter: wordRight[index]!,
+    // biome-ignore lint/style/noNonNullAssertion: assertSameLength guarantees matching code point counts
+    rightCharacter: rightCharacters[index]!,
   }));
 }

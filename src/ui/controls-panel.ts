@@ -394,8 +394,8 @@ export class ControlsPanel {
   #validateWords(wordLeft: string, wordRight: string): WordValidation {
     const normalizedWordLeft = normalizeWord(wordLeft);
     const normalizedWordRight = normalizeWord(wordRight);
-    const leftCount = normalizedWordLeft.length;
-    const rightCount = normalizedWordRight.length;
+    const leftCount = Array.from(normalizedWordLeft).length;
+    const rightCount = Array.from(normalizedWordRight).length;
 
     try {
       assertWordsPresent(normalizedWordLeft, normalizedWordRight);
